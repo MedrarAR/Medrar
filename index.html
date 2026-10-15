@@ -46,17 +46,17 @@ body {
 
     <div class="space-y-1">
       <h3 class="text-lg font-extrabold text-white">¡Bienvenido a MEDRAR!</h3>
-      <p class="text-xs text-amber-200/80">Plataforma Oficial de Mercado Petrolero</p>
+      <p class="text-xs text-amber-200/80">Plataforma Oficial de Mercado e Inversiones Petroleras</p>
     </div>
 
     <div class="bg-[#001F1C] border border-amber-400/20 rounded-2xl p-3.5 text-left text-xs space-y-2 text-amber-100/90">
       <p class="flex items-start gap-2">
         <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
-        <span><strong>Depósito Mínimo Inicial:</strong> $5.000 ARS para comenzar a comprar acciones.</span>
+        <span><strong>Depósito Mínimo Inicial:</strong> $5.000 ARS para habilitar la plataforma.</span>
       </p>
       <p class="flex items-start gap-2">
         <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
-        <span><strong>Retiros diarios:</strong> Mínimo de $10.000 ARS.</span>
+        <span><strong>Retiros diarios:</strong> Máximo de $10.000 ARS cada 48 hs (0% comisión).</span>
       </p>
       <p class="flex items-start gap-2">
         <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
@@ -65,7 +65,7 @@ body {
     </div>
 
     <button onclick="closeNoticeModal()" class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-400/10 cursor-pointer transition">
-      ¡LISTO!
+      Entendido / Continuar
     </button>
   </div>
 </div>
@@ -167,7 +167,7 @@ body {
       </div>
 
       <div class="grid grid-cols-2 gap-2 pt-2 border-t border-amber-400/20">
-        <button onclick="openWalletModal('depositar')" class="py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition">
+        <button onclick="openWalletModal('recargar')" class="py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition">
           <i class="fa-solid fa-plus text-xs"></i> Depositar
         </button>
         <button onclick="openWalletModal('retirar')" class="py-2.5 bg-[#004D47] hover:bg-[#1A6660] text-amber-400 border border-amber-400/30 text-xs rounded-xl font-bold flex items-center justify-center gap-1.5 cursor-pointer transition">
@@ -400,9 +400,9 @@ body {
 </main>
 
 <script>
-// CONFIGURACIÓN DE CONEXIÓN A SUPABASE
-const SUPABASE_URL = 'https://gjesutnfyfvmuilsgrgy.supabase.co';
-const SUPABASE_KEY = 'eyJhbGci...'; // <-- REEMPLAZA AQUÍ POR TU CLAVE ANON PUBLIC COPIADA DE SUPABASE
+// CONFIGURACIÓN DE CONEXIÓN A SUPABASE (ACTUALIZADA)
+const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -774,7 +774,7 @@ window.setWalletMode = function(mode) {
   document.getElementById('deposit-custom-input').min = minRecharge;
   document.getElementById('deposit-custom-input').value = minRecharge;
 
-  if (mode === 'depositar') {
+  if (mode === 'recargar') {
     boxRec.style.display = 'block';
     boxRet.style.display = 'none';
     tabRec.className = "py-2 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer";
@@ -834,7 +834,7 @@ function checkWithdrawEligibility() {
   }
 
   if (recharges < 2) {
-    noteEl.innerText = " Para continuar retirando, se requiere una segunda recarga a partir de $8.000 ARS.";
+    noteEl.innerText = " Para continuar retirando, se requiere una segunda recarga a partir de $10.000 ARS.";
   } else {
     noteEl.innerText = " Habilitado para retiro.";
   }
@@ -950,4 +950,4 @@ document.getElementById('btn-logout').addEventListener('click', () => {
 });
 </script>
 </body>
-        </html>
+</html>
