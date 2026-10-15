@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MEDRAR - Mercado Petrolero</title>
+
+<meta name="theme-color" content="#004D47">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- SDK OFICIAL DE SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+  font-family: 'Inter', sans-serif !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.font-mono-num {
+  font-family: 'JetBrains Mono', monospace;
+}
+.petrol-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+</style>
+</head>
+<body class="bg-[#003834] text-slate-100 antialiased min-h-screen p-0 sm:p-4 flex justify-center">
+
+<!-- POPUP DE BIENVENIDA Y AVISO OFICIAL (SE MUESTRA AL INGRESAR) -->
+<div id="notice-modal" class="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-[#002B27] border border-amber-400/40 w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-4 text-center">
+    
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/30 p-2 mx-auto">
+      <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </div>
+
+    <div class="space-y-1">
+      <h3 class="text-lg font-extrabold text-white">¡Bienvenido a MEDRAR!</h3>
+      <p class="text-xs text-amber-200/80">Plataforma Oficial de Mercado Petrolero</p>
+    </div>
+
+    <div class="bg-[#001F1C] border border-amber-400/20 rounded-2xl p-3.5 text-left text-xs space-y-2 text-amber-100/90">
+      <p class="flex items-start gap-2">
+        <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
+        <span><strong>Depósito Mínimo Inicial:</strong> $5.000 ARS para comenzar a comprar acciones.</span>
+      </p>
+      <p class="flex items-start gap-2">
+        <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
+        <span><strong>Retiros diarios:</strong> Mínimo de $10.000 ARS.</span>
+      </p>
+      <p class="flex items-start gap-2">
+        <i class="fa-solid fa-circle-check text-amber-400 mt-0.5 shrink-0"></i>
+        <span><strong>Bono Diario:</strong> Obtené +$350 ARS gratis cada 24 hs.</span>
+      </p>
+    </div>
+
+    <button onclick="closeNoticeModal()" class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-400/10 cursor-pointer transition">
+      ¡LISTO!
+    </button>
+  </div>
+</div>
+
+<!-- PANTALLA DE AUTENTICACIÓN / BLOQUEO DE DISPOSITIVO MULTICUENTA -->
+<div id="auth-screen" class="fixed inset-0 z-50 bg-[#002B27] flex items-center justify-center p-4">
+  <div class="w-full max-w-sm bg-[#004D47] border border-amber-400/30 rounded-3xl p-6 shadow-2xl space-y-4">
+    
+    <div class="text-center space-y-1">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/30 p-2 mb-1">
+        <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+      </div>
+      <h2 class="text-xl font-extrabold text-white tracking-wide">MEDRAR</h2>
+      <p class="text-xs text-amber-200/70">Ingresa tus datos para acceder a tu panel financiero</p>
+    </div>
+
+    <!-- MENSAJE MULTICUENTA -->
+    <div id="multicount-error" class="hidden bg-rose-950/80 border border-rose-500/50 p-3 rounded-xl text-xs text-rose-200 text-center">
+      <i class="fa-solid fa-circle-exclamation text-rose-400 mr-1"></i>
+      Dispositivo ya vinculado a otra cuenta activa. No se permiten multicuentas en este equipo.
+    </div>
+
+    <form id="auth-form" class="space-y-3" onsubmit="event.preventDefault(); handleAuthSubmit();">
+      <div>
+        <label class="text-[11px] text-amber-200/90 block mb-1">Nombre y Apellido del Titular</label>
+        <div class="flex items-center bg-[#001F1C] border border-amber-400/30 rounded-xl px-3 py-2.5 focus-within:border-amber-400">
+          <i class="fa-solid fa-user text-amber-400 text-xs mr-2.5"></i>
+          <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[11px] text-amber-200/90 block mb-1">PIN de Acceso (4 dígitos)</label>
+        <div class="flex items-center bg-[#001F1C] border border-amber-400/30 rounded-xl px-3 py-2.5 focus-within:border-amber-400">
+          <i class="fa-solid fa-lock text-amber-400 text-xs mr-2.5"></i>
+          <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono placeholder:text-gray-500">
+        </div>
+      </div>
+
+      <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl transition shadow-lg shadow-amber-400/10 cursor-pointer">
+        Ingresar a MEDRAR
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- APLICACIÓN PRINCIPAL -->
+<main class="w-full max-w-md mx-auto bg-[#001F1C] border-x border-[#004D47]/40 min-h-screen sm:rounded-2xl shadow-2xl flex flex-col justify-between relative pb-20">
+
+<div>
+  <!-- HEADER CON SALDO Y USUARIO -->
+  <header class="bg-[#002B27] border-b border-amber-400/20 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/30 p-1 flex items-center justify-center shrink-0">
+        <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+      </div>
+      <div>
+        <span class="font-extrabold text-white text-xs block tracking-wider">MEDRAR</span>
+        <span id="user-display-name" class="text-[10px] text-amber-200/70 block">Titular: ---</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div class="text-right">
+        <span class="text-[9px] text-amber-200/60 block uppercase font-mono-num">Saldo</span>
+        <span id="header-balance-display" class="text-xs font-bold font-mono-num text-amber-400">$0 ARS</span>
+      </div>
+      <button id="btn-logout" title="Cerrar sesión" class="text-amber-200/50 hover:text-amber-400 p-1.5 text-xs cursor-pointer ml-1">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- TICKER INFORMATIVO -->
+  <section class="bg-[#00332E] border-b border-amber-400/10 px-4 py-2 text-xs text-amber-100/80">
+    <p class="truncate font-mono-num text-[11px] flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+      <span>Acciones semanales habilitadas • Mínimo de carga $5.000 ARS</span>
+    </p>
+  </section>
+
+  <!-- VISTA 1: INICIO Y ACCIONES PRINCIPALES -->
+  <div id="view-planes" class="space-y-4 p-4">
+
+    <!-- CARD TARJETA DE CAPITAL DE INGRESO -->
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4 space-y-3">
+      <div class="flex items-center justify-between text-xs text-amber-200/80">
+        <span class="font-medium">Capital de Ingreso</span>
+        <button onclick="toggleBalanceMask()" class="text-amber-400 hover:text-amber-300 cursor-pointer">
+          <i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i>
+        </button>
+      </div>
+
+      <div>
+        <h1 id="home-balance-display" class="text-3xl font-bold text-white tracking-tight font-sans">
+          <span class="text-xl font-normal text-amber-400 mr-0.5">$</span>0 <span class="text-xs font-normal text-amber-200/60">ARS</span>
+        </h1>
+        <p class="text-[11px] text-amber-100/60 mt-0.5">Saldo acumulado disponible para operar o retirar</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-2 border-t border-amber-400/20">
+        <button onclick="openWalletModal('depositar')" class="py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition">
+          <i class="fa-solid fa-plus text-xs"></i> Depositar
+        </button>
+        <button onclick="openWalletModal('retirar')" class="py-2.5 bg-[#004D47] hover:bg-[#1A6660] text-amber-400 border border-amber-400/30 text-xs rounded-xl font-bold flex items-center justify-center gap-1.5 cursor-pointer transition">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> Retirar
+        </button>
+      </div>
+    </div>
+
+    <!-- BONO DIARIO CON CONTEO DE 24 HS -->
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center text-lg border border-amber-400/30">
+          <i class="fa-solid fa-gift"></i>
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block leading-tight">Bono Diario</span>
+          <span id="daily-timer-text" class="text-[11px] text-amber-200/70 font-mono-num">+$350 ARS disponibles</span>
+        </div>
+      </div>
+      <button id="btn-claim-daily" onclick="claimDailyReward()" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs cursor-pointer transition">
+        Cobrar
+      </button>
+    </div>
+
+    <!-- LISTADO TOP 5 ACCIONES PETROLERAS -->
+    <div class="flex items-center justify-between">
+      <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Top 5 Acciones Petroleras</h3>
+      <span class="text-[10px] text-amber-200/60">1 activación / semana</span>
+    </div>
+
+    <div id="plans-container" class="space-y-3"></div>
+  </div>
+
+  <!-- VISTA 2: ACCIONES ADQUIRIDAS -->
+  <div id="view-productos" class="hidden p-4 space-y-3">
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4">
+      <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-chart-line"></i> Mis Acciones en Operación
+      </h2>
+      <p class="text-[11px] text-amber-100/70 mt-1">Al finalizar el tiempo activo, el capital con sus dividendos pasa automáticamente al saldo disponible.</p>
+    </div>
+    <div id="active-products-container" class="space-y-3"></div>
+  </div>
+
+  <!-- VISTA 3: PRÓXIMAMENTE -->
+  <div id="view-proximamente" class="hidden p-4 space-y-4">
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-8 text-center space-y-3">
+      <div class="w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 text-2xl mx-auto">
+        <i class="fa-solid fa-hourglass-start"></i>
+      </div>
+      <h3 class="text-sm font-bold text-white uppercase tracking-wider">Próximamente</h3>
+      <p class="text-xs text-amber-200/60 max-w-xs mx-auto">Nuevas herramientas financieras, mercado secundario de acciones y módulos se habilitarán en la próxima actualización.</p>
+    </div>
+  </div>
+
+  <!-- VISTA 4: MI PERFIL -->
+  <div id="view-perfil" class="hidden p-4 space-y-4">
+    
+    <!-- DATOS PERSONALES DE RETIRO -->
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4 space-y-3 text-xs">
+      <div class="flex items-center justify-between border-b border-amber-400/20 pb-2">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-id-card text-amber-400"></i>
+          <span class="font-bold text-white text-xs">Datos de Mi Perfil</span>
+        </div>
+        <span class="text-[10px] font-mono-num text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">Supabase Sync</span>
+      </div>
+
+      <div class="space-y-2.5">
+        <div>
+          <label class="text-amber-200/70 block text-[10px] mb-1">NOMBRE Y APELLIDO COMPLETO</label>
+          <input id="prof-name-input" type="text" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-2.5 text-white outline-none focus:border-amber-400" placeholder="Nombre de la cuenta">
+        </div>
+
+        <div>
+          <label class="text-amber-200/70 block text-[10px] mb-1">CVU DE COBRO</label>
+          <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-2.5 font-mono-num text-white outline-none focus:border-amber-400" placeholder="0000000000000000000000">
+        </div>
+
+        <div>
+          <label class="text-amber-200/70 block text-[10px] mb-1">ALIAS BANCARIO</label>
+          <input id="prof-alias-input" type="text" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-2.5 font-mono-num text-white outline-none focus:border-amber-400" placeholder="tu.alias.mp">
+        </div>
+
+        <button onclick="saveProfileData()" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl cursor-pointer transition">
+          Guardar Datos en la Nube
+        </button>
+      </div>
+    </div>
+
+    <!-- RECOMENDAR A AMISTADES -->
+    <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4 space-y-3 text-xs">
+      <div class="flex items-center gap-2 border-b border-amber-400/20 pb-2">
+        <i class="fa-solid fa-users text-amber-400"></i>
+        <span class="font-bold text-white text-xs">Invitar Amistades</span>
+      </div>
+
+      <div class="flex items-center bg-[#001F1C] border border-amber-400/30 rounded-xl px-3 py-2 gap-2">
+        <input id="ref-link-input-profile" type="text" readonly class="bg-transparent text-xs text-amber-100 font-mono-num w-full outline-none select-all truncate">
+        <button onclick="copyRefLinkProfile()" id="btn-copy-ref-profile" class="px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-lg text-xs cursor-pointer shrink-0 transition">
+          Copiar
+        </button>
+      </div>
+
+      <button onclick="shareWhatsAppProfile()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition shadow-md">
+        <i class="fa-brands fa-whatsapp text-sm"></i> Compartir por WhatsApp
+      </button>
+    </div>
+
+    <!-- TELEGRAM (CANAL OFICIAL Y GRUPO SOCIAL) -->
+    <div class="space-y-2">
+      <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="p-3.5 bg-[#002B27] border border-amber-400/30 rounded-2xl flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-telegram text-2xl text-amber-400"></i>
+          <div>
+            <span class="font-bold block text-amber-400">Canal Oficial Telegram</span>
+            <span class="text-[10px] text-amber-100/70">Novedades y Anuncios</span>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+      </a>
+
+      <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="p-3.5 bg-[#002B27] border border-amber-400/30 rounded-2xl flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
+          <div>
+            <span class="font-bold block text-amber-400">Grupo Social Medrar</span>
+            <span class="text-[10px] text-amber-100/70">Comunidad y Comprobantes</span>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- NAVEGACIÓN INFERIOR -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-400/20 grid grid-cols-4 py-2.5 px-2 text-center z-40 shadow-2xl">
+  <button onclick="switchTab('planes')" id="nav-btn-planes" class="flex flex-col items-center gap-1 text-amber-400 font-bold text-xs cursor-pointer">
+    <i class="fa-solid fa-house text-base"></i>
+    <span class="text-[10px] leading-none">Inicio</span>
+  </button>
+  <button onclick="switchTab('productos')" id="nav-btn-productos" class="flex flex-col items-center gap-1 text-amber-200/40 hover:text-amber-400 text-xs cursor-pointer">
+    <i class="fa-solid fa-chart-line text-base"></i>
+    <span class="text-[10px] leading-none">Acciones</span>
+  </button>
+  <button onclick="switchTab('proximamente')" id="nav-btn-proximamente" class="flex flex-col items-center gap-1 text-amber-200/40 hover:text-amber-400 text-xs cursor-pointer">
+    <i class="fa-solid fa-clock text-base"></i>
+    <span class="text-[10px] leading-none">Próximamente</span>
+  </button>
+  <button onclick="switchTab('perfil')" id="nav-btn-perfil" class="flex flex-col items-center gap-1 text-amber-200/40 hover:text-amber-400 text-xs cursor-pointer">
+    <i class="fa-solid fa-user text-base"></i>
+    <span class="text-[10px] leading-none">Mi Perfil</span>
+  </button>
+</nav>
+
+<!-- MODAL BILLETERA (DEPÓSITOS Y RETIROS) -->
+<div id="wallet-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="bg-[#002B27] border border-amber-400/40 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4 text-white">
+    
+    <div class="flex items-center justify-between border-b border-amber-400/20 pb-3">
+      <h3 class="text-sm font-bold text-white">Billetera MEDRAR</h3>
+      <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-400/20 rounded-xl text-xs font-semibold">
+      <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('recargar')" class="py-2 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer">
+        Cargar Saldo
+      </button>
+      <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer">
+        Retirar Dinero
+      </button>
+    </div>
+
+    <!-- FORMULARIO DE DEPÓSITO -->
+    <div id="wallet-recarga-box" class="space-y-3 text-xs">
+      <div class="p-3 bg-[#001F1C] border border-amber-400/30 rounded-xl space-y-1">
+        <div class="flex justify-between items-center text-[10px] text-amber-200/70 font-mono-num uppercase">
+          <span>CVU de Depósito</span>
+          <span class="text-amber-400 font-bold">Oficial</span>
+        </div>
+        <div class="flex items-center justify-between gap-1 pt-1">
+          <span id="cvu-text-val" class="font-mono-num font-bold text-xs text-white select-all">00000267900000002952651</span>
+          <button id="btn-copy-cvu" onclick="copyOfficialCVU()" class="px-3 py-1 bg-amber-400 text-slate-950 font-bold text-xs rounded-lg cursor-pointer shrink-0">
+            Copiar
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label id="recharge-min-label" class="text-[11px] text-amber-200/80 block mb-1">Monto a cargar (Mínimo $5.000 ARS)</label>
+        <input id="deposit-custom-input" type="number" value="5000" min="5000" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-3 text-xs font-mono-num font-bold text-amber-400 outline-none">
+      </div>
+
+      <button onclick="notifyDepositTelegram()" class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition">
+        <i class="fa-brands fa-telegram text-sm"></i> Confirmar y Notificar Depósito
+      </button>
+    </div>
+
+    <!-- FORMULARIO DE RETIRO CON REGLAS Y SEGURIDAD -->
+    <div id="wallet-retiro-box" class="hidden space-y-3 text-xs">
+      <div id="withdraw-info-box" class="p-2.5 bg-[#001F1C] border border-amber-400/20 rounded-xl text-[11px] text-amber-200/80 space-y-1">
+        <p>• Máximo por día: <strong>$10.000 ARS</strong></p>
+        <p>• Sin descuento de comisión (0%).</p>
+        <p>• Frecuencia: 1 retiro cada 48 hs.</p>
+        <p id="withdraw-status-note" class="text-amber-400 font-semibold mt-1"></p>
+      </div>
+
+      <div>
+        <label class="text-[11px] text-amber-200/80 block mb-1">Monto a retirar (Máx. $10.000 ARS)</label>
+        <input id="withdraw-custom-input" type="number" placeholder="Ej: 5000" max="10000" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-3 font-mono-num font-bold text-amber-400 outline-none">
+      </div>
+
+      <div>
+        <label class="text-[10px] text-amber-200/80 block mb-1">PIN DE SEGURIDAD (4 DÍGITOS)</label>
+        <input id="withdraw-pin-confirm" type="password" maxlength="4" placeholder="••••" class="w-full bg-[#001F1C] border border-amber-400/30 rounded-xl p-2.5 text-white tracking-widest font-mono outline-none">
+      </div>
+
+      <button id="btn-submit-withdraw" onclick="executeWithdrawal()" class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl cursor-pointer transition">
+        Solicitar Retiro
+      </button>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<script>
+// CONFIGURACIÓN DE CONEXIÓN A SUPABASE
+const SUPABASE_URL = 'https://gjesutnfyfvmuilsgrgy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGci...'; // <-- REEMPLAZA AQUÍ POR TU CLAVE ANON PUBLIC COPIADA DE SUPABASE
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// POPUP DE BIENVENIDA
+window.closeNoticeModal = () => {
+  document.getElementById('notice-modal').classList.add('hidden');
+};
+
+// CONFIGURACIÓN DE TOP 5 ACCIONES PETROLERAS
+const plans = [
+  { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
+  { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png' },
+  { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png' },
+  { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png' },
+  { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png' }
+];
+
+let currentUser = null;
+let activePlansList = [];
+let hideBalance = false;
+
+function getDeviceId() {
+  let devId = localStorage.getItem('medrar_device_id');
+  if (!devId) {
+    devId = 'DEV-' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+    localStorage.setItem('medrar_device_id', devId);
+  }
+  return devId;
+}
+
+function fmt(n) {
+  return new Intl.NumberFormat('es-AR').format(Math.round(n || 0));
+}
+
+// INICIO / REGISTRO CON SUPABASE
+async function handleAuthSubmit() {
+  const nameVal = document.getElementById('auth-name').value.trim();
+  const pinVal = document.getElementById('auth-pin').value.trim();
+  const deviceId = getDeviceId();
+
+  if (!nameVal || pinVal.length !== 4) {
+    alert("Ingresa tu nombre completo y un PIN de 4 dígitos.");
+    return;
+  }
+
+  // Buscar si el dispositivo ya existe en Supabase
+  let { data: existingUser, error } = await db.from('usuarios').select('*').eq('device_id', deviceId).single();
+
+  if (existingUser) {
+    if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
+      document.getElementById('multicount-error').classList.remove('hidden');
+      return;
+    }
+    currentUser = existingUser;
+  } else {
+    // Crear nuevo usuario en Supabase
+    let { data: newUser, error: createError } = await db.from('usuarios').insert([{
+      device_id: deviceId,
+      nombre: nameVal,
+      pin: pinVal,
+      balance: 0
+    }]).select().single();
+
+    if (createError) {
+      alert("Error al conectar con la base de datos.");
+      return;
+    }
+    currentUser = newUser;
+  }
+
+  document.getElementById('auth-screen').remove();
+  document.getElementById('user-display-name').innerText = `Titular: ${currentUser.nombre}`;
+  await loadUserData();
+}
+
+async function loadUserData() {
+  if (!currentUser) return;
+
+  // Actualizar datos de usuario desde Supabase
+  let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).single();
+  if (userData) currentUser = userData;
+
+  // Cargar acciones activas
+  let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
+  activePlansList = plansData || [];
+
+  renderUI();
+}
+
+async function updateDBUser(fields) {
+  if (!currentUser) return;
+  let { data, error } = await db.from('usuarios').update(fields).eq('id', currentUser.id).select().single();
+  if (data) currentUser = data;
+  renderUI();
+}
+
+// SALDO
+window.toggleBalanceMask = function() {
+  hideBalance = !hideBalance;
+  renderBalanceDisplay();
+};
+
+function renderBalanceDisplay() {
+  const balEl = document.getElementById('home-balance-display');
+  const headEl = document.getElementById('header-balance-display');
+  const eyeIcon = document.getElementById('balance-eye-icon');
+
+  const bal = currentUser ? currentUser.balance : 0;
+
+  if (hideBalance) {
+    balEl.innerHTML = `<span class="text-xl font-normal text-amber-400 mr-0.5">$</span>•••••• <span class="text-xs font-normal text-amber-200/60">ARS</span>`;
+    headEl.innerText = "$•••• ARS";
+    if (eyeIcon) eyeIcon.className = "fa-solid fa-eye-slash text-xs";
+  } else {
+    balEl.innerHTML = `<span class="text-xl font-normal text-amber-400 mr-0.5">$</span>${fmt(bal)} <span class="text-xs font-normal text-amber-200/60">ARS</span>`;
+    headEl.innerText = `$${fmt(bal)} ARS`;
+    if (eyeIcon) eyeIcon.className = "fa-solid fa-eye text-xs";
+  }
+}
+
+// TEMPORIZADOR BONO DIARIO DE 24 HS
+function startDailyTimer() {
+  const btn = document.getElementById('btn-claim-daily');
+  const timerText = document.getElementById('daily-timer-text');
+
+  function update() {
+    if (!currentUser) return;
+    const now = Date.now();
+    const lastClaim = currentUser.last_daily_claim || 0;
+    const elapsed = now - lastClaim;
+    const cooldown = 24 * 60 * 60 * 1000;
+
+    if (elapsed >= cooldown) {
+      btn.disabled = false;
+      btn.className = "px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs cursor-pointer transition";
+      btn.innerText = "Cobrar";
+      timerText.innerText = "+$350 ARS disponibles";
+    } else {
+      btn.disabled = true;
+      btn.className = "px-4 py-2 bg-amber-400/20 text-amber-200/40 font-bold rounded-xl text-xs cursor-not-allowed";
+      btn.innerText = "Espera";
+      
+      const diff = cooldown - elapsed;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      timerText.innerText = `Disponible en ${hours}h ${mins}m ${secs}s`;
+    }
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+async function claimDailyReward() {
+  if (!currentUser) return;
+  const now = Date.now();
+  const lastClaim = currentUser.last_daily_claim || 0;
+
+  if (now - lastClaim >= 24 * 60 * 60 * 1000) {
+    await updateDBUser({
+      balance: (currentUser.balance || 0) + 350,
+      last_daily_claim: now
+    });
+    alert("¡Bono diario de +$350 ARS cobrado!");
+  }
+}
+
+// RENDER PLANES ACCIONES PETROLERAS (1 POR SEMANA)
+function renderPlans() {
+  const container = document.getElementById('plans-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const now = Date.now();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  const lastPurchase = currentUser ? (currentUser.last_plan_purchase_time || 0) : 0;
+  const canBuyWeekly = (now - lastPurchase) >= weekMs;
+
+  plans.forEach(p => {
+    const card = document.createElement('div');
+    card.className = "petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4 space-y-3";
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/30 p-1 flex items-center justify-center shrink-0">
+            <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png';">
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-sm leading-tight">${p.name}</h4>
+            <span class="text-xs text-amber-400 font-medium">Ciclo de ${p.days} días</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-[#001F1C] p-2.5 rounded-xl border border-amber-400/20 text-xs font-mono-num">
+        <div>
+          <span class="text-amber-200/60 block text-[10px]">Rendimiento diario</span>
+          <strong class="text-white">+$${fmt(p.daily)} / día</strong>
+        </div>
+        <div>
+          <span class="text-amber-200/60 block text-[10px]">Total al cierre</span>
+          <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
+        </div>
+      </div>
+
+      <button onclick="purchasePlan('${p.id}')" ${!canBuyWeekly ? 'disabled' : ''} class="w-full py-2.5 ${canBuyWeekly ? 'bg-amber-400 hover:bg-amber-300 text-slate-950 cursor-pointer' : 'bg-amber-400/20 text-amber-200/40 cursor-not-allowed'} font-bold text-xs rounded-xl shadow-md transition">
+        ${canBuyWeekly ? `Activar Acción ($${fmt(p.cost)} ARS)` : 'Límite Semanal (1 activación por semana)'}
+      </button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+async function purchasePlan(planId) {
+  if (!currentUser) return;
+  const p = plans.find(item => item.id === planId);
+  if (!p) return;
+
+  const now = Date.now();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
+    alert("Solo puedes activar 1 acción por semana.");
+    return;
+  }
+
+  if (currentUser.balance < p.cost) {
+    alert("Saldo insuficiente. Realiza una carga para activar esta acción.");
+    openWalletModal('recargar');
+    return;
+  }
+
+  if (confirm(`¿Confirmas la activación de la acción ${p.name} por $${fmt(p.cost)} ARS?`)) {
+    const endTime = now + (p.days * 24 * 60 * 60 * 1000);
+
+    // Guardar acción en Supabase
+    await db.from('acciones_activas').insert([{
+      user_id: currentUser.id,
+      plan_id: p.id,
+      nombre_accion: p.name,
+      monto_invertido: p.cost,
+      total_retorno: p.total,
+      logo: p.logo,
+      fecha_inicio: now,
+      fecha_fin: endTime,
+      completada: false
+    }]);
+
+    // Actualizar usuario
+    await updateDBUser({
+      balance: currentUser.balance - p.cost,
+      last_plan_purchase_time: now
+    });
+
+    await loadUserData();
+    alert("¡Acción registrada en la nube con éxito!");
+    switchTab('productos');
+  }
+}
+
+// RENDER ACCIONES COMPRADAS
+async function renderProducts() {
+  const container = document.getElementById('active-products-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!activePlansList || activePlansList.length === 0) {
+    container.innerHTML = `
+      <div class="petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-6 text-center space-y-2">
+        <i class="fa-solid fa-box-open text-amber-400/40 text-3xl"></i>
+        <p class="text-xs text-amber-100/60">Aún no has adquirido acciones en operación.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const now = Date.now();
+  for (let plan of activePlansList) {
+    const remaining = plan.fecha_fin - now;
+
+    if (remaining <= 0 && !plan.completada) {
+      plan.completada = true;
+      await db.from('acciones_activas').update({ completada: true }).eq('id', plan.id);
+      await updateDBUser({
+        balance: currentUser.balance + plan.total_retorno,
+        completed_actions_count: (currentUser.completed_actions_count || 0) + 1
+      });
+    }
+
+    const isEnded = plan.completada || remaining <= 0;
+
+    const card = document.createElement('div');
+    card.className = "petrol-card bg-[#002B27] border border-amber-400/30 rounded-2xl p-4 space-y-2.5";
+    card.innerHTML = `
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <img src="${plan.logo}" class="w-5 h-5 object-contain" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/888/888879.png';">
+          <h4 class="font-bold text-xs text-white">${plan.nombre_accion}</h4>
+        </div>
+        <span class="text-[10px] font-mono-num text-amber-400 bg-amber-400/10 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold">
+          ${isEnded ? 'Finalizado ✓' : 'En Operación'}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-xs font-mono-num bg-[#001F1C] p-2.5 rounded-xl border border-amber-400/20">
+        <div>
+          <span class="text-amber-200/60 block text-[10px]">Capital Invertido</span>
+          <strong class="text-white">$${fmt(plan.monto_invertido)} ARS</strong>
+        </div>
+        <div>
+          <span class="text-amber-200/60 block text-[10px]">Retorno Total</span>
+          <strong class="text-amber-400 font-bold">$${fmt(plan.total_retorno)} ARS</strong>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+}
+
+// PERFIL
+async function saveProfileData() {
+  if (!currentUser) return;
+  const name = document.getElementById('prof-name-input').value.trim();
+  const cvu = document.getElementById('prof-cvu-input').value.trim();
+  const alias = document.getElementById('prof-alias-input').value.trim();
+
+  await updateDBUser({ nombre: name, cvu: cvu, alias: alias });
+  alert("Datos guardados en la nube.");
+}
+
+function updateRefLinkProfile() {
+  const name = currentUser ? currentUser.nombre : 'medrar';
+  const url = `${window.location.origin}${window.location.pathname}?ref=${encodeURIComponent(name)}`;
+  const el = document.getElementById('ref-link-input-profile');
+  if (el) el.value = url;
+}
+
+function copyRefLinkProfile() {
+  const el = document.getElementById('ref-link-input-profile');
+  if (!el) return;
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = document.getElementById('btn-copy-ref-profile');
+    btn.innerText = "¡Copiado!";
+    setTimeout(() => { btn.innerText = "Copiar"; }, 1500);
+  });
+}
+
+function shareWhatsAppProfile() {
+  const el = document.getElementById('ref-link-input-profile');
+  const msg = encodeURIComponent(`Sumate a MEDRAR Mercado Petrolero ⛽ Registrate con mi enlace: ${el ? el.value : window.location.href}`);
+  window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+}
+
+// BILLETERA DEPOSITOS Y RETIROS
+window.openWalletModal = (mode) => {
+  document.getElementById('wallet-modal').classList.remove('hidden');
+  setWalletMode(mode);
+};
+window.closeWalletModal = () => document.getElementById('wallet-modal').classList.add('hidden');
+
+window.setWalletMode = function(mode) {
+  const boxRec = document.getElementById('wallet-recarga-box');
+  const boxRet = document.getElementById('wallet-retiro-box');
+  const tabRec = document.getElementById('wallet-tab-recargar');
+  const tabRet = document.getElementById('wallet-tab-retirar');
+
+  const recharges = currentUser ? (currentUser.recharge_count || 0) : 0;
+  const minRecharge = recharges >= 1 ? 10000 : 5000;
+  document.getElementById('recharge-min-label').innerText = `Monto a cargar (Mínimo $${fmt(minRecharge)} ARS)`;
+  document.getElementById('deposit-custom-input').min = minRecharge;
+  document.getElementById('deposit-custom-input').value = minRecharge;
+
+  if (mode === 'depositar') {
+    boxRec.style.display = 'block';
+    boxRet.style.display = 'none';
+    tabRec.className = "py-2 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer";
+    tabRet.className = "py-2 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer";
+  } else {
+    boxRec.style.display = 'none';
+    boxRet.style.display = 'block';
+    tabRet.className = "py-2 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer";
+    tabRec.className = "py-2 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer";
+    checkWithdrawEligibility();
+  }
+};
+
+window.copyOfficialCVU = function() {
+  navigator.clipboard.writeText("00000267900000002952651").then(() => {
+    const btn = document.getElementById('btn-copy-cvu');
+    btn.innerText = "¡Copiado!";
+    setTimeout(() => { btn.innerText = "Copiar"; }, 1500);
+  });
+};
+
+async function notifyDepositTelegram() {
+  if (!currentUser) return;
+  const recharges = currentUser.recharge_count || 0;
+  const minRequired = recharges >= 1 ? 10000 : 5000;
+  const val = parseFloat(document.getElementById('deposit-custom-input').value);
+
+  if (isNaN(val) || val < minRequired) {
+    alert(`El monto mínimo de depósito es de $${fmt(minRequired)} ARS.`);
+    return;
+  }
+
+  await db.from('depositos').insert([{
+    user_id: currentUser.id,
+    monto: val,
+    estado: 'pendiente'
+  }]);
+
+  await updateDBUser({ recharge_count: recharges + 1 });
+  closeWalletModal();
+  window.open('https://t.me/+i0gOfjPhPEU5Mjgx', '_blank');
+}
+
+function checkWithdrawEligibility() {
+  if (!currentUser) return;
+  const noteEl = document.getElementById('withdraw-status-note');
+  const btn = document.getElementById('btn-submit-withdraw');
+
+  const completed = currentUser.completed_actions_count || 0;
+  const recharges = currentUser.recharge_count || 0;
+
+  if (completed < 1) {
+    noteEl.innerText = " Debes completar al menos 1 acción petrolera adquirida para retirar.";
+    btn.disabled = true;
+    btn.className = "w-full py-3 bg-amber-400/20 text-amber-200/40 font-bold rounded-xl cursor-not-allowed";
+    return;
+  }
+
+  if (recharges < 2) {
+    noteEl.innerText = " Para continuar retirando, se requiere una segunda recarga a partir de $8.000 ARS.";
+  } else {
+    noteEl.innerText = " Habilitado para retiro.";
+  }
+
+  const now = Date.now();
+  const cooldown48 = 48 * 60 * 60 * 1000;
+  const elapsed = now - (currentUser.last_withdraw_time || 0);
+
+  if (elapsed < cooldown48) {
+    const diff = cooldown48 - elapsed;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    noteEl.innerText += ` Próximo retiro en ${hours}h ${mins}m.`;
+    btn.disabled = true;
+    btn.className = "w-full py-3 bg-amber-400/20 text-amber-200/40 font-bold rounded-xl cursor-not-allowed";
+  } else {
+    btn.disabled = false;
+    btn.className = "w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl cursor-pointer transition";
+  }
+}
+
+async function executeWithdrawal() {
+  if (!currentUser) return;
+  const completed = currentUser.completed_actions_count || 0;
+  const recharges = currentUser.recharge_count || 0;
+
+  if (completed < 1) {
+    alert("Retiro no permitido. Debes culminar la activación de una acción petrolera.");
+    return;
+  }
+
+  if (recharges < 2) {
+    alert("Para habilitar retiros continuos debes realizar la segunda carga de $10.000 ARS.");
+    openWalletModal('recargar');
+    return;
+  }
+
+  const now = Date.now();
+  if ((now - (currentUser.last_withdraw_time || 0)) < 48 * 60 * 60 * 1000) {
+    alert("Debes esperar 48 horas entre cada solicitud de retiro.");
+    return;
+  }
+
+  const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
+  const pinConf = document.getElementById('withdraw-pin-confirm').value.trim();
+
+  if (isNaN(amt) || amt <= 0 || amt > 10000) {
+    alert("El monto de retiro debe ser de hasta $10.000 ARS por día.");
+    return;
+  }
+
+  if (amt > currentUser.balance) {
+    alert("Saldo insuficiente.");
+    return;
+  }
+
+  if (pinConf !== currentUser.pin) {
+    alert("PIN de acceso incorrecto.");
+    return;
+  }
+
+  if (!currentUser.alias && !currentUser.cvu) {
+    alert("Por favor completa tu CVU o Alias bancario en 'Mi Perfil' antes de solicitar el retiro.");
+    switchTab('perfil');
+    closeWalletModal();
+    return;
+  }
+
+  // Registrar solicitud de retiro en Supabase
+  await db.from('retiros').insert([{
+    user_id: currentUser.id,
+    monto: amt,
+    cvu_destino: currentUser.cvu,
+    alias_destino: currentUser.alias,
+    estado: 'pendiente'
+  }]);
+
+  await updateDBUser({
+    balance: currentUser.balance - amt,
+    last_withdraw_time: now
+  });
+
+  closeWalletModal();
+  alert(`Solicitud de retiro por $${fmt(amt)} ARS enviada exitosamente.`);
+}
+
+function switchTab(tabName) {
+  ['planes', 'productos', 'proximamente', 'perfil'].forEach(t => {
+    document.getElementById(`view-${t}`).classList.add('hidden');
+    document.getElementById(`nav-btn-${t}`).className = "flex flex-col items-center gap-1 text-amber-200/40 hover:text-amber-400 text-xs cursor-pointer";
+  });
+  document.getElementById(`view-${tabName}`).classList.remove('hidden');
+  document.getElementById(`nav-btn-${tabName}`).className = "flex flex-col items-center gap-1 text-amber-400 font-bold text-xs cursor-pointer";
+
+  if (tabName === 'productos') renderProducts();
+}
+
+function renderUI() {
+  renderBalanceDisplay();
+  if (currentUser) {
+    if (document.getElementById('prof-name-input')) document.getElementById('prof-name-input').value = currentUser.nombre || '';
+    if (document.getElementById('prof-cvu-input')) document.getElementById('prof-cvu-input').value = currentUser.cvu || '';
+    if (document.getElementById('prof-alias-input')) document.getElementById('prof-alias-input').value = currentUser.alias || '';
+  }
+  updateRefLinkProfile();
+  renderPlans();
+}
+
+// INICIALIZACIÓN
+startDailyTimer();
+document.getElementById('btn-logout').addEventListener('click', () => {
+  if (confirm("¿Deseas cerrar sesión?")) location.reload();
+});
+</script>
+</body>
+        </html>
