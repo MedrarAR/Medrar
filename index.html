@@ -43,7 +43,6 @@ body {
 .app-button:active {
   transform: scale(0.98);
 }
-/* Estilo de menú lateral deslizable tipo app moderna */
 #sidebar-menu {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -72,7 +71,7 @@ body {
   </div>
 </div>
 
-<!-- PANTALLA DE AUTENTICACIÓN / MULTICUENTA -->
+<!-- PANTALLA DE AUTENTICACIÓN / LOGIN -->
 <div id="auth-screen" class="fixed inset-0 z-60 bg-[#001412] flex items-center justify-center p-4">
   <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C]">
     <div class="text-center space-y-1">
@@ -92,7 +91,7 @@ body {
         <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">Nombre del Titular</label>
         <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
           <i class="fa-solid fa-user text-amber-400 text-sm mr-2.5"></i>
-          <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-600">
+          <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
         </div>
       </div>
 
@@ -100,22 +99,21 @@ body {
         <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">PIN de Seguridad (4 Dígitos)</label>
         <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
           <i class="fa-solid fa-lock text-amber-400 text-sm mr-2.5"></i>
-          <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-600">
+          <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-500">
         </div>
       </div>
 
       <button type="submit" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-        Ingresar
+        Ingresar a Terminal
       </button>
     </form>
   </div>
 </div>
 
-<!-- MENÚ LATERAL DESLIZABLE (ESTILO REFERENCIA SEGUNDA IMAGEN) -->
+<!-- MENÚ LATERAL DESLIZABLE -->
 <div id="sidebar-overlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden" onclick="toggleSidebar(false)"></div>
 <div id="sidebar-menu" class="fixed top-0 left-0 bottom-0 w-72 bg-[#001F1C] border-r border-amber-500/20 z-50 transform -translate-x-full flex flex-col justify-between shadow-2xl">
   <div>
-    <!-- Encabezado del Menú Lateral -->
     <div class="p-5 border-b border-amber-500/20 bg-[#002B27] flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold">
@@ -131,7 +129,6 @@ body {
       </button>
     </div>
 
-    <!-- Opciones del Menú Lateral -->
     <div class="p-3 space-y-1 text-xs font-medium">
       <button onclick="switchTab('terminal'); toggleSidebar(false);" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-amber-100 hover:bg-amber-500/10 hover:text-amber-400 transition text-left cursor-pointer">
         <i class="fa-solid fa-house text-amber-400 w-5"></i> Inicio / Terminal
@@ -162,11 +159,10 @@ body {
   </div>
 </div>
 
-<!-- CONTENEDOR PRINCIPAL DE LA APP MÓVIL -->
+<!-- CONTENEDOR PRINCIPAL -->
 <main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-24 overflow-hidden">
 
 <div>
-  <!-- BARRA SUPERIOR (HEADER ESTILO APP) -->
   <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
     <div class="flex items-center gap-3">
       <button onclick="toggleSidebar(true)" class="text-amber-400 text-lg p-1 cursor-pointer">
@@ -183,10 +179,8 @@ body {
     </div>
   </header>
 
-  <!-- SECCIÓN 1: VISTA TERMINAL / INICIO -->
+  <!-- VISTA 1: TERMINAL -->
   <div id="view-terminal" class="p-4 space-y-4">
-
-    <!-- TARJETA DE CAPITAL DE INGRESO -->
     <div class="app-card p-5 space-y-4">
       <div class="flex items-center justify-between text-xs text-amber-200/80">
         <span class="uppercase tracking-wider text-[11px] font-bold text-amber-400">Capital de Ingreso</span>
@@ -212,7 +206,6 @@ body {
       </div>
     </div>
 
-    <!-- BONO DIARIO -->
     <div class="app-card p-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base border border-amber-500/30 shrink-0">
@@ -228,7 +221,6 @@ body {
       </button>
     </div>
 
-    <!-- LISTADO UNIFICADO TOP 5 & PRÓXIMAS ACCIONES -->
     <div class="flex items-center justify-between pt-2">
       <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Top 5 Acciones & Próximas</h3>
       <span class="text-[10px] text-amber-200/60 font-mono-num">1 activación / semana</span>
@@ -237,7 +229,7 @@ body {
     <div id="plans-container" class="space-y-3.5"></div>
   </div>
 
-  <!-- SECCIÓN 2: MIS ACTIVOS -->
+  <!-- VISTA 2: ACTIVOS -->
   <div id="view-activos" class="hidden p-4 space-y-4">
     <div class="app-card p-4">
       <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación</h2>
@@ -246,7 +238,7 @@ body {
     <div id="active-products-container" class="space-y-3"></div>
   </div>
 
-  <!-- SECCIÓN 3: MI PERFIL -->
+  <!-- VISTA 3: PERFIL -->
   <div id="view-perfil" class="hidden p-4 space-y-4">
     <div class="app-card p-4 space-y-3 text-xs">
       <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
@@ -256,21 +248,21 @@ body {
 
       <div class="space-y-3 font-mono-num">
         <div>
-          <label class="text-amber-200/70 block text-[10px] mb-1 uppercase">Titular</label>
-          <input id="prof-name-input" type="text" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white outline-none text-xs">
+          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Titular</label>
+          <input id="prof-name-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="Nombre completo">
         </div>
 
         <div>
-          <label class="text-amber-200/70 block text-[10px] mb-1 uppercase">CVU Destino (22 dígitos)</label>
-          <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white outline-none text-xs" placeholder="0000000000000000000000">
+          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">CVU Destino (22 dígitos)</label>
+          <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="0000000000000000000000">
         </div>
 
         <div>
-          <label class="text-amber-200/70 block text-[10px] mb-1 uppercase">Alias Bancario</label>
-          <input id="prof-alias-input" type="text" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white outline-none text-xs" placeholder="tu.alias">
+          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Alias Bancario</label>
+          <input id="prof-alias-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="tu.alias.mp">
         </div>
 
-        <button onclick="saveProfileData()" class="app-button w-full py-3 rounded-xl cursor-pointer uppercase tracking-wider text-xs shadow-md">
+        <button onclick="saveProfileData()" class="app-button w-full py-3 rounded-xl cursor-pointer uppercase tracking-wider text-xs shadow-md mt-2">
           Guardar Cambios
         </button>
       </div>
@@ -278,7 +270,7 @@ body {
   </div>
 </div>
 
-<!-- NAVEGACIÓN INFERIOR (3 PESTAÑAS LIMPIAS) -->
+<!-- NAVEGACIÓN INFERIOR -->
 <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 grid grid-cols-3 py-2.5 px-2 text-center z-40 shadow-2xl">
   <button onclick="switchTab('terminal')" id="nav-btn-terminal" class="flex flex-col items-center gap-1 text-amber-400 font-bold text-xs cursor-pointer">
     <i class="fa-solid fa-house text-base"></i>
@@ -394,6 +386,19 @@ function getDeviceId() {
 
 function fmt(n) { return new Intl.NumberFormat('es-AR').format(Math.round(n || 0)); }
 
+// VERIFICAR SESIÓN AUTOMÁTICA AL INICIAR
+async function checkExistingSession() {
+  const deviceId = getDeviceId();
+  let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).single();
+  
+  if (existingUser) {
+    currentUser = existingUser;
+    document.getElementById('auth-screen').remove();
+    document.getElementById('menu-user-subtitle').innerText = currentUser.nombre || '';
+    await loadUserData();
+  }
+}
+
 async function handleAuthSubmit() {
   const nameVal = document.getElementById('auth-name').value.trim();
   const pinVal = document.getElementById('auth-pin').value.trim();
@@ -420,7 +425,7 @@ async function handleAuthSubmit() {
   }
 
   document.getElementById('auth-screen').remove();
-  document.getElementById('menu-user-subtitle').innerText = currentUser.nombre;
+  document.getElementById('menu-user-subtitle').innerText = currentUser.nombre || '';
   await loadUserData();
 }
 
@@ -712,6 +717,8 @@ function renderUI() {
   renderPlans();
 }
 
+// INICIAR AL CARGAR LA PÁGINA
+checkExistingSession();
 startDailyTimer();
 </script>
 </body>
