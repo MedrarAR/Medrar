@@ -300,7 +300,7 @@ body {
 
       <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
         <div class="flex items-center gap-3">
-          <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
+          <i class="fa-brands fa-comments text-2xl text-amber-400"></i>
           <div>
             <span class="font-bold block text-amber-400 font-mono-num uppercase">Grupo Social Medrar</span>
             <span class="text-[10px] text-amber-100/70 font-mono-num">Comunidad y Comprobantes</span>
@@ -446,7 +446,7 @@ function fmt(n) { return new Intl.NumberFormat('es-AR').format(Math.round(n || 0
 
 async function checkExistingSession() {
   const deviceId = getDeviceId();
-  let { data: existingUser, error } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+  let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
   
   if (existingUser) {
     currentUser = existingUser;
@@ -479,8 +479,7 @@ async function handleAuthSubmit() {
     return;
   }
 
-  // Verificar si ya existe el dispositivo en Supabase
-  let { data: existingUser, error: checkError } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+  let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
 
   if (existingUser) {
     if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
@@ -489,26 +488,24 @@ async function handleAuthSubmit() {
     }
     currentUser = existingUser;
   } else {
-    // Si no existe, insertamos el nuevo usuario en Supabase con los campos requeridos
+    // Registro limpio sin forzar la IP en el alta inicial para evitar errores de caché en Supabase
     let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
       device_id: deviceId, 
       nombre: nameVal, 
       pin: pinVal, 
       balance: 0, 
       last_centavos_date: '', 
-      retiro_pendiente: false, 
-      ip_address: userIp
+      retiro_pendiente: false
     }]).select().single();
 
     if (insertError) {
       console.error("Error Supabase:", insertError);
-      alert("Error al registrar en la base de datos: " + (insertError.message || "Verifique la estructura de la tabla usuarios."));
+      alert("Error al registrar en la base de datos: " + (insertError.message || "Verifique la tabla usuarios."));
       return;
     }
     currentUser = newUser;
   }
 
-  // Quitar pantalla de registro, mostrar popup de bienvenida y cargar datos
   document.getElementById('auth-screen').remove();
   document.getElementById('notice-modal').classList.remove('hidden');
   updateHeaderUser();
@@ -853,7 +850,7 @@ window.setWalletMode = function(mode) {
     boxRec.style.display = 'none';
     boxRet.style.display = 'block';
     tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-    tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+    tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
   }
 };
 
@@ -891,6 +888,7 @@ async function executeWithdrawal() {
     return;
   }
 
+  // Verificación de IP en retiros (respeta la regla y consulta la tabla de retiros)
   let { data: ipChecks } = await db.from('retiros').select('*').eq('ip_address', userIp).gte('created_at', new Date().toDateString());
   if (ipChecks && ipChecks.length > 0) {
     const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
@@ -977,4 +975,4 @@ checkExistingSession();
 startDailyTimer();
 </script>
 </body>
-  </html>
+</html>
