@@ -300,7 +300,7 @@ body {
 
       <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
         <div class="flex items-center gap-3">
-          <i class="fa-brands fa-comments text-2xl text-amber-400"></i>
+          <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
           <div>
             <span class="font-bold block text-amber-400 font-mono-num uppercase">Grupo Social Medrar</span>
             <span class="text-[10px] text-amber-100/70 font-mono-num">Comunidad y Comprobantes</span>
@@ -431,7 +431,6 @@ const plans = [
 let currentUser = null;
 let activePlansList = [];
 let hideBalance = false;
-let userIp = '192.168.1.' + Math.floor(Math.random() * 255);
 
 function getDeviceId() {
   let devId = localStorage.getItem('medrar_device_id');
@@ -452,20 +451,9 @@ async function checkExistingSession() {
     currentUser = existingUser;
     document.getElementById('auth-screen').remove();
     updateHeaderUser();
-    await checkSilentCentavos();
     await loadUserData();
   } else {
     document.getElementById('notice-modal').classList.add('hidden');
-  }
-}
-
-async function checkSilentCentavos() {
-  if (!currentUser) return;
-  const todayStr = new Date().toISOString().split('T')[0];
-  if (currentUser.last_centavos_date !== todayStr) {
-    const newBalance = (currentUser.balance || 0) + 0.04;
-    await db.from('usuarios').update({ balance: newBalance, last_centavos_date: todayStr }).eq('id', currentUser.id);
-    currentUser.balance = newBalance;
   }
 }
 
@@ -488,13 +476,12 @@ async function handleAuthSubmit() {
     }
     currentUser = existingUser;
   } else {
-    // Registro limpio sin forzar la IP en el alta inicial para evitar errores de caché en Supabase
+    // Inserción adaptada exactamente a las columnas existentes en tu tabla de Supabase
     let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
       device_id: deviceId, 
       nombre: nameVal, 
       pin: pinVal, 
       balance: 0, 
-      last_centavos_date: '', 
       retiro_pendiente: false
     }]).select().single();
 
@@ -509,7 +496,6 @@ async function handleAuthSubmit() {
   document.getElementById('auth-screen').remove();
   document.getElementById('notice-modal').classList.remove('hidden');
   updateHeaderUser();
-  await checkSilentCentavos();
   await loadUserData();
 }
 
@@ -850,7 +836,7 @@ window.setWalletMode = function(mode) {
     boxRec.style.display = 'none';
     boxRet.style.display = 'block';
     tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-    tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+    tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
   }
 };
 
@@ -888,16 +874,6 @@ async function executeWithdrawal() {
     return;
   }
 
-  // Verificación de IP en retiros (respeta la regla y consulta la tabla de retiros)
-  let { data: ipChecks } = await db.from('retiros').select('*').eq('ip_address', userIp).gte('created_at', new Date().toDateString());
-  if (ipChecks && ipChecks.length > 0) {
-    const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
-    await updateDBUser({ penalty_until: penaltyTime });
-    closeWalletModal();
-    alert("Operación en proceso de validación por red.");
-    return;
-  }
-
   if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
     alert("Operación temporalmente restringida por protocolo de seguridad.");
     return;
@@ -925,7 +901,6 @@ async function executeWithdrawal() {
     comision: fee,
     monto_neto: net,
     cvu_destino: currentUser.cvu || currentUser.alias, 
-    ip_address: userIp,
     estado: 'pendiente' 
   }]);
 
