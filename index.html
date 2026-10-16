@@ -43,7 +43,6 @@ body {
 .app-button:active {
   transform: scale(0.98);
 }
-/* Estilo del modal flotante inferior estilo Play Store / App moderna */
 #action-sheet {
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -178,13 +177,37 @@ body {
       </button>
     </div>
 
-    <div class="flex items-center justify-between pt-2">
-      <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Top 5 Acciones & Próximas</h3>
-      <span class="text-[10px] text-amber-200/60 font-mono-num">1 activación / semana</span>
+    <!-- SELECTOR DESLIZANTE BÁSICO / PREMIUM -->
+    <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
+      <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
+        Básico
+      </button>
+      <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center">
+        Premium
+      </button>
     </div>
 
-    <!-- LISTADO DE ACCIONES EN TARJETAS MODERNAS -->
-    <div id="plans-container" class="space-y-3.5"></div>
+    <!-- CONTENEDOR MODO BÁSICO (TOP 5 ACCIONES) -->
+    <div id="section-basico" class="space-y-3.5">
+      <div class="flex items-center justify-between pt-1">
+        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Top 5 Acciones Petroleras</h3>
+        <span class="text-[10px] text-amber-200/60 font-mono-num">1 activación / semana</span>
+      </div>
+      <div id="plans-container" class="space-y-3.5"></div>
+    </div>
+
+    <!-- CONTENEDOR MODO PREMIUM (SOLO PRÓXIMAMENTE) -->
+    <div id="section-premium" class="hidden space-y-3.5">
+      <div class="app-card p-6 text-center space-y-3 border-amber-500/30 bg-[#001C1A]">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl">
+          <i class="fa-solid fa-clock animate-pulse"></i>
+        </div>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono-num">Próximamente</h3>
+        <p class="text-xs text-amber-200/70 font-mono-num">
+          Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.
+        </p>
+      </div>
+    </div>
   </div>
 
   <!-- VISTA 2: ACTIVOS -->
@@ -196,7 +219,7 @@ body {
     <div id="active-products-container" class="space-y-3"></div>
   </div>
 
-  <!-- VISTA 3: PERFIL CON CANALES DE TELEGRAM Y SOCIAL -->
+  <!-- VISTA 3: PERFIL -->
   <div id="view-perfil" class="hidden p-4 space-y-4">
     <div class="app-card p-4 space-y-3 text-xs">
       <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
@@ -226,7 +249,7 @@ body {
       </div>
     </div>
 
-    <!-- CANALES OFICIALES DE TELEGRAM Y COMUNIDAD SOCIAL -->
+    <!-- CANALES OFICIALES -->
     <div class="space-y-2.5 pt-2">
       <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
         <div class="flex items-center gap-3">
@@ -330,13 +353,11 @@ body {
   </div>
 </div>
 
-<!-- MODAL FLOTANTE INFERIOR (ESTILO ACCIÓN TIPO PLAY STORE) -->
+<!-- MODAL FLOTANTE INFERIOR -->
 <div id="action-sheet-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden" onclick="closeActionSheet()"></div>
 <div id="action-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#001F1C] border-t border-amber-500/40 rounded-t-3xl p-5 transform translate-y-full max-w-md mx-auto shadow-2xl space-y-4">
   <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-2"></div>
-  <div id="action-sheet-content" class="space-y-4">
-    <!-- Contenido dinámico al hacer click en una acción -->
-  </div>
+  <div id="action-sheet-content" class="space-y-4"></div>
 </div>
 
 </main>
@@ -349,13 +370,11 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.closeNoticeModal = () => document.getElementById('notice-modal').classList.add('hidden');
 
 const plans = [
-  { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, status: 'activo' },
-  { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, status: 'activo' },
-  { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, status: 'activo' },
-  { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, status: 'activo' },
-  { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, status: 'activo' },
-  { id: 'pluspetrol', name: 'Pluspetrol (Próx.)', cost: 50000, days: 30, daily: 7500, total: 225000, status: 'proximamente' },
-  { id: 'panamerican', name: 'PAE Energy (Próx.)', cost: 75000, days: 35, daily: 11000, total: 385000, status: 'proximamente' }
+  { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
+  { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png' },
+  { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png' },
+  { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png' },
+  { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png' }
 ];
 
 let currentUser = null;
@@ -498,31 +517,48 @@ async function claimDailyReward() {
   }
 }
 
-// RENDER PLANES CON TARJETAS MEJORADAS Y MODAL FLOTANTE
+window.switchPlanMode = function(mode) {
+  const btnBasico = document.getElementById('switch-basico');
+  const btnPremium = document.getElementById('switch-premium');
+  const secBasico = document.getElementById('section-basico');
+  const secPremium = document.getElementById('section-premium');
+
+  if (mode === 'basico') {
+    btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+    btnPremium.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+    secBasico.classList.remove('hidden');
+    secPremium.classList.add('hidden');
+  } else {
+    btnPremium.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+    btnBasico.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+    secPremium.classList.remove('hidden');
+    secBasico.classList.add('hidden');
+  }
+};
+
 function renderPlans() {
   const container = document.getElementById('plans-container');
   if (!container) return;
   container.innerHTML = '';
 
   plans.forEach(p => {
-    const isUpcoming = p.status === 'proximamente';
     const card = document.createElement('div');
-    card.className = `app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition ${isUpcoming ? 'opacity-75' : ''}`;
+    card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
     card.onclick = () => openActionSheet(p);
     
     card.innerHTML = `
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm font-bold">
-            <i class="fa-solid fa-chart-line"></i>
+          <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
+            <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
           </div>
           <div>
             <h4 class="font-bold text-white text-xs">${p.name}</h4>
-            <span class="text-[10px] text-amber-400 font-mono-num">${isUpcoming ? 'Próximo Lanzamiento' : `Ciclo: ${p.days} días`}</span>
+            <span class="text-[10px] text-amber-400 font-mono-num">Ciclo: ${p.days} días</span>
           </div>
         </div>
-        <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border ${isUpcoming ? 'bg-amber-500/5 border-amber-500/20 text-amber-200/50' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'}">
-          ${isUpcoming ? 'PRÓXIMO' : 'OPERATIVO'}
+        <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
+          Operativo
         </span>
       </div>
 
@@ -541,7 +577,6 @@ function renderPlans() {
   });
 }
 
-// CONTROL DEL MODAL FLOTANTE INFERIOR (ESTILO ÚLTIMA IMAGEN)
 function openActionSheet(p) {
   const sheet = document.getElementById('action-sheet');
   const overlay = document.getElementById('action-sheet-overlay');
@@ -553,9 +588,12 @@ function openActionSheet(p) {
 
   content.innerHTML = `
     <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
-      <div>
-        <h4 class="text-sm font-bold text-white">${p.name}</h4>
-        <span class="text-[10px] text-amber-400 font-mono-num">Costo de activación: $${fmt(p.cost)} ARS</span>
+      <div class="flex items-center gap-3">
+        <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+        <div>
+          <h4 class="text-sm font-bold text-white">${p.name}</h4>
+          <span class="text-[10px] text-amber-400 font-mono-num">Costo: $${fmt(p.cost)} ARS</span>
+        </div>
       </div>
       <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
     </div>
@@ -564,10 +602,10 @@ function openActionSheet(p) {
       <p>• Retorno diario: <strong>+$${fmt(p.daily)} ARS</strong></p>
       <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
     </div>
-    <button onclick="${p.status === 'proximamente' ? 'alert(\'Disponible próximamente.\'); closeActionSheet();' : `purchasePlan('${p.id}')`}" 
-      ${p.status !== 'proximamente' && !canBuyWeekly ? 'disabled' : ''}
+    <button onclick="purchasePlan('${p.id}')" 
+      ${!canBuyWeekly ? 'disabled' : ''}
       class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ${p.status === 'proximamente' ? 'Próximamente en la Red' : (canBuyWeekly ? `Activar Activo ($${fmt(p.cost)} ARS)` : 'Límite Semanal Activo')}
+      ${canBuyWeekly ? `Activar Activo ($${fmt(p.cost)} ARS)` : 'Límite Semanal Activo'}
     </button>
   `;
 
@@ -585,7 +623,7 @@ function closeActionSheet() {
 async function purchasePlan(planId) {
   if (!currentUser) return;
   const p = plans.find(item => item.id === planId);
-  if (!p || p.status === 'proximamente') return;
+  if (!p) return;
 
   if (currentUser.balance < p.cost) {
     alert("Saldo insuficiente para activar este activo.");
@@ -602,7 +640,7 @@ async function purchasePlan(planId) {
       nombre_accion: p.name,
       monto_invertido: p.cost,
       total_retorno: p.total,
-      logo: './logo.png',
+      logo: p.logo,
       fecha_inicio: now,
       fecha_fin: now + (p.days * 86400000),
       completada: false
@@ -641,7 +679,10 @@ async function renderProducts() {
     card.className = "app-card p-4 space-y-2.5 font-mono-num";
     card.innerHTML = `
       <div class="flex justify-between items-center text-xs">
-        <span class="font-bold text-white">${plan.nombre_accion}</span>
+        <div class="flex items-center gap-2">
+          <img src="${plan.logo || './logo.png'}" class="w-6 h-6 object-contain bg-amber-500/10 p-0.5 rounded border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+          <span class="font-bold text-white">${plan.nombre_accion}</span>
+        </div>
         <span class="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold uppercase">
           ${plan.completada ? 'Finalizado ✓' : 'Operativo'}
         </span>
@@ -745,9 +786,8 @@ function renderUI() {
   renderPlans();
 }
 
-// INICIAR AL CARGAR LA PÁGINA
 checkExistingSession();
 startDailyTimer();
 </script>
 </body>
-</html>
+  </html>
