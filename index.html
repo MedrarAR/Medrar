@@ -43,6 +43,12 @@ body {
 .app-button:active {
   transform: scale(0.98);
 }
+.floating-pill {
+  background: rgba(0, 34, 31, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
 #action-sheet {
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -62,7 +68,7 @@ body {
     </div>
     <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-3.5 text-left text-xs space-y-2 text-amber-100 font-mono-num">
       <p>• <strong>Depósito Mínimo:</strong> $5.000 ARS</p>
-      <p>• <strong>Retiros:</strong> Hasta $10.000 ARS / 48hs</p>
+      <p>• <strong>Retiros:</strong> Lunes y Viernes (Máx $10.000)</p>
       <p>• <strong>Bono Diario:</strong> +$350 ARS cada 24 hs</p>
     </div>
     <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
@@ -111,20 +117,19 @@ body {
 </div>
 
 <!-- CONTENEDOR PRINCIPAL -->
-<main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-24 overflow-hidden">
+<main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-32 overflow-hidden">
 
 <div>
-  <!-- HEADER CON LOGO IZQUIERDA, USUARIO CENTRO Y SILUETA DERECHA -->
-  <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-    <div class="flex items-center gap-2">
+  <!-- HEADER CON SALUDO ESTILO MERCADO PAGO Y SILUETA -->
+  <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-2.5">
       <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold p-1 overflow-hidden shadow-inner">
         <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
       </div>
-    </div>
-
-    <div class="text-center truncate px-2">
-      <span id="header-username" class="font-bold text-white text-xs tracking-wide block truncate max-w-[140px]">---</span>
-      <span class="text-[9px] text-amber-400/80 font-mono-num block uppercase">SALDO: <span id="header-balance-mini">$0 ARS</span></span>
+      <div>
+        <span class="text-[10px] text-amber-200/70 block uppercase font-mono-num">Cuenta Activa</span>
+        <span id="header-greeting" class="font-bold text-white text-xs tracking-wide block truncate max-w-[150px]">Hola, ---</span>
+      </div>
     </div>
 
     <div class="flex items-center gap-2">
@@ -145,8 +150,8 @@ body {
       </div>
 
       <div>
-        <h1 id="home-balance" class="text-3xl font-extrabold text-white tracking-tight font-mono-num">
-          $0 <span class="text-xs font-normal text-amber-200/60">ARS</span>
+        <h1 id="home-balance" class="text-3xl font-extrabold text-white tracking-tight font-mono-num flex items-baseline gap-1">
+          <span id="bal-entero">$0</span><span id="bal-decimal" class="text-lg text-amber-400/90">,00</span> <span class="text-xs font-normal text-amber-200/60 ml-1">ARS</span>
         </h1>
         <p class="text-[11px] text-amber-100/70 mt-1">Liquidez disponible para operaciones o extracción inmediata</p>
       </div>
@@ -282,6 +287,27 @@ body {
   </div>
 </div>
 
+<!-- CÁPSULA FLOTANTE INFERIOR DE ACCESOS RÁPIDOS -->
+<div class="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 w-max">
+  <div class="floating-pill px-3 py-2 rounded-full flex items-center gap-2.5">
+    <button onclick="openActionSheetByName('refinor')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center p-1 hover:scale-110 transition cursor-pointer shadow-md" title="Refinor">
+      <img src="./refinor.png" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </button>
+    <button onclick="openActionSheetByName('puma')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center p-1 hover:scale-110 transition cursor-pointer shadow-md" title="Puma">
+      <img src="./puma.png" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </button>
+    <button onclick="openActionSheetByName('shell')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center p-1 hover:scale-110 transition cursor-pointer shadow-md" title="Shell">
+      <img src="./shell.png" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </button>
+    <button onclick="openActionSheetByName('axion')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center p-1 hover:scale-110 transition cursor-pointer shadow-md" title="Axion">
+      <img src="./axion.png" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </button>
+    <button onclick="openActionSheetByName('ypf')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center p-1 hover:scale-110 transition cursor-pointer shadow-md" title="YPF">
+      <img src="./ypf.png" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    </button>
+  </div>
+</div>
+
 <!-- NAVEGACIÓN INFERIOR -->
 <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 grid grid-cols-3 py-2.5 px-2 text-center z-40 shadow-2xl">
   <button onclick="switchTab('terminal')" id="nav-btn-terminal" class="flex flex-col items-center gap-1 text-amber-400 font-bold text-xs cursor-pointer">
@@ -323,7 +349,7 @@ body {
         </div>
       </div>
       <div>
-        <label id="recharge-min-label" class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo $5.000 ARS</label>
+        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo $5.000 ARS</label>
         <input id="deposit-custom-input" type="number" value="5000" min="5000" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-xs font-bold text-amber-400 outline-none">
       </div>
       <button onclick="notifyDepositTelegram()" class="app-button w-full py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider shadow-md">
@@ -331,21 +357,29 @@ body {
       </button>
     </div>
 
-    <!-- Retiro -->
-    <div id="wallet-retiro-box" class="hidden space-y-3.5 text-xs font-mono-num">
-      <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl text-[11px] text-amber-200/80 space-y-1">
-        <p>• Límite diario: <strong>$10.000 ARS</strong></p>
-        <p>• Comisión: <strong>0%</strong></p>
-        <p id="withdraw-status-note" class="text-amber-400 font-semibold mt-1"></p>
+    <!-- Retiro (Con datos de perfil, calculadora del 5% y días hábiles Lunes/Viernes) -->
+    <div id="wallet-retiro-box" class="hidden space-y-3 text-xs font-mono-num">
+      <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1 text-[11px]">
+        <div class="flex justify-between text-amber-200/80"><span>Titular:</span><strong id="w-dest-name" class="text-white">---</strong></div>
+        <div class="flex justify-between text-amber-200/80"><span>CVU/Alias:</span><strong id="w-dest-cvu" class="text-white truncate max-w-[160px]">---</strong></div>
       </div>
+
       <div>
-        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a retirar (Máx $10.000)</label>
-        <input id="withdraw-custom-input" type="number" placeholder="5000" max="10000" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
+        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $10.000)</label>
+        <input id="withdraw-custom-input" type="number" max="10000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
       </div>
+
+      <!-- Calculadora de Comisión (5%) -->
+      <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
+        <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
+        <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
+      </div>
+
       <div>
         <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">PIN de Autorización (4 Dígitos)</label>
         <input id="withdraw-pin-confirm" type="password" maxlength="4" placeholder="••••" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white tracking-widest outline-none">
       </div>
+
       <button id="btn-submit-withdraw" onclick="executeWithdrawal()" class="app-button w-full py-3.5 rounded-xl cursor-pointer uppercase tracking-wider shadow-md">
         Solicitar Retiro
       </button>
@@ -453,8 +487,13 @@ async function updateDBUser(fields) {
 
 function updateHeaderUser() {
   if (!currentUser) return;
-  const nameEl = document.getElementById('header-username');
-  if (nameEl) nameEl.innerText = currentUser.nombre || 'Usuario';
+  const greetingEl = document.getElementById('header-greeting');
+  if (greetingEl) greetingEl.innerText = `Hola, ${currentUser.nombre || 'Inversor'}`;
+  
+  const destName = document.getElementById('w-dest-name');
+  const destCvu = document.getElementById('w-dest-cvu');
+  if (destName) destName.innerText = currentUser.nombre || 'No especificado';
+  if (destCvu) destCvu.innerText = currentUser.cvu || currentUser.alias || 'Faltan datos en perfil';
 }
 
 window.toggleBalanceMask = function() {
@@ -463,18 +502,22 @@ window.toggleBalanceMask = function() {
 };
 
 function renderBalanceDisplay() {
-  const balEl = document.getElementById('home-balance');
+  const enteroEl = document.getElementById('bal-entero');
+  const decimalEl = document.getElementById('bal-decimal');
   const headMini = document.getElementById('header-balance-mini');
   const eyeIcon = document.getElementById('balance-eye-icon');
   const bal = currentUser ? currentUser.balance : 0;
 
   if (hideBalance) {
-    balEl.innerHTML = `$•••••• <span class="text-xs font-normal text-amber-200/60">ARS</span>`;
+    enteroEl.innerText = "$••••••";
+    decimalEl.innerText = "";
     if(headMini) headMini.innerText = "$••••";
     if (eyeIcon) eyeIcon.className = "fa-solid fa-eye-slash text-xs";
   } else {
-    balEl.innerHTML = `$${fmt(bal)} <span class="text-xs font-normal text-amber-200/60">ARS</span>`;
-    if(headMini) headMini.innerText = `$${fmt(bal)} ARS`;
+    const parts = bal.toFixed(2).split('.');
+    enteroEl.innerText = `$${fmt(parts[0])}`;
+    decimalEl.innerText = `,${parts[1]}`;
+    if(headMini) headMini.innerText = `$${fmt(parts[0])} ARS`;
     if (eyeIcon) eyeIcon.className = "fa-solid fa-eye text-xs";
   }
 }
@@ -497,10 +540,10 @@ function startDailyTimer() {
     } else {
       btn.disabled = true;
       btn.className = "px-4 py-2.5 bg-amber-500/10 text-amber-200/40 font-bold rounded-xl text-xs cursor-not-allowed";
-      btn.innerText = "Cargando...";
       const diff = cooldown - elapsed;
       const h = Math.floor(diff / (1000 * 60 * 60));
       const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      btn.innerText = "Cobrado";
       timerText.innerText = `Próximo ciclo: ${h}h ${m}m`;
     }
   }
@@ -576,6 +619,11 @@ function renderPlans() {
     container.appendChild(card);
   });
 }
+
+window.openActionSheetByName = function(planId) {
+  const p = plans.find(item => item.id === planId);
+  if (p) openActionSheet(p);
+};
 
 function openActionSheet(p) {
   const sheet = document.getElementById('action-sheet');
@@ -715,6 +763,7 @@ async function saveProfileData() {
 window.openWalletModal = (mode) => {
   document.getElementById('wallet-modal').classList.remove('hidden');
   setWalletMode(mode);
+  if (mode === 'retirar') calculateWithdrawal();
 };
 window.closeWalletModal = () => document.getElementById('wallet-modal').classList.add('hidden');
 
@@ -741,6 +790,16 @@ window.copyCVU = function() {
   navigator.clipboard.writeText("00000267900000002952651").then(() => alert("CVU copiado"));
 };
 
+// CALCULADORA DE COMISIÓN (5%) PARA RETIROS
+window.calculateWithdrawal = function() {
+  const amtInput = document.getElementById('withdraw-custom-input').value;
+  const amt = parseFloat(amtInput) || 0;
+  const fee = amt * 0.05;
+  const net = amt - fee;
+  document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
+  document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
+};
+
 async function notifyDepositTelegram() {
   const val = parseFloat(document.getElementById('deposit-custom-input').value);
   if (isNaN(val) || val < 5000) { alert("Monto mínimo $5.000 ARS"); return; }
@@ -750,16 +809,36 @@ async function notifyDepositTelegram() {
 }
 
 async function executeWithdrawal() {
+  // Validación de días hábiles: Lunes (1) y Viernes (5)
+  const currentDay = new Date().getDay();
+  if (currentDay !== 1 && currentDay !== 5) {
+    alert("Los retiros solo están habilitados los días lunes y viernes.");
+    return;
+  }
+
   const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
   const pin = document.getElementById('withdraw-pin-confirm').value.trim();
-  if (isNaN(amt) || amt <= 0 || amt > 10000) { alert("Máximo $10.000 ARS"); return; }
+  
+  if (isNaN(amt) || amt <= 0 || amt > 10000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
   if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
   if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
+  if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
 
-  await db.from('retiros').insert([{ user_id: currentUser.id, monto: amt, cvu_destino: currentUser.cvu, alias_destino: currentUser.alias, estado: 'pendiente' }]);
+  const fee = amt * 0.05;
+  const net = amt - fee;
+
+  await db.from('retiros').insert([{ 
+    user_id: currentUser.id, 
+    monto: amt, 
+    comision: fee,
+    monto_neto: net,
+    cvu_destino: currentUser.cvu || currentUser.alias, 
+    estado: 'pendiente' 
+  }]);
+
   await updateDBUser({ balance: currentUser.balance - amt, last_withdraw_time: Date.now() });
   closeWalletModal();
-  alert(`Retiro por $${fmt(amt)} ARS solicitado.`);
+  alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS`);
 }
 
 function switchTab(tabName) {
@@ -790,4 +869,4 @@ checkExistingSession();
 startDailyTimer();
 </script>
 </body>
-  </html>
+</html>
