@@ -1,953 +1,951 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MEDRAR - Mercado Petrolero</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MEDRAR - Mercado Petrolero</title>
 
-<!-- METATAGS DE VISTA PREVIA PARA COMPARTIR EN REDES -->
-<meta property="og:title" content="MEDRAR - Mercado Petrolero">
-<meta property="og:description" content="Plataforma oficial del mercado petrolero argentino.">
-<meta property="og:type" content="website">
+  <!-- METATAGS DE VISTA PREVIA PARA COMPARTIR EN REDES -->
+  <meta property="og:title" content="MEDRAR - Mercado Petrolero">
+  <meta property="og:description" content="Plataforma oficial del mercado petrolero argentino.">
+  <meta property="og:type" content="website">
 
-<meta name="theme-color" content="#002B27">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#002B27">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  background-color: #001412;
-  color: #E2E8F0;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-.font-mono-num {
-  font-family: 'JetBrains Mono', monospace;
-}
-.app-card {
-  background: #00221F;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-.app-button {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  color: #001412;
-  font-weight: 700;
-  transition: all 0.2s ease;
-}
-.app-button:active {
-  transform: scale(0.98);
-}
-.floating-pill {
-  background: rgba(0, 34, 31, 0.9);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-#action-sheet {
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-}
-</style>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      background-color: #001412;
+      color: #E2E8F0;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .app-card {
+      background: #00221F;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .app-button {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: #001412;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .app-button:active {
+      transform: scale(0.98);
+    }
+    .floating-pill {
+      background: rgba(0, 34, 31, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+    #action-sheet {
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+  </style>
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-<!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
-<div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
-  <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
-    <div class="text-center space-y-1">
-      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl mb-2">
-        <i class="fa-solid fa-user-shield"></i>
-      </div>
-      <h2 class="text-lg font-bold text-white">Registro y Acceso</h2>
-      <p class="text-xs text-amber-200/70">Ingrese sus datos para registrar su cuenta en el sistema</p>
-    </div>
-
-    <div id="multicount-error" class="hidden bg-rose-950/80 border border-rose-500/50 p-3 rounded-xl text-xs text-rose-200 text-center font-mono-num">
-      Dispositivo vinculado a otro usuario.
-    </div>
-
-    <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
-      <div>
-        <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">Nombre del Titular</label>
-        <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
-          <i class="fa-solid fa-user text-amber-400 text-sm mr-2.5"></i>
-          <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
+  <!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
+  <div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
+    <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
+      <div class="text-center space-y-1">
+        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl mb-2">
+          <i class="fa-solid fa-user-shield"></i>
         </div>
+        <h2 class="text-lg font-bold text-white">Registro y Acceso</h2>
+        <p class="text-xs text-amber-200/70">Ingrese sus datos para registrar su cuenta en el sistema</p>
       </div>
 
-      <div>
-        <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">PIN de Seguridad (4 Dígitos)</label>
-        <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
-          <i class="fa-solid fa-lock text-amber-400 text-sm mr-2.5"></i>
-          <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-500">
-        </div>
+      <div id="multicount-error" class="hidden bg-rose-950/80 border border-rose-500/50 p-3 rounded-xl text-xs text-rose-200 text-center font-mono-num">
+        Dispositivo vinculado a otro usuario.
       </div>
 
-      <button type="submit" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-        Registrarse / Ingresar
-      </button>
-    </form>
-  </div>
-</div>
-
-<!-- 2. POPUP DE BIENVENIDA (SE MUESTRA TRAS EL REGISTRO) -->
-<div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
-  <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
-    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
-      <i class="fa-solid fa-chart-line"></i>
-    </div>
-    <div class="space-y-1">
-      <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
-      <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
-    </div>
-    <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
-      <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
-      <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
-    </div>
-    <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ¡Listo!
-    </button>
-  </div>
-</div>
-
-<!-- CONTENEDOR PRINCIPAL -->
-<main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-32 overflow-hidden">
-
-<div>
-  <!-- HEADER CON SALUDO ESTILO MERCADO PAGO Y SILUETA -->
-  <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold p-1 overflow-hidden shadow-inner">
-        <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
-      </div>
-      <div>
-        <span class="text-[10px] text-amber-200/70 block uppercase font-mono-num">Cuenta Activa</span>
-        <span id="header-greeting" class="font-bold text-white text-xs tracking-wide block truncate max-w-[150px]">Hola, ---</span>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <button onclick="switchTab('perfil')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm cursor-pointer hover:bg-amber-500/20 transition">
-        <i class="fa-solid fa-user"></i>
-      </button>
-    </div>
-  </header>
-
-  <!-- VISTA 1: TERMINAL -->
-  <div id="view-terminal" class="p-4 space-y-4">
-    <div class="app-card p-5 space-y-4">
-      <div class="flex items-center justify-between text-xs text-amber-200/80">
-        <span class="uppercase tracking-wider text-[11px] font-bold text-amber-400">Capital de Ingreso</span>
-        <button onclick="toggleBalanceMask()" class="text-amber-400 cursor-pointer p-1">
-          <i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i>
-        </button>
-      </div>
-
-      <div>
-        <h1 id="home-balance" class="text-3xl font-extrabold text-white tracking-tight font-mono-num flex items-baseline gap-1">
-          <span id="bal-entero">$0</span><span id="bal-decimal" class="text-lg text-amber-400/90">,00</span> <span class="text-xs font-normal text-amber-200/60 ml-1">ARS</span>
-        </h1>
-        <p class="text-[11px] text-amber-100/70 mt-1">Liquidez disponible para operaciones o extracción inmediata</p>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 pt-2">
-        <button onclick="openWalletModal('recargar')" class="app-button py-3 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md">
-          <i class="fa-solid fa-plus-circle"></i> Depositar
-        </button>
-        <button onclick="openWalletModal('retirar')" class="py-3 bg-[#001412] hover:bg-[#002B27] text-amber-400 border border-amber-500/40 text-xs rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer transition">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Retirar
-        </button>
-      </div>
-    </div>
-
-    <!-- BONO DIARIO -->
-    <div class="app-card p-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base border border-amber-500/30 shrink-0">
-          <i class="fa-solid fa-gift"></i>
-        </div>
+      <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
         <div>
-          <span class="text-xs font-bold text-white block">Bono Diario</span>
-          <span id="daily-timer-text" class="text-[11px] text-amber-200/70 font-mono-num">+$350 ARS disponibles</span>
-        </div>
-      </div>
-      <button id="btn-claim-daily" onclick="claimDailyReward()" class="app-button px-4 py-2.5 rounded-xl text-xs cursor-pointer shadow-md">
-        Cobrar
-      </button>
-    </div>
-
-    <!-- SELECTOR DESLIZANTE BÁSICO / PREMIUM -->
-    <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
-      <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
-        Básico
-      </button>
-      <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center">
-        Premium
-      </button>
-    </div>
-
-    <!-- CONTENEDOR MODO BÁSICO (ACCIONES PETROLERAS) -->
-    <div id="section-basico" class="space-y-3.5">
-      <div class="flex items-center justify-between pt-1">
-        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Mercado de Acciones</h3>
-      </div>
-      <div id="plans-container" class="space-y-3.5"></div>
-    </div>
-
-    <!-- CONTENEDOR MODO PREMIUM (SOLO PRÓXIMAMENTE) -->
-    <div id="section-premium" class="hidden space-y-3.5">
-      <div class="app-card p-6 text-center space-y-3 border-amber-500/30 bg-[#001C1A]">
-        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl">
-          <i class="fa-solid fa-clock animate-pulse"></i>
-        </div>
-        <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono-num">Próximamente</h3>
-        <p class="text-xs text-amber-200/70 font-mono-num">
-          Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- VISTA 2: ACTIVOS -->
-  <div id="view-activos" class="hidden p-4 space-y-4">
-    <div class="app-card p-4">
-      <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación</h2>
-      <p class="text-[11px] text-amber-100/70 mt-1">Al cumplirse el ciclo operativo, el capital inicial y los dividendos se acreditan automáticamente.</p>
-    </div>
-    <div id="active-products-container" class="space-y-3"></div>
-  </div>
-
-  <!-- VISTA 3: PERFIL -->
-  <div id="view-perfil" class="hidden p-4 space-y-4">
-    <div class="app-card p-4 space-y-3 text-xs">
-      <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
-        <i class="fa-solid fa-user-shield text-sm"></i>
-        <span class="uppercase tracking-wider">Datos de Cuenta y Retiro</span>
-      </div>
-
-      <div class="space-y-3 font-mono-num">
-        <div>
-          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Titular</label>
-          <input id="prof-name-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="Nombre completo">
-        </div>
-
-        <div>
-          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">CVU Destino (22 dígitos)</label>
-          <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="0000000000000000000000">
-        </div>
-
-        <div>
-          <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Alias Bancario</label>
-          <input id="prof-alias-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="tu.alias.mp">
-        </div>
-
-        <button onclick="saveProfileData()" class="app-button w-full py-3 rounded-xl cursor-pointer uppercase tracking-wider text-xs shadow-md mt-2">
-          Guardar Cambios
-        </button>
-      </div>
-    </div>
-
-    <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO (REACTIVACIÓN DE CUENTA) -->
-    <div id="withdrawal-confirm-box" class="hidden app-card p-4 space-y-3 border-amber-500/40 bg-[#002B27]">
-      <div class="flex items-center gap-2.5 text-amber-400 font-bold text-xs">
-        <i class="fa-solid fa-circle-check text-base"></i>
-        <span class="uppercase tracking-wider">Retiro Solicitado / Pendiente</span>
-      </div>
-      <p class="text-[11px] text-amber-100/80 font-mono-num">
-        Si ya recibiste los fondos en tu cuenta bancaria, confirma la recepción para reactivar la cuenta y realizar una nueva carga obligatoria.
-      </p>
-      <button onclick="confirmWithdrawalReceived()" class="app-button w-full py-2.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-        Confirmar que recibí mi retiro
-      </button>
-    </div>
-
-    <!-- BOTÓN DE COMPARTIR APLICACIÓN -->
-    <button onclick="shareApp()" class="app-card w-full p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition cursor-pointer font-mono-num">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
-          <i class="fa-solid fa-share-nodes"></i>
-        </div>
-        <div class="text-left">
-          <span class="font-bold block text-amber-400 uppercase">Invitar a un Amigo</span>
-          <span class="text-[10px] text-amber-100/70">Compartir enlace de la app</span>
-        </div>
-      </div>
-      <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-    </button>
-
-    <!-- CANALES OFICIALES -->
-    <div class="space-y-2.5 pt-1">
-      <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
-        <div class="flex items-center gap-3">
-          <i class="fa-brands fa-telegram text-2xl text-amber-400"></i>
-          <div>
-            <span class="font-bold block text-amber-400 font-mono-num uppercase">Canal Oficial Telegram</span>
-            <span class="text-[10px] text-amber-100/70 font-mono-num">Anuncios y Reportes</span>
+          <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">Nombre del Titular</label>
+          <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
+            <i class="fa-solid fa-user text-amber-400 text-sm mr-2.5"></i>
+            <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
           </div>
         </div>
-        <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-      </a>
 
-      <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
-        <div class="flex items-center gap-3">
-          <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
-          <div>
-            <span class="font-bold block text-amber-400 font-mono-num uppercase">Grupo Social Medrar</span>
-            <span class="text-[10px] text-amber-100/70 font-mono-num">Comunidad y Comprobantes</span>
+        <div>
+          <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">PIN de Seguridad (4 Dígitos)</label>
+          <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
+            <i class="fa-solid fa-lock text-amber-400 text-sm mr-2.5"></i>
+            <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-500">
           </div>
         </div>
-        <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-      </a>
-    </div>
 
-    <div class="pt-2">
-      <button onclick="if(confirm('¿Cerrar sesión?')) location.reload();" class="w-full py-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md">
-        <i class="fa-solid fa-power-off"></i> Salir de la Cuenta
+        <button type="submit" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+          Registrarse / Ingresar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. POPUP DE BIENVENIDA (SE MUESTRA TRAS EL REGISTRO) -->
+  <div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
+        <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
+      </div>
+      <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
+        <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
+        <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
+      </div>
+      <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+        ¡Listo!
       </button>
     </div>
   </div>
-</div>
 
-<!-- CÁPSULA FLOTANTE INFERIOR CON LAS 3 SECCIONES (TERMINAL, ACTIVOS, PERFIL) -->
-<div class="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 w-max">
-  <div class="floating-pill px-4 py-2.5 rounded-full flex items-center gap-6">
-    <button onclick="switchTab('terminal')" id="pill-btn-terminal" class="flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition">
-      <i class="fa-solid fa-house text-base"></i>
-      <span class="text-[9px] uppercase tracking-wider">Terminal</span>
-    </button>
-    <button onclick="switchTab('activos')" id="pill-btn-activos" class="flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition">
-      <i class="fa-solid fa-server text-base"></i>
-      <span class="text-[9px] uppercase tracking-wider">Activos</span>
-    </button>
-    <button onclick="switchTab('perfil')" id="pill-btn-perfil" class="flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition">
-      <i class="fa-solid fa-user text-base"></i>
-      <span class="text-[9px] uppercase tracking-wider">Perfil</span>
-    </button>
-  </div>
-</div>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-32 overflow-hidden">
 
-<!-- NAVEGACIÓN INFERIOR -->
-<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 h-12 z-30 shadow-2xl"></nav>
-
-<!-- MODAL BILLETERA -->
-<div id="wallet-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs hidden flex items-center justify-center p-4">
-  <div class="app-card w-full max-w-sm p-5 space-y-4 text-white bg-[#001F1C] border-amber-500/40">
-    <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
-      <h3 class="text-xs font-bold text-white uppercase tracking-widest"><i class="fa-solid fa-wallet text-amber-400 mr-1.5"></i> Gestión Financiera</h3>
-      <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer p-1">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-
-    <div class="grid grid-cols-2 p-1 bg-[#001412] border border-amber-500/20 rounded-xl text-xs font-bold">
-      <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('recargar')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 transition cursor-pointer uppercase">Depositar</button>
-      <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase">Retirar</button>
-    </div>
-
-    <!-- Depósito -->
-    <div id="wallet-recarga-box" class="space-y-3.5 text-xs font-mono-num">
-      <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1">
-        <span class="text-[10px] text-amber-200/70 uppercase block">CVU Oficial</span>
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-bold text-xs text-white select-all">0000267900000002952651</span>
-          <button id="btn-copy-cvu" onclick="copyCVU()" class="app-button px-3 py-1.5 rounded-lg text-xs cursor-pointer">Copiar</button>
-        </div>
-      </div>
-      <div>
-        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo obligatorio: $5.000 ARS</label>
-        <input id="deposit-custom-input" type="number" value="5000" min="5000" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-xs font-bold text-amber-400 outline-none">
-      </div>
-      <button onclick="notifyDepositTelegram()" class="app-button w-full py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider shadow-md">
-        <i class="fa-brands fa-telegram text-sm"></i> Notificar Depósito por Telegram
-      </button>
-    </div>
-
-    <!-- Retiro -->
-    <div id="wallet-retiro-box" class="hidden space-y-3 text-xs font-mono-num">
-      <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1 text-[11px]">
-        <div class="flex justify-between text-amber-200/80"><span>Titular:</span><strong id="w-dest-name" class="text-white">---</strong></div>
-        <div class="flex justify-between text-amber-200/80"><span>CVU/Alias:</span><strong id="w-dest-cvu" class="text-white truncate max-w-[160px]">---</strong></div>
-      </div>
-
-      <div>
-        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $10.000)</label>
-        <input id="withdraw-custom-input" type="number" max="10000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
-      </div>
-
-      <!-- Calculadora de Comisión (5%) -->
-      <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
-        <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
-        <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
-      </div>
-
-      <div>
-        <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">PIN de Autorización (4 Dígitos)</label>
-        <input id="withdraw-pin-confirm" type="password" maxlength="4" placeholder="••••" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white tracking-widest outline-none">
-      </div>
-
-      <button id="btn-submit-withdraw" onclick="executeWithdrawal()" class="app-button w-full py-3.5 rounded-xl cursor-pointer uppercase tracking-wider shadow-md">
-        Solicitar Retiro
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL FLOTANTE INFERIOR -->
-<div id="action-sheet-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden" onclick="closeActionSheet()"></div>
-<div id="action-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#001F1C] border-t border-amber-500/40 rounded-t-3xl p-5 transform translate-y-full max-w-md mx-auto shadow-2xl space-y-4">
-  <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-2"></div>
-  <div id="action-sheet-content" class="space-y-4"></div>
-</div>
-
-</main>
-
-<script>
-const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-window.closeNoticeModal = () => {
-  document.getElementById('notice-modal').classList.add('hidden');
-};
-
-const plans = [
-  { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
-  { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png' },
-  { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png' },
-  { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png' },
-  { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png' }
-];
-
-let currentUser = null;
-let activePlansList = [];
-let hideBalance = false;
-
-function getDeviceId() {
-  let devId = localStorage.getItem('medrar_device_id');
-  if (!devId) {
-    devId = 'DEV-' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
-    localStorage.setItem('medrar_device_id', devId);
-  }
-  return devId;
-}
-
-function fmt(n) { return new Intl.NumberFormat('es-AR').format(Math.round(n || 0)); }
-
-async function checkExistingSession() {
-  const deviceId = getDeviceId();
-  let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
-  
-  if (existingUser) {
-    currentUser = existingUser;
-    document.getElementById('auth-screen').remove();
-    updateHeaderUser();
-    await loadUserData();
-  } else {
-    document.getElementById('notice-modal').classList.add('hidden');
-  }
-}
-
-async function handleAuthSubmit() {
-  const nameVal = document.getElementById('auth-name').value.trim();
-  const pinVal = document.getElementById('auth-pin').value.trim();
-  const deviceId = getDeviceId();
-
-  if (!nameVal || pinVal.length !== 4) {
-    alert("Ingrese nombre y PIN de 4 dígitos válido.");
-    return;
-  }
-
-  let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
-
-  if (existingUser) {
-    if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
-      document.getElementById('multicount-error').classList.remove('hidden');
-      return;
-    }
-    currentUser = existingUser;
-  } else {
-    // Inserción adaptada exactamente a las columnas existentes en tu tabla de Supabase
-    let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
-      device_id: deviceId, 
-      nombre: nameVal, 
-      pin: pinVal, 
-      balance: 0, 
-      retiro_pendiente: false
-    }]).select().single();
-
-    if (insertError) {
-      console.error("Error Supabase:", insertError);
-      alert("Error al registrar en la base de datos: " + (insertError.message || "Verifique la tabla usuarios."));
-      return;
-    }
-    currentUser = newUser;
-  }
-
-  document.getElementById('auth-screen').remove();
-  document.getElementById('notice-modal').classList.remove('hidden');
-  updateHeaderUser();
-  await loadUserData();
-}
-
-async function loadUserData() {
-  if (!currentUser) return;
-  let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).maybeSingle();
-  if (userData) currentUser = userData;
-
-  let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
-  activePlansList = plansData || [];
-  renderUI();
-}
-
-async function updateDBUser(fields) {
-  if (!currentUser) return;
-  let { data } = await db.from('usuarios').update(fields).eq('id', currentUser.id).select().single();
-  if (data) currentUser = data;
-  renderUI();
-}
-
-function updateHeaderUser() {
-  if (!currentUser) return;
-  const greetingEl = document.getElementById('header-greeting');
-  if (greetingEl) greetingEl.innerText = `Hola, ${currentUser.nombre || 'Inversor'}`;
-  
-  const destName = document.getElementById('w-dest-name');
-  const destCvu = document.getElementById('w-dest-cvu');
-  if (destName) destName.innerText = currentUser.nombre || 'No especificado';
-  if (destCvu) destCvu.innerText = currentUser.cvu || currentUser.alias || 'Faltan datos en perfil';
-
-  const withdrawBox = document.getElementById('withdrawal-confirm-box');
-  if (withdrawBox) {
-    if (currentUser.retiro_pendiente) {
-      withdrawBox.classList.remove('hidden');
-    } else {
-      withdrawBox.classList.add('hidden');
-    }
-  }
-}
-
-window.toggleBalanceMask = function() {
-  hideBalance = !hideBalance;
-  renderBalanceDisplay();
-};
-
-function renderBalanceDisplay() {
-  const enteroEl = document.getElementById('bal-entero');
-  const decimalEl = document.getElementById('bal-decimal');
-  const headMini = document.getElementById('header-balance-mini');
-  const eyeIcon = document.getElementById('balance-eye-icon');
-  const bal = currentUser ? currentUser.balance : 0;
-
-  if (hideBalance) {
-    enteroEl.innerText = "$••••••";
-    decimalEl.innerText = "";
-    if(headMini) headMini.innerText = "$••••";
-    if (eyeIcon) eyeIcon.className = "fa-solid fa-eye-slash text-xs";
-  } else {
-    const parts = bal.toFixed(2).split('.');
-    enteroEl.innerText = `$${fmt(parts[0])}`;
-    decimalEl.innerText = `,${parts[1]}`;
-    if(headMini) headMini.innerText = `$${fmt(parts[0])},${parts[1]} ARS`;
-    if (eyeIcon) eyeIcon.className = "fa-solid fa-eye text-xs";
-  }
-}
-
-function startDailyTimer() {
-  const btn = document.getElementById('btn-claim-daily');
-  const timerText = document.getElementById('daily-timer-text');
-
-  function update() {
-    if (!currentUser) return;
-    const now = Date.now();
-    const elapsed = now - (currentUser.last_daily_claim || 0);
-    const cooldown = 24 * 60 * 60 * 1000;
-
-    if (elapsed >= cooldown) {
-      btn.disabled = false;
-      btn.className = "app-button px-4 py-2.5 rounded-xl text-xs cursor-pointer shadow-md";
-      btn.innerText = "Cobrar";
-      timerText.innerText = "+$350 ARS disponibles";
-    } else {
-      btn.disabled = true;
-      btn.className = "px-4 py-2.5 bg-amber-500/10 text-amber-200/40 font-bold rounded-xl text-xs cursor-not-allowed";
-      const diff = cooldown - elapsed;
-      const h = Math.floor(diff / (1000 * 60 * 60));
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      btn.innerText = "Cobrado";
-      timerText.innerText = `Próximo ciclo: ${h}h ${m}m`;
-    }
-  }
-  update();
-  setInterval(update, 1000);
-}
-
-async function claimDailyReward() {
-  if (!currentUser) return;
-  const now = Date.now();
-  if (now - (currentUser.last_daily_claim || 0) >= 24 * 60 * 60 * 1000) {
-    await updateDBUser({ balance: (currentUser.balance || 0) + 350, last_daily_claim: now });
-    alert("¡Bono acreditado exitosamente (+ $350 ARS)!");
-  }
-}
-
-window.shareApp = function() {
-  if (navigator.share) {
-    navigator.share({
-      title: 'MEDRAR - Mercado Petrolero',
-      text: '¡Únete a MEDRAR y comienza a gestionar tus operaciones en el mercado petrolero hoy mismo!',
-      url: window.location.href
-    }).catch(err => console.log('Error al compartir', err));
-  } else {
-    navigator.clipboard.writeText(window.location.href);
-    alert("¡Enlace de la aplicación copiado al portapapeles!");
-  }
-};
-
-window.switchPlanMode = function(mode) {
-  const btnBasico = document.getElementById('switch-basico');
-  const btnPremium = document.getElementById('switch-premium');
-  const secBasico = document.getElementById('section-basico');
-  const secPremium = document.getElementById('section-premium');
-
-  if (mode === 'basico') {
-    btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
-    btnPremium.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
-    secBasico.classList.remove('hidden');
-    secPremium.classList.add('hidden');
-  } else {
-    btnPremium.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
-    btnBasico.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
-    secPremium.classList.remove('hidden');
-    secBasico.classList.add('hidden');
-  }
-};
-
-function renderPlans() {
-  const container = document.getElementById('plans-container');
-  if (!container) return;
-  container.innerHTML = '';
-
-  plans.forEach(p => {
-    const card = document.createElement('div');
-    card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
-    card.onclick = () => openActionSheet(p);
-    
-    card.innerHTML = `
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
-            <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+    <div>
+      <!-- HEADER CON SALUDO ESTILO MERCADO PAGO Y SILUETA -->
+      <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold p-1 overflow-hidden shadow-inner">
+            <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
           </div>
           <div>
-            <h4 class="font-bold text-white text-xs">${p.name}</h4>
-            <span class="text-[10px] text-amber-400 font-mono-num">Ciclo: ${p.days} días</span>
+            <span class="text-[10px] text-amber-200/70 block uppercase font-mono-num">Cuenta Activa</span>
+            <span id="header-greeting" class="font-bold text-white text-xs tracking-wide block truncate max-w-[150px]">Hola, ---</span>
           </div>
         </div>
-        <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
-          Acción Adquirida
-        </span>
+
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('perfil')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm cursor-pointer hover:bg-amber-500/20 transition">
+            <i class="fa-solid fa-user"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- VISTA 1: TERMINAL -->
+      <div id="view-terminal" class="p-4 space-y-4">
+        <div class="app-card p-5 space-y-4">
+          <div class="flex items-center justify-between text-xs text-amber-200/80">
+            <span class="uppercase tracking-wider text-[11px] font-bold text-amber-400">Capital de Ingreso</span>
+            <button onclick="toggleBalanceMask()" class="text-amber-400 cursor-pointer p-1">
+              <i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </div>
+
+          <div>
+            <h1 id="home-balance" class="text-3xl font-extrabold text-white tracking-tight font-mono-num flex items-baseline gap-1">
+              <span id="bal-entero">$0</span><span id="bal-decimal" class="text-lg text-amber-400/90">,00</span> <span class="text-xs font-normal text-amber-200/60 ml-1">ARS</span>
+            </h1>
+            <p class="text-[11px] text-amber-100/70 mt-1">Liquidez disponible para operaciones o extracción inmediata</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <button onclick="openWalletModal('recargar')" class="app-button py-3 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md">
+              <i class="fa-solid fa-plus-circle"></i> Depositar
+            </button>
+            <button onclick="openWalletModal('retirar')" class="py-3 bg-[#001412] hover:bg-[#002B27] text-amber-400 border border-amber-500/40 text-xs rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer transition">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Retirar
+            </button>
+          </div>
+        </div>
+
+        <!-- BONO DIARIO -->
+        <div class="app-card p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base border border-amber-500/30 shrink-0">
+              <i class="fa-solid fa-gift"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-white block">Bono Diario</span>
+              <span id="daily-timer-text" class="text-[11px] text-amber-200/70 font-mono-num">+$350 ARS disponibles</span>
+            </div>
+          </div>
+          <button id="btn-claim-daily" onclick="claimDailyReward()" class="app-button px-4 py-2.5 rounded-xl text-xs cursor-pointer shadow-md">
+            Cobrar
+          </button>
+        </div>
+
+        <!-- SELECTOR DESLIZANTE BÁSICO / PREMIUM -->
+        <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
+          <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
+            Básico
+          </button>
+          <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center">
+            Premium
+          </button>
+        </div>
+
+        <!-- CONTENEDOR MODO BÁSICO (ACCIONES PETROLERAS) -->
+        <div id="section-basico" class="space-y-3.5">
+          <div class="flex items-center justify-between pt-1">
+            <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Mercado de Acciones</h3>
+          </div>
+          <div id="plans-container" class="space-y-3.5"></div>
+        </div>
+
+        <!-- CONTENEDOR MODO PREMIUM (SOLO PRÓXIMAMENTE) -->
+        <div id="section-premium" class="hidden space-y-3.5">
+          <div class="app-card p-6 text-center space-y-3 border-amber-500/30 bg-[#001C1A]">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl">
+              <i class="fa-solid fa-clock animate-pulse"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono-num">Próximamente</h3>
+            <p class="text-xs text-amber-200/70 font-mono-num">
+              Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
-        <div>
-          <span class="text-amber-200/60 block text-[9px] uppercase">Rendimiento</span>
-          <strong class="text-white">+$${fmt(p.daily)} / d</strong>
+      <!-- VISTA 2: ACTIVOS -->
+      <div id="view-activos" class="hidden p-4 space-y-4">
+        <div class="app-card p-4">
+          <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación</h2>
+          <p class="text-[11px] text-amber-100/70 mt-1">Al cumplirse el ciclo operativo, el capital inicial y los dividendos se acreditan automáticamente.</p>
         </div>
-        <div>
-          <span class="text-amber-200/60 block text-[9px] uppercase">Retorno Total</span>
-          <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
+        <div id="active-products-container" class="space-y-3"></div>
+      </div>
+
+      <!-- VISTA 3: PERFIL -->
+      <div id="view-perfil" class="hidden p-4 space-y-4">
+        <div class="app-card p-4 space-y-3 text-xs">
+          <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
+            <i class="fa-solid fa-user-shield text-sm"></i>
+            <span class="uppercase tracking-wider">Datos de Cuenta y Retiro</span>
+          </div>
+
+          <div class="space-y-3 font-mono-num">
+            <div>
+              <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Titular</label>
+              <input id="prof-name-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="Nombre completo">
+            </div>
+
+            <div>
+              <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">CVU Destino (22 dígitos)</label>
+              <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="0000000000000000000000">
+            </div>
+
+            <div>
+              <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Alias Bancario</label>
+              <input id="prof-alias-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="tu.alias.mp">
+            </div>
+
+            <button onclick="saveProfileData()" class="app-button w-full py-3 rounded-xl cursor-pointer uppercase tracking-wider text-xs shadow-md mt-2">
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+
+        <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO (REACTIVACIÓN DE CUENTA) -->
+        <div id="withdrawal-confirm-box" class="hidden app-card p-4 space-y-3 border-amber-500/40 bg-[#002B27]">
+          <div class="flex items-center gap-2.5 text-amber-400 font-bold text-xs">
+            <i class="fa-solid fa-circle-check text-base"></i>
+            <span class="uppercase tracking-wider">Retiro Solicitado / Pendiente</span>
+          </div>
+          <p class="text-[11px] text-amber-100/80 font-mono-num">
+            Si ya recibiste los fondos en tu cuenta bancaria, confirma la recepción para reactivar la cuenta y realizar una nueva carga obligatoria.
+          </p>
+          <button onclick="confirmWithdrawalReceived()" class="app-button w-full py-2.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+            Confirmar que recibí mi retiro
+          </button>
+        </div>
+
+        <!-- BOTÓN DE COMPARTIR APLICACIÓN -->
+        <button onclick="shareApp()" class="app-card w-full p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition cursor-pointer font-mono-num">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
+              <i class="fa-solid fa-share-nodes"></i>
+            </div>
+            <div class="text-left">
+              <span class="font-bold block text-amber-400 uppercase">Invitar a un Amigo</span>
+              <span class="text-[10px] text-amber-100/70">Compartir enlace de la app</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+        </button>
+
+        <!-- CANALES OFICIALES -->
+        <div class="space-y-2.5 pt-1">
+          <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
+            <div class="flex items-center gap-3">
+              <i class="fa-brands fa-telegram text-2xl text-amber-400"></i>
+              <div>
+                <span class="font-bold block text-amber-400 font-mono-num uppercase">Canal Oficial Telegram</span>
+                <span class="text-[10px] text-amber-100/70 font-mono-num">Anuncios y Reportes</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+          </a>
+
+          <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
+              <div>
+                <span class="font-bold block text-amber-400 font-mono-num uppercase">Grupo Social Medrar</span>
+                <span class="text-[10px] text-amber-100/70 font-mono-num">Comunidad y Comprobantes</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+          </a>
+        </div>
+
+        <div class="pt-2">
+          <button onclick="if(confirm('¿Cerrar sesión?')) location.reload();" class="w-full py-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md">
+            <i class="fa-solid fa-power-off"></i> Salir de la Cuenta
+          </button>
         </div>
       </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-function openActionSheet(p) {
-  const sheet = document.getElementById('action-sheet');
-  const overlay = document.getElementById('action-sheet-overlay');
-  const content = document.getElementById('action-sheet-content');
-
-  const now = Date.now();
-  const weekMs = 7 * 24 * 60 * 60 * 1000;
-  const canBuyWeekly = (now - (currentUser ? currentUser.last_plan_purchase_time || 0 : 0)) >= weekMs;
-
-  content.innerHTML = `
-    <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
-      <div class="flex items-center gap-3">
-        <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
-        <div>
-          <h4 class="text-sm font-bold text-white">${p.name}</h4>
-          <span class="text-[10px] text-amber-400 font-mono-num">Costo: $${fmt(p.cost)} ARS</span>
-        </div>
-      </div>
-      <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="space-y-2 text-xs font-mono-num text-amber-100/80 bg-[#001412] p-3 rounded-xl border border-amber-500/20">
-      <p>• Ciclo operativo: <strong>${p.days} días</strong></p>
-      <p>• Retorno diario: <strong>+$${fmt(p.daily)} ARS</strong></p>
-      <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
+
+    <!-- CÁPSULA FLOTANTE INFERIOR CON LAS 3 SECCIONES (TERMINAL, ACTIVOS, PERFIL) -->
+    <div class="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 w-max">
+      <div class="floating-pill px-4 py-2.5 rounded-full flex items-center gap-6">
+        <button onclick="switchTab('terminal')" id="pill-btn-terminal" class="flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition">
+          <i class="fa-solid fa-house text-base"></i>
+          <span class="text-[9px] uppercase tracking-wider">Terminal</span>
+        </button>
+        <button onclick="switchTab('activos')" id="pill-btn-activos" class="flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition">
+          <i class="fa-solid fa-server text-base"></i>
+          <span class="text-[9px] uppercase tracking-wider">Activos</span>
+        </button>
+        <button onclick="switchTab('perfil')" id="pill-btn-perfil" class="flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition">
+          <i class="fa-solid fa-user text-base"></i>
+          <span class="text-[9px] uppercase tracking-wider">Perfil</span>
+        </button>
+      </div>
     </div>
-    <button onclick="purchasePlan('${p.id}')" 
-      ${!canBuyWeekly ? 'disabled' : ''}
-      class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-      ${canBuyWeekly ? `Activar Acción ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
-    </button>
-  `;
 
-  overlay.classList.remove('hidden');
-  setTimeout(() => { sheet.style.transform = 'translateY(0)'; }, 10);
-}
+    <!-- NAVEGACIÓN INFERIOR -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 h-12 z-30 shadow-2xl"></nav>
 
-function closeActionSheet() {
-  const sheet = document.getElementById('action-sheet');
-  const overlay = document.getElementById('action-sheet-overlay');
-  sheet.style.transform = 'translateY(100%)';
-  setTimeout(() => { overlay.classList.add('hidden'); }, 300);
-}
+    <!-- MODAL BILLETERA -->
+    <div id="wallet-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs hidden flex items-center justify-center p-4">
+      <div class="app-card w-full max-w-sm p-5 space-y-4 text-white bg-[#001F1C] border-amber-500/40">
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+          <h3 class="text-xs font-bold text-white uppercase tracking-widest"><i class="fa-solid fa-wallet text-amber-400 mr-1.5"></i> Gestión Financiera</h3>
+          <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer p-1">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
 
-async function purchasePlan(planId) {
-  if (!currentUser) return;
-  const p = plans.find(item => item.id === planId);
-  if (!p) return;
+        <div class="grid grid-cols-2 p-1 bg-[#001412] border border-amber-500/20 rounded-xl text-xs font-bold">
+          <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('recargar')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 transition cursor-pointer uppercase">Depositar</button>
+          <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase">Retirar</button>
+        </div>
 
-  const now = Date.now();
-  const weekMs = 7 * 24 * 60 * 60 * 1000;
-  if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
-    closeActionSheet();
-    return;
-  }
+        <!-- Depósito -->
+        <div id="wallet-recarga-box" class="space-y-3.5 text-xs font-mono-num">
+          <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1">
+            <span class="text-[10px] text-amber-200/70 uppercase block">CVU Oficial</span>
+            <div class="flex items-center justify-between gap-2">
+              <span id="official-cvu-text" class="font-bold text-xs text-white select-all">0000267900000002952651</span>
+              <button id="btn-copy-cvu" onclick="copyCVU()" class="app-button px-3 py-1.5 rounded-lg text-xs cursor-pointer">Copiar</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto mínimo obligatorio: $5.000 ARS</label>
+            <input id="deposit-custom-input" type="number" value="5000" min="5000" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-xs font-bold text-amber-400 outline-none">
+          </div>
+          <button onclick="notifyDepositTelegram()" class="app-button w-full py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider shadow-md">
+            <i class="fa-brands fa-telegram text-sm"></i> Notificar Depósito por Telegram
+          </button>
+        </div>
 
-  if (currentUser.balance < p.cost) {
-    alert("Saldo insuficiente. Se requiere carga obligatoria.");
-    closeActionSheet();
-    openWalletModal('recargar');
-    return;
-  }
+        <!-- Retiro -->
+        <div id="wallet-retiro-box" class="hidden space-y-3 text-xs font-mono-num">
+          <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1 text-[11px]">
+            <div class="flex justify-between text-amber-200/80"><span>Titular:</span><strong id="w-dest-name" class="text-white">---</strong></div>
+            <div class="flex justify-between text-amber-200/80"><span>CVU/Alias:</span><strong id="w-dest-cvu" class="text-white truncate max-w-[160px]">---</strong></div>
+          </div>
 
-  if (confirm(`¿Adquirir acción ${p.name} por $${fmt(p.cost)} ARS?`)) {
-    await db.from('acciones_activas').insert([{
-      user_id: currentUser.id,
-      plan_id: p.id,
-      nombre_accion: p.name,
-      monto_invertido: p.cost,
-      total_retorno: p.total,
-      logo: p.logo,
-      fecha_inicio: now,
-      fecha_fin: now + (p.days * 86400000),
-      completada: false
-    }]);
+          <div>
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $10.000)</label>
+            <input id="withdraw-custom-input" type="number" max="10000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
+          </div>
 
-    await updateDBUser({ balance: currentUser.balance - p.cost, last_plan_purchase_time: now });
-    closeActionSheet();
-    await loadUserData();
-    alert("¡Acción adquirida correctamente!");
-    switchTab('activos');
-  }
-}
+          <!-- Calculadora de Comisión (5%) -->
+          <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
+            <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
+            <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
+          </div>
 
-async function renderProducts() {
-  const container = document.getElementById('active-products-container');
-  if (!container) return;
-  container.innerHTML = '';
+          <div>
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">PIN de Autorización (4 Dígitos)</label>
+            <input id="withdraw-pin-confirm" type="password" maxlength="4" placeholder="••••" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white tracking-widest outline-none">
+          </div>
 
-  if (!activePlansList || activePlansList.length === 0) {
-    container.innerHTML = `<div class="app-card p-6 text-center text-xs text-amber-100/60 font-mono-num">No hay activos en operación actualmente.</div>`;
-    return;
-  }
+          <button id="btn-submit-withdraw" onclick="executeWithdrawal()" class="app-button w-full py-3.5 rounded-xl cursor-pointer uppercase tracking-wider shadow-md">
+            Solicitar Retiro
+          </button>
+        </div>
+      </div>
+    </div>
 
-  const now = Date.now();
-  for (let plan of activePlansList) {
-    if (plan.fecha_fin <= now && !plan.completada) {
-      plan.completada = true;
-      await db.from('acciones_activas').update({ completada: true }).eq('id', plan.id);
-      await updateDBUser({
-        balance: currentUser.balance + plan.total_retorno,
-        completed_actions_count: (currentUser.completed_actions_count || 0) + 1
+    <!-- MODAL FLOTANTE INFERIOR -->
+    <div id="action-sheet-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden" onclick="closeActionSheet()"></div>
+    <div id="action-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#001F1C] border-t border-amber-500/40 rounded-t-3xl p-5 transform translate-y-full max-w-md mx-auto shadow-2xl space-y-4">
+      <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-2"></div>
+      <div id="action-sheet-content" class="space-y-4"></div>
+    </div>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    window.closeNoticeModal = () => {
+      document.getElementById('notice-modal').classList.add('hidden');
+    };
+
+    const plans = [
+      { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
+      { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png' },
+      { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png' },
+      { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png' },
+      { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png' }
+    ];
+
+    let currentUser = null;
+    let activePlansList = [];
+    let hideBalance = false;
+
+    function getDeviceId() {
+      let devId = localStorage.getItem('medrar_device_id');
+      if (!devId) {
+        devId = 'DEV-' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+        localStorage.setItem('medrar_device_id', devId);
+      }
+      return devId;
+    }
+
+    function fmt(n) { 
+      return new Intl.NumberFormat('es-AR').format(Math.round(n || 0)); 
+    }
+
+    async function checkExistingSession() {
+      const deviceId = getDeviceId();
+      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+      
+      if (existingUser) {
+        currentUser = existingUser;
+        document.getElementById('auth-screen').remove();
+        updateHeaderUser();
+        await loadUserData();
+      } else {
+        document.getElementById('notice-modal').classList.add('hidden');
+      }
+    }
+
+    async function handleAuthSubmit() {
+      const nameVal = document.getElementById('auth-name').value.trim();
+      const pinVal = document.getElementById('auth-pin').value.trim();
+      const deviceId = getDeviceId();
+
+      if (!nameVal || pinVal.length !== 4) {
+        alert("Ingrese nombre y PIN de 4 dígitos válido.");
+        return;
+      }
+
+      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+
+      if (existingUser) {
+        if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
+          document.getElementById('multicount-error').classList.remove('hidden');
+          return;
+        }
+        currentUser = existingUser;
+      } else {
+        let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
+          device_id: deviceId, 
+          nombre: nameVal, 
+          pin: pinVal, 
+          balance: 0, 
+          retiro_pendiente: false
+        }]).select().single();
+
+        if (insertError) {
+          console.error("Error Supabase:", insertError);
+          alert("Error al registrar en la base de datos: " + (insertError.message || "Verifique la tabla usuarios."));
+          return;
+        }
+        currentUser = newUser;
+      }
+
+      document.getElementById('auth-screen').remove();
+      document.getElementById('notice-modal').classList.remove('hidden');
+      updateHeaderUser();
+      await loadUserData();
+    }
+
+    async function loadUserData() {
+      if (!currentUser) return;
+      let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).maybeSingle();
+      if (userData) currentUser = userData;
+
+      let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
+      activePlansList = plansData || [];
+      renderUI();
+    }
+
+    async function updateDBUser(fields) {
+      if (!currentUser) return;
+      let { data } = await db.from('usuarios').update(fields).eq('id', currentUser.id).select().single();
+      if (data) currentUser = data;
+      renderUI();
+    }
+
+    function updateHeaderUser() {
+      if (!currentUser) return;
+      const greetingEl = document.getElementById('header-greeting');
+      if (greetingEl) greetingEl.innerText = `Hola, ${currentUser.nombre || 'Inversor'}`;
+      
+      const destName = document.getElementById('w-dest-name');
+      const destCvu = document.getElementById('w-dest-cvu');
+      if (destName) destName.innerText = currentUser.nombre || 'No especificado';
+      if (destCvu) destCvu.innerText = currentUser.cvu || currentUser.alias || 'Faltan datos en perfil';
+
+      const withdrawBox = document.getElementById('withdrawal-confirm-box');
+      if (withdrawBox) {
+        if (currentUser.retiro_pendiente) {
+          withdrawBox.classList.remove('hidden');
+        } else {
+          withdrawBox.classList.add('hidden');
+        }
+      }
+    }
+
+    window.toggleBalanceMask = function() {
+      hideBalance = !hideBalance;
+      renderBalanceDisplay();
+    };
+
+    function renderBalanceDisplay() {
+      const enteroEl = document.getElementById('bal-entero');
+      const decimalEl = document.getElementById('bal-decimal');
+      const eyeIcon = document.getElementById('balance-eye-icon');
+      const bal = currentUser ? currentUser.balance : 0;
+
+      if (hideBalance) {
+        enteroEl.innerText = "$••••••";
+        decimalEl.innerText = "";
+        if (eyeIcon) eyeIcon.className = "fa-solid fa-eye-slash text-xs";
+      } else {
+        const parts = bal.toFixed(2).split('.');
+        enteroEl.innerText = `$${fmt(parts[0])}`;
+        decimalEl.innerText = `,${parts[1]}`;
+        if (eyeIcon) eyeIcon.className = "fa-solid fa-eye text-xs";
+      }
+    }
+
+    function startDailyTimer() {
+      const btn = document.getElementById('btn-claim-daily');
+      const timerText = document.getElementById('daily-timer-text');
+
+      function update() {
+        if (!currentUser) return;
+        const now = Date.now();
+        const elapsed = now - (currentUser.last_daily_claim || 0);
+        const cooldown = 24 * 60 * 60 * 1000;
+
+        if (elapsed >= cooldown) {
+          btn.disabled = false;
+          btn.className = "app-button px-4 py-2.5 rounded-xl text-xs cursor-pointer shadow-md";
+          btn.innerText = "Cobrar";
+          timerText.innerText = "+$350 ARS disponibles";
+        } else {
+          btn.disabled = true;
+          btn.className = "px-4 py-2.5 bg-amber-500/10 text-amber-200/40 font-bold rounded-xl text-xs cursor-not-allowed";
+          const diff = cooldown - elapsed;
+          const h = Math.floor(diff / (1000 * 60 * 60));
+          const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          btn.innerText = "Cobrado";
+          timerText.innerText = `Próximo ciclo: ${h}h ${m}m`;
+        }
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    async function claimDailyReward() {
+      if (!currentUser) return;
+      const now = Date.now();
+      if (now - (currentUser.last_daily_claim || 0) >= 24 * 60 * 60 * 1000) {
+        await updateDBUser({ balance: (currentUser.balance || 0) + 350, last_daily_claim: now });
+        alert("¡Bono acreditado exitosamente (+ $350 ARS)!");
+      }
+    }
+
+    window.shareApp = function() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'MEDRAR - Mercado Petrolero',
+          text: '¡Únete a MEDRAR y comienza a gestionar tus operaciones en el mercado petrolero hoy mismo!',
+          url: window.location.href
+        }).catch(err => console.log('Error al compartir', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("¡Enlace de la aplicación copiado al portapapeles!");
+      }
+    };
+
+    window.switchPlanMode = function(mode) {
+      const btnBasico = document.getElementById('switch-basico');
+      const btnPremium = document.getElementById('switch-premium');
+      const secBasico = document.getElementById('section-basico');
+      const secPremium = document.getElementById('section-premium');
+
+      if (mode === 'basico') {
+        btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+        btnPremium.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+        secBasico.classList.remove('hidden');
+        secPremium.classList.add('hidden');
+      } else {
+        btnPremium.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+        btnBasico.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+        secPremium.classList.remove('hidden');
+        secBasico.classList.add('hidden');
+      }
+    };
+
+    function renderPlans() {
+      const container = document.getElementById('plans-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      plans.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
+        card.onclick = () => openActionSheet(p);
+        
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-xs">${p.name}</h4>
+                <span class="text-[10px] text-amber-400 font-mono-num">Ciclo: ${p.days} días</span>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
+              Acción Adquirida
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Rendimiento</span>
+              <strong class="text-white">+$${fmt(p.daily)} / d</strong>
+            </div>
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Retorno Total</span>
+              <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
       });
     }
 
-    const card = document.createElement('div');
-    card.className = "app-card p-4 space-y-2.5 font-mono-num";
-    card.innerHTML = `
-      <div class="flex justify-between items-center text-xs">
-        <div class="flex items-center gap-2">
-          <img src="${plan.logo || './logo.png'}" class="w-6 h-6 object-contain bg-amber-500/10 p-0.5 rounded border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
-          <span class="font-bold text-white">${plan.nombre_accion}</span>
+    function openActionSheet(p) {
+      const sheet = document.getElementById('action-sheet');
+      const overlay = document.getElementById('action-sheet-overlay');
+      const content = document.getElementById('action-sheet-content');
+
+      const now = Date.now();
+      const weekMs = 7 * 24 * 60 * 60 * 1000;
+      const canBuyWeekly = (now - (currentUser ? currentUser.last_plan_purchase_time || 0 : 0)) >= weekMs;
+
+      content.innerHTML = `
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+            <div>
+              <h4 class="text-sm font-bold text-white">${p.name}</h4>
+              <span class="text-[10px] text-amber-400 font-mono-num">Costo: $${fmt(p.cost)} ARS</span>
+            </div>
+          </div>
+          <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <span class="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold uppercase">
-          ${plan.completada ? 'Finalizado ✓' : 'Acción Adquirida'}
-        </span>
-      </div>
-      <div class="grid grid-cols-2 gap-2 text-xs bg-[#001412] p-2.5 rounded-xl border border-amber-500/20">
-        <div>
-          <span class="text-amber-200/60 block text-[9px] uppercase">Inversión</span>
-          <strong class="text-white">$${fmt(plan.monto_invertido)} ARS</strong>
+        <div class="space-y-2 text-xs font-mono-num text-amber-100/80 bg-[#001412] p-3 rounded-xl border border-amber-500/20">
+          <p>• Ciclo operativo: <strong>${p.days} días</strong></p>
+          <p>• Retorno diario: <strong>+$${fmt(p.daily)} ARS</strong></p>
+          <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
         </div>
-        <div>
-          <span class="text-amber-200/60 block text-[9px] uppercase">Retorno</span>
-          <strong class="text-amber-400">$${fmt(plan.total_retorno)} ARS</strong>
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
-  }
-}
+        <button onclick="purchasePlan('${p.id}')" 
+          ${!canBuyWeekly ? 'disabled' : ''}
+          class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+          ${canBuyWeekly ? `Activar Acción ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
+        </button>
+      `;
 
-async function saveProfileData() {
-  if (!currentUser) return;
-  const name = document.getElementById('prof-name-input').value.trim();
-  const cvu = document.getElementById('prof-cvu-input').value.trim();
-  const alias = document.getElementById('prof-alias-input').value.trim();
-  await updateDBUser({ nombre: name, cvu: cvu, alias: alias });
-  updateHeaderUser();
-  alert("Perfil actualizado correctamente.");
-}
+      overlay.classList.remove('hidden');
+      setTimeout(() => { sheet.style.transform = 'translateY(0)'; }, 10);
+    }
 
-window.openWalletModal = (mode) => {
-  document.getElementById('wallet-modal').classList.remove('hidden');
-  setWalletMode(mode);
-  if (mode === 'retirar') calculateWithdrawal();
-};
-window.closeWalletModal = () => document.getElementById('wallet-modal').classList.add('hidden');
+    function closeActionSheet() {
+      const sheet = document.getElementById('action-sheet');
+      const overlay = document.getElementById('action-sheet-overlay');
+      sheet.style.transform = 'translateY(100%)';
+      setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+    }
 
-window.setWalletMode = function(mode) {
-  const boxRec = document.getElementById('wallet-recarga-box');
-  const boxRet = document.getElementById('wallet-retiro-box');
-  const tabRec = document.getElementById('wallet-tab-recargar');
-  const tabRet = document.getElementById('wallet-tab-retirar');
+    async function purchasePlan(planId) {
+      if (!currentUser) return;
+      const p = plans.find(item => item.id === planId);
+      if (!p) return;
 
-  if (mode === 'recargar') {
-    boxRec.style.display = 'block';
-    boxRet.style.display = 'none';
-    tabRec.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-    tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
-  } else {
-    boxRec.style.display = 'none';
-    boxRet.style.display = 'block';
-    tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-    tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
-  }
-};
+      const now = Date.now();
+      const weekMs = 7 * 24 * 60 * 60 * 1000;
+      if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
+        closeActionSheet();
+        return;
+      }
 
-window.copyCVU = function() {
-  navigator.clipboard.writeText("00000267900000002952651").then(() => alert("CVU copiado"));
-};
+      if (currentUser.balance < p.cost) {
+        alert("Saldo insuficiente. Se requiere carga obligatoria.");
+        closeActionSheet();
+        openWalletModal('recargar');
+        return;
+      }
 
-window.calculateWithdrawal = function() {
-  const amtInput = document.getElementById('withdraw-custom-input').value;
-  const amt = parseFloat(amtInput) || 0;
-  const fee = amt * 0.05;
-  const net = amt - fee;
-  document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
-  document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
-};
+      if (confirm(`¿Adquirir acción ${p.name} por $${fmt(p.cost)} ARS?`)) {
+        await db.from('acciones_activas').insert([{
+          user_id: currentUser.id,
+          plan_id: p.id,
+          nombre_accion: p.name,
+          monto_invertido: p.cost,
+          total_retorno: p.total,
+          logo: p.logo,
+          fecha_inicio: now,
+          fecha_fin: now + (p.days * 86400000),
+          completada: false
+        }]);
 
-async function notifyDepositTelegram() {
-  const val = parseFloat(document.getElementById('deposit-custom-input').value);
-  if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
-  await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
-  closeWalletModal();
-  window.open('https://t.me/+i0gOfjPhPEU5Mjgx', '_blank');
-}
+        await updateDBUser({ balance: currentUser.balance - p.cost, last_plan_purchase_time: now });
+        closeActionSheet();
+        await loadUserData();
+        alert("¡Acción adquirida correctamente!");
+        switchTab('activos');
+      }
+    }
 
-async function executeWithdrawal() {
-  const now = new Date();
-  const currentDay = now.getDay();
-  const currentHour = now.getHours();
+    async function renderProducts() {
+      const container = document.getElementById('active-products-container');
+      if (!container) return;
+      container.innerHTML = '';
 
-  if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
-    const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
-    await updateDBUser({ penalty_until: penaltyTime });
-    closeWalletModal();
-    alert("Operación en proceso de validación por red.");
-    return;
-  }
+      if (!activePlansList || activePlansList.length === 0) {
+        container.innerHTML = `<div class="app-card p-6 text-center text-xs text-amber-100/60 font-mono-num">No hay activos en operación actualmente.</div>`;
+        return;
+      }
 
-  if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
-    alert("Operación temporalmente restringida por protocolo de seguridad.");
-    return;
-  }
+      const now = Date.now();
+      for (let plan of activePlansList) {
+        if (plan.fecha_fin <= now && !plan.completada) {
+          plan.completada = true;
+          await db.from('acciones_activas').update({ completada: true }).eq('id', plan.id);
+          await updateDBUser({
+            balance: currentUser.balance + plan.total_retorno,
+            completed_actions_count: (currentUser.completed_actions_count || 0) + 1
+          });
+        }
 
-  if (currentUser.retiro_pendiente) {
-    alert("Tiene un proceso activo. Confirme la recepción en su perfil para continuar.");
-    return;
-  }
+        const card = document.createElement('div');
+        card.className = "app-card p-4 space-y-2.5 font-mono-num";
+        card.innerHTML = `
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <img src="${plan.logo || './logo.png'}" class="w-6 h-6 object-contain bg-amber-500/10 p-0.5 rounded border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+              <span class="font-bold text-white">${plan.nombre_accion}</span>
+            </div>
+            <span class="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold uppercase">
+              ${plan.completada ? 'Finalizado ✓' : 'Acción Adquirida'}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs bg-[#001412] p-2.5 rounded-xl border border-amber-500/20">
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Inversión</span>
+              <strong class="text-white">$${fmt(plan.monto_invertido)} ARS</strong>
+            </div>
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Retorno</span>
+              <strong class="text-amber-400">$${fmt(plan.total_retorno)} ARS</strong>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
 
-  const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
-  const pin = document.getElementById('withdraw-pin-confirm').value.trim();
-  
-  if (isNaN(amt) || amt <= 0 || amt > 10000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
-  if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
-  if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
-  if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
+    async function saveProfileData() {
+      if (!currentUser) return;
+      const name = document.getElementById('prof-name-input').value.trim();
+      const cvu = document.getElementById('prof-cvu-input').value.trim();
+      const alias = document.getElementById('prof-alias-input').value.trim();
+      await updateDBUser({ nombre: name, cvu: cvu, alias: alias });
+      updateHeaderUser();
+      alert("Perfil actualizado correctamente.");
+    }
 
-  const fee = amt * 0.05;
-  const net = amt - fee;
+    window.openWalletModal = (mode) => {
+      document.getElementById('wallet-modal').classList.remove('hidden');
+      setWalletMode(mode);
+      if (mode === 'retirar') calculateWithdrawal();
+    };
+    window.closeWalletModal = () => document.getElementById('wallet-modal').classList.add('hidden');
 
-  await db.from('retiros').insert([{ 
-    user_id: currentUser.id, 
-    monto: amt, 
-    comision: fee,
-    monto_neto: net,
-    cvu_destino: currentUser.cvu || currentUser.alias, 
-    estado: 'pendiente' 
-  }]);
+    window.setWalletMode = function(mode) {
+      const boxRec = document.getElementById('wallet-recarga-box');
+      const boxRet = document.getElementById('wallet-retiro-box');
+      const tabRec = document.getElementById('wallet-tab-recargar');
+      const tabRet = document.getElementById('wallet-tab-retirar');
 
-  await updateDBUser({ 
-    balance: currentUser.balance - amt, 
-    retiro_pendiente: true 
-  });
+      if (mode === 'recargar') {
+        boxRec.style.display = 'block';
+        boxRet.style.display = 'none';
+        tabRec.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
+        tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+      } else {
+        boxRec.style.display = 'none';
+        boxRet.style.display = 'block';
+        tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
+        tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+      }
+    };
 
-  closeWalletModal();
-  switchTab('perfil');
-  alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
-}
+    window.copyCVU = function() {
+      navigator.clipboard.writeText("0000267900000002952651").then(() => alert("CVU copiado"));
+    };
 
-async function confirmWithdrawalReceived() {
-  if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
-    await updateDBUser({ retiro_pendiente: false });
-    alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
-    openWalletModal('recargar');
-  }
-}
+    window.calculateWithdrawal = function() {
+      const amtInput = document.getElementById('withdraw-custom-input').value;
+      const amt = parseFloat(amtInput) || 0;
+      const fee = amt * 0.05;
+      const net = amt - fee;
+      document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
+      document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
+    };
 
-function switchTab(tabName) {
-  ['terminal', 'activos', 'perfil'].forEach(t => {
-    document.getElementById(`view-${t}`).classList.add('hidden');
-    const pillBtn = document.getElementById(`pill-btn-${t}`);
-    if(pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition";
-  });
-  document.getElementById(`view-${tabName}`).classList.remove('hidden');
-  const activePill = document.getElementById(`pill-btn-${tabName}`);
-  if(activePill) activePill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
+    async function notifyDepositTelegram() {
+      const val = parseFloat(document.getElementById('deposit-custom-input').value);
+      if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
+      await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
+      closeWalletModal();
+      window.open('https://t.me/+i0gOfjPhPEU5Mjgx', '_blank');
+    }
 
-  if (tabName === 'activos') renderProducts();
-}
+    async function executeWithdrawal() {
+      const now = new Date();
+      const currentDay = now.getDay();
+      const currentHour = now.getHours();
 
-function renderUI() {
-  renderBalanceDisplay();
-  if (currentUser) {
-    document.getElementById('prof-name-input').value = currentUser.nombre || '';
-    document.getElementById('prof-cvu-input').value = currentUser.cvu || '';
-    document.getElementById('prof-alias-input').value = currentUser.alias || '';
-    updateHeaderUser();
-  }
-  renderPlans();
-}
+      if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
+        const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
+        await updateDBUser({ penalty_until: penaltyTime });
+        closeWalletModal();
+        alert("Operación en proceso de validación por red.");
+        return;
+      }
 
-checkExistingSession();
-startDailyTimer();
-</script>
+      if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
+        alert("Operación temporalmente restringida por protocolo de seguridad.");
+        return;
+      }
+
+      if (currentUser.retiro_pendiente) {
+        alert("Tiene un proceso activo. Confirme la recepción en su perfil para continuar.");
+        return;
+      }
+
+      const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
+      const pin = document.getElementById('withdraw-pin-confirm').value.trim();
+      
+      if (isNaN(amt) || amt <= 0 || amt > 10000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
+      if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
+      if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
+      if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
+
+      const fee = amt * 0.05;
+      const net = amt - fee;
+
+      await db.from('retiros').insert([{ 
+        user_id: currentUser.id, 
+        monto: amt, 
+        comision: fee,
+        monto_neto: net,
+        cvu_destino: currentUser.cvu || currentUser.alias, 
+        estado: 'pendiente' 
+      }]);
+
+      await updateDBUser({ 
+        balance: currentUser.balance - amt, 
+        retiro_pendiente: true 
+      });
+
+      closeWalletModal();
+      switchTab('perfil');
+      alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
+    }
+
+    async function confirmWithdrawalReceived() {
+      if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
+        await updateDBUser({ retiro_pendiente: false });
+        alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
+        openWalletModal('recargar');
+      }
+    }
+
+    function switchTab(tabName) {
+      ['terminal', 'activos', 'perfil'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        const pillBtn = document.getElementById(`pill-btn-${t}`);
+        if(pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition";
+      });
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+      const activePill = document.getElementById(`pill-btn-${tabName}`);
+      if(activePill) activePill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
+
+      if (tabName === 'activos') renderProducts();
+    }
+
+    function renderUI() {
+      renderBalanceDisplay();
+      if (currentUser) {
+        document.getElementById('prof-name-input').value = currentUser.nombre || '';
+        document.getElementById('prof-cvu-input').value = currentUser.cvu || '';
+        document.getElementById('prof-alias-input').value = currentUser.alias || '';
+        updateHeaderUser();
+      }
+      renderPlans();
+    }
+
+    checkExistingSession();
+    startDailyTimer();
+  </script>
 </body>
-</html>
+        </html>
