@@ -297,17 +297,6 @@
             </div>
             <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
           </a>
-
-          <a href="https://t.me/+i0gOfjPhPEU5Mjgx" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
-            <div class="flex items-center gap-3">
-              <i class="fa-solid fa-comments text-2xl text-amber-400"></i>
-              <div>
-                <span class="font-bold block text-amber-400 font-mono-num uppercase">Grupo Social Medrar</span>
-                <span class="text-[10px] text-amber-100/70 font-mono-num">Comunidad y Comprobantes</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-          </a>
         </div>
 
         <div class="pt-2">
@@ -856,7 +845,7 @@
       if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
       closeWalletModal();
-      window.open('https://t.me/+i0gOfjPhPEU5Mjgx', '_blank');
+      window.open('https://t.me/MedrarFinanzas', '_blank');
     }
 
     async function executeWithdrawal() {
@@ -948,4 +937,4 @@
     startDailyTimer();
   </script>
 </body>
-        </html>
+</html>
