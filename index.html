@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>MEDRAR - Aplicación Financiera Petrolera</title>
 
-<!-- METATAGS DE VISTA PREVIA PARA COMPARTIR EN REDES (WHATSAPP, TELEGRAM, ETC.) -->
-<meta property="metar:title" content="MEDRAR - Plataforma de Inversión Petrolera">
+<!-- METATAGS DE VISTA PREVIA PARA COMPARTIR EN REDES -->
 <meta property="og:title" content="MEDRAR - Plataforma de Inversión Petrolera">
 <meta property="og:description" content="Gestione sus activos petroleros, bonos diarios y retiros de forma segura.">
 <meta property="og:type" content="website">
@@ -260,8 +259,22 @@ body {
       </div>
     </div>
 
+    <!-- BOTÓN DE COMPARTIR APLICACIÓN / INVITAR -->
+    <button onclick="shareApp()" class="app-card w-full p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition cursor-pointer font-mono-num">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
+          <i class="fa-solid fa-share-nodes"></i>
+        </div>
+        <div class="text-left">
+          <span class="font-bold block text-amber-400 uppercase">Invitar a un Amigo</span>
+          <span class="text-[10px] text-amber-100/70">Compartir enlace de la app</span>
+        </div>
+      </div>
+      <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+    </button>
+
     <!-- CANALES OFICIALES -->
-    <div class="space-y-2.5 pt-2">
+    <div class="space-y-2.5 pt-1">
       <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
         <div class="flex items-center gap-3">
           <i class="fa-brands fa-telegram text-2xl text-amber-400"></i>
@@ -561,6 +574,20 @@ async function claimDailyReward() {
     alert("¡Bono acreditado exitosamente (+ $350 ARS)!");
   }
 }
+
+// FUNCIÓN PARA COMPARTIR LA APLICACIÓN
+window.shareApp = function() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'MEDRAR - Inversión Petrolera',
+      text: '¡Únete a MEDRAR y comienza a gestionar tus activos e inversiones petroleras hoy mismo!',
+      url: window.location.href
+    }).catch(err => console.log('Error al compartir', err));
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert("¡Enlace de la aplicación copiado al portapapeles!");
+  }
+};
 
 window.switchPlanMode = function(mode) {
   const btnBasico = document.getElementById('switch-basico');
