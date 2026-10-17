@@ -271,19 +271,33 @@
           </button>
         </div>
 
-        <!-- BOTÓN DE COMPARTIR APLICACIÓN -->
-        <button onclick="shareApp()" class="app-card w-full p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition cursor-pointer font-mono-num">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
-              <i class="fa-solid fa-share-nodes"></i>
+        <!-- SECCIÓN DE INVITAR A UN AMIGO Y LISTADO DE REFERIDOS -->
+        <div class="app-card p-4 space-y-3 font-mono-num">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-base">
+                <i class="fa-solid fa-share-nodes"></i>
+              </div>
+              <div class="text-left">
+                <span class="font-bold block text-amber-400 uppercase text-xs">Invitar a un Amigo</span>
+                <span class="text-[10px] text-amber-100/70">Gana $2.000 por invitado activo</span>
+              </div>
             </div>
-            <div class="text-left">
-              <span class="font-bold block text-amber-400 uppercase">Invitar a un Amigo</span>
-              <span class="text-[10px] text-amber-100/70">Compartir enlace de la app</span>
+            <button onclick="shareApp()" class="app-button px-3 py-2 rounded-xl text-xs cursor-pointer shadow-md">
+              Compartir
+            </button>
+          </div>
+
+          <div class="border-t border-amber-500/20 pt-3 space-y-2">
+            <span class="text-[11px] text-amber-200/80 font-bold uppercase block">Mis Referidos Invitados</span>
+            <div id="referrals-list-container" class="space-y-2 max-h-48 overflow-y-auto">
+              <!-- Se llena dinámicamente -->
+              <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl text-center text-[11px] text-amber-100/60">
+                Aún no tienes invitados registrados.
+              </div>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-        </button>
+        </div>
 
         <!-- CANALES OFICIALES -->
         <div class="space-y-2.5 pt-1">
@@ -430,6 +444,12 @@
       return devId;
     }
 
+    function getUrlParameter(name) {
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
     function fmt(n) { 
       return new Intl.NumberFormat('es-AR').format(Math.round(n || 0)); 
     }
@@ -467,12 +487,18 @@
         }
         currentUser = existingUser;
       } else {
+        const inviteCodeRef = getUrlParameter('ref');
+        const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
         let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
           device_id: deviceId, 
           nombre: nameVal, 
           pin: pinVal, 
           balance: 0, 
-          retiro_pendiente: false
+          retiro_pendiente: false,
+          cuenta_activa: false,
+          codigo_invitacion: codigoPropio,
+          invitado_por: inviteCodeRef || null
         }]).select().single();
 
         if (insertError) {
@@ -497,6 +523,7 @@
       let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
       activePlansList = plansData || [];
       renderUI();
+      loadReferrals();
     }
 
     async function updateDBUser(fields) {
@@ -588,17 +615,45 @@
     }
 
     window.shareApp = function() {
+      if (!currentUser) return;
+      const referralUrl = `${window.location.origin}${window.location.pathname}?ref=${currentUser.codigo_invitacion || ''}`;
       if (navigator.share) {
         navigator.share({
           title: 'MEDRAR - Mercado Petrolero',
           text: '¡Únete a MEDRAR y comienza a gestionar tus operaciones en el mercado petrolero hoy mismo!',
-          url: window.location.href
+          url: referralUrl
         }).catch(err => console.log('Error al compartir', err));
       } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert("¡Enlace de la aplicación copiado al portapapeles!");
+        navigator.clipboard.writeText(referralUrl);
+        alert("¡Enlace de invitación copiado al portapapeles!");
       }
     };
+
+    async function loadReferrals() {
+      if (!currentUser || !currentUser.codigo_invitacion) return;
+      const container = document.getElementById('referrals-list-container');
+      if (!container) return;
+
+      let { data: invitados, error } = await db.from('usuarios').select('*').eq('invitado_por', currentUser.codigo_invitacion);
+      if (error || !invitados || invitados.length === 0) {
+        container.innerHTML = `<div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl text-center text-[11px] text-amber-100/60">Aún no tienes invitados registrados.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      invitados.forEach(inv => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl text-xs";
+        item.innerHTML = `
+          <div>
+            <span class="font-bold text-white block">${inv.nombre}</span>
+            <span class="text-[9px] text-amber-200/60">Estado: ${inv.cuenta_activa ? '<strong class="text-emerald-400">Activo (Carga realizada)</strong>' : '<span class="text-amber-400">Pendiente de Carga</span>'}</span>
+          </div>
+          <span class="font-bold text-amber-400 font-mono-num">${inv.cuenta_activa ? '+$2.000 ARS' : '$0 ARS'}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
 
     window.switchPlanMode = function(mode) {
       const btnBasico = document.getElementById('switch-basico');
@@ -823,7 +878,7 @@
         boxRec.style.display = 'none';
         boxRet.style.display = 'block';
         tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-        tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+        tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
       }
     };
 
@@ -843,12 +898,32 @@
     async function notifyDepositTelegram() {
       const val = parseFloat(document.getElementById('deposit-custom-input').value);
       if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
+      
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
+
+      // Si es su primera carga y fue invitado por alguien, activar cuenta del invitado y dar recompensa de $2000 al invitador
+      if (!currentUser.cuenta_activa) {
+        await db.from('usuarios').update({ cuenta_activa: true }).eq('id', currentUser.id);
+        
+        if (currentUser.invitado_por) {
+          let { data: invitador } = await db.from('usuarios').select('*').eq('codigo_invitacion', currentUser.invitado_por).maybeSingle();
+          if (invitador) {
+            await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
+          }
+        }
+      }
+
       closeWalletModal();
       window.open('https://t.me/MedrarFinanzas', '_blank');
     }
 
     async function executeWithdrawal() {
+      // REGLA: El usuario no puede retirar si no ha realizado una carga previa (cuenta_activa debe ser true)
+      if (!currentUser.cuenta_activa) {
+        alert("Para realizar retiros debe contar con una carga previa de saldo en la plataforma.");
+        return;
+      }
+
       const now = new Date();
       const currentDay = now.getDay();
       const currentHour = now.getHours();
@@ -920,6 +995,7 @@
       if(activePill) activePill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
 
       if (tabName === 'activos') renderProducts();
+      if (tabName === 'perfil') loadReferrals();
     }
 
     function renderUI() {
