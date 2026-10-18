@@ -901,13 +901,15 @@
       
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
 
-      // Si es su primera carga y fue invitado por alguien, activar cuenta y validar tope silencioso de 30
+      // Si es su primera carga y fue invitado por alguien, activar cuenta y dar recompensa de $2000 al invitador
       if (!currentUser.cuenta_activa) {
         await db.from('usuarios').update({ cuenta_activa: true }).eq('id', currentUser.id);
         
         if (currentUser.invitado_por) {
           let { data: invitador } = await db.from('usuarios').select('*').eq('codigo_invitacion', currentUser.invitado_por).maybeSingle();
-          
+          if (invitador) {
+            await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
+      
           if (invitador) {
             // Contamos cuántos referidos activos ya tiene el invitador
             let { count: totalReferidosActivos } = await db.from('usuarios')
