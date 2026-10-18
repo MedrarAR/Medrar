@@ -61,9 +61,12 @@
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-<!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
+  <!-- ========================================== -->
+  <!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN    -->
+  <!-- ========================================== -->
   <div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
     <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
+      
       <div class="text-center space-y-1">
         <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl mb-2">
           <i class="fa-solid fa-user-shield"></i>
@@ -97,35 +100,46 @@
           Registrarse / Ingresar
         </button>
       </div>
+
     </div>
   </div>
 
-  <!-- 2. POPUP DE BIENVENIDA (SE MUESTRA TRAS EL REGISTRO) -->
+  <!-- ========================================== -->
+  <!-- 2. POPUP DE BIENVENIDA INSTITUCIONAL       -->
+  <!-- ========================================== -->
   <div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
+      
       <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
         <i class="fa-solid fa-chart-line"></i>
       </div>
+
       <div class="space-y-1">
         <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
         <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
       </div>
+
       <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
         <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
         <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
       </div>
+
       <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
         ¡Listo!
       </button>
+
     </div>
   </div>
 
-  <!-- CONTENEDOR PRINCIPAL -->
+  <!-- ========================================== -->
+  <!-- 3. CONTENEDOR PRINCIPAL DE LA APLICACIÓN   -->
+  <!-- ========================================== -->
   <main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-32 overflow-hidden">
 
     <div>
-      <!-- HEADER CON SALUDO ESTILO MERCADO PAGO Y SILUETA -->
+      <!-- HEADER CON SALUDO Y PERFIL -->
       <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
+        
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold p-1 overflow-hidden shadow-inner">
             <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
@@ -141,10 +155,15 @@
             <i class="fa-solid fa-user"></i>
           </button>
         </div>
+
       </header>
 
-      <!-- VISTA 1: TERMINAL -->
+      <!-- ====================================== -->
+      <!-- VISTA 1: TERMINAL                      -->
+      <!-- ====================================== -->
       <div id="view-terminal" class="p-4 space-y-4">
+        
+        <!-- TARJETA DE CAPITAL / SALDO -->
         <div class="app-card p-5 space-y-4">
           <div class="flex items-center justify-between text-xs text-amber-200/80">
             <span class="uppercase tracking-wider text-[11px] font-bold text-amber-400">Capital de Ingreso</span>
@@ -186,7 +205,7 @@
           </button>
         </div>
 
-        <!-- SELECTOR DESLIZANTE BÁSICO / PREMIUM -->
+        <!-- SELECTOR DE MERCADO: BÁSICO / PREMIUM -->
         <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
           <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
             Básico
@@ -196,7 +215,7 @@
           </button>
         </div>
 
-        <!-- CONTENEDOR MODO BÁSICO (ACCIONES PETROLERAS) -->
+        <!-- CONTENEDOR BÁSICO (ACCIONES) -->
         <div id="section-basico" class="space-y-3.5">
           <div class="flex items-center justify-between pt-1">
             <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Mercado de Acciones</h3>
@@ -204,31 +223,39 @@
           <div id="plans-container" class="space-y-3.5"></div>
         </div>
 
-        <!-- CONTENEDOR MODO PREMIUM (SOLO PRÓXIMAMENTE) -->
+        <!-- CONTENEDOR PREMIUM -->
         <div id="section-premium" class="hidden space-y-3.5">
           <div class="app-card p-6 text-center space-y-3 border-amber-500/30 bg-[#001C1A]">
             <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl">
               <i class="fa-solid fa-clock animate-pulse"></i>
             </div>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono-num">Próximamente</h3>
-            <p class="text-xs text-amber-200/70 font-mono-num">
-              Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.
-            </p>
+            <p class="text-xs text-amber-200/70 font-mono-num">Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.</p>
           </div>
         </div>
+
       </div>
 
-      <!-- VISTA 2: ACTIVOS -->
+      <!-- ====================================== -->
+      <!-- VISTA 2: ACTIVOS                       -->
+      <!-- ====================================== -->
       <div id="view-activos" class="hidden p-4 space-y-4">
+        
         <div class="app-card p-4">
           <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación</h2>
           <p class="text-[11px] text-amber-100/70 mt-1">Al cumplirse el ciclo operativo, el capital inicial y los dividendos se acreditan automáticamente.</p>
         </div>
+
         <div id="active-products-container" class="space-y-3"></div>
+
       </div>
 
-      <!-- VISTA 3: PERFIL -->
+      <!-- ====================================== -->
+      <!-- VISTA 3: PERFIL                        -->
+      <!-- ====================================== -->
       <div id="view-perfil" class="hidden p-4 space-y-4">
+        
+        <!-- DATOS BANCARIOS Y DE CUENTA -->
         <div class="app-card p-4 space-y-3 text-xs">
           <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
             <i class="fa-solid fa-user-shield text-sm"></i>
@@ -257,7 +284,7 @@
           </div>
         </div>
 
-        <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO (REACTIVACIÓN DE CUENTA) -->
+        <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO -->
         <div id="withdrawal-confirm-box" class="hidden app-card p-4 space-y-3 border-amber-500/40 bg-[#002B27]">
           <div class="flex items-center gap-2.5 text-amber-400 font-bold text-xs">
             <i class="fa-solid fa-circle-check text-base"></i>
@@ -271,7 +298,7 @@
           </button>
         </div>
 
-        <!-- SECCIÓN DE INVITAR A UN AMIGO Y LISTADO DE REFERIDOS -->
+        <!-- SECCIÓN DE REFERIDOS E INVITACIONES -->
         <div class="app-card p-4 space-y-3 font-mono-num">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -291,7 +318,6 @@
           <div class="border-t border-amber-500/20 pt-3 space-y-2">
             <span class="text-[11px] text-amber-200/80 font-bold uppercase block">Mis Referidos Invitados</span>
             <div id="referrals-list-container" class="space-y-2 max-h-48 overflow-y-auto">
-              <!-- Se llena dinámicamente -->
               <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl text-center text-[11px] text-amber-100/60">
                 Aún no tienes invitados registrados.
               </div>
@@ -299,7 +325,7 @@
           </div>
         </div>
 
-        <!-- CANALES OFICIALES -->
+        <!-- CANAL OFICIAL TELEGRAM -->
         <div class="space-y-2.5 pt-1">
           <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
             <div class="flex items-center gap-3">
@@ -318,10 +344,14 @@
             <i class="fa-solid fa-power-off"></i> Salir de la Cuenta
           </button>
         </div>
+
       </div>
+
     </div>
 
-    <!-- CÁPSULA FLOTANTE INFERIOR CON LAS 3 SECCIONES (TERMINAL, ACTIVOS, PERFIL) -->
+    <!-- ========================================== -->
+    <!-- CÁPSULA FLOTANTE INFERIOR DE NAVEGACIÓN    -->
+    <!-- ========================================== -->
     <div class="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 w-max">
       <div class="floating-pill px-4 py-2.5 rounded-full flex items-center gap-6">
         <button onclick="switchTab('terminal')" id="pill-btn-terminal" class="flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition">
@@ -339,12 +369,14 @@
       </div>
     </div>
 
-    <!-- NAVEGACIÓN INFERIOR -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 h-12 z-30 shadow-2xl"></nav>
 
-    <!-- MODAL BILLETERA -->
+    <!-- ========================================== -->
+    <!-- MODAL DE BILLETERA (DEPÓSITOS Y RETIROS)   -->
+    <!-- ========================================== -->
     <div id="wallet-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs hidden flex items-center justify-center p-4">
       <div class="app-card w-full max-w-sm p-5 space-y-4 text-white bg-[#001F1C] border-amber-500/40">
+        
         <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
           <h3 class="text-xs font-bold text-white uppercase tracking-widest"><i class="fa-solid fa-wallet text-amber-400 mr-1.5"></i> Gestión Financiera</h3>
           <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer p-1">
@@ -357,7 +389,7 @@
           <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase">Retirar</button>
         </div>
 
-        <!-- Depósito -->
+        <!-- DEPÓSITO -->
         <div id="wallet-recarga-box" class="space-y-3.5 text-xs font-mono-num">
           <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1">
             <span class="text-[10px] text-amber-200/70 uppercase block">CVU Oficial</span>
@@ -375,7 +407,7 @@
           </button>
         </div>
 
-        <!-- Retiro -->
+        <!-- RETIRO -->
         <div id="wallet-retiro-box" class="hidden space-y-3 text-xs font-mono-num">
           <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1 text-[11px]">
             <div class="flex justify-between text-amber-200/80"><span>Titular:</span><strong id="w-dest-name" class="text-white">---</strong></div>
@@ -387,7 +419,7 @@
             <input id="withdraw-custom-input" type="number" max="10000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
           </div>
 
-          <!-- Calculadora de Comisión (5%) -->
+          <!-- CALCULADORA DE COMISIÓN (5%) -->
           <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
             <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
             <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
@@ -402,10 +434,13 @@
             Solicitar Retiro
           </button>
         </div>
+
       </div>
     </div>
 
-    <!-- MODAL FLOTANTE INFERIOR -->
+    <!-- ========================================== -->
+    <!-- MODAL INFERIOR DE ACCIONES (BOTTOM SHEET)  -->
+    <!-- ========================================== -->
     <div id="action-sheet-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden" onclick="closeActionSheet()"></div>
     <div id="action-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#001F1C] border-t border-amber-500/40 rounded-t-3xl p-5 transform translate-y-full max-w-md mx-auto shadow-2xl space-y-4">
       <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-2"></div>
@@ -414,6 +449,9 @@
 
   </main>
 
+  <!-- ========================================== -->
+  <!-- SCRIPTS Y LÓGICA DE LA APLICACIÓN          -->
+  <!-- ========================================== -->
   <script>
     const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
@@ -478,55 +516,41 @@
         return;
       }
 
-      // Aviso visual temporal en pantalla para saber qué pasa
-      const errorDiv = document.getElementById('multicount-error');
-      errorDiv.classList.remove('hidden');
-      errorDiv.innerText = "Conectando con base de datos...";
+      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
 
-      try {
-        let { data: existingUser, error: fetchError } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
-
-        if (fetchError) {
-          errorDiv.innerText = "Error al buscar: " + fetchError.message;
+      if (existingUser) {
+        if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
+          document.getElementById('multicount-error').classList.remove('hidden');
           return;
         }
+        currentUser = existingUser;
+      } else {
+        const inviteCodeRef = getUrlParameter('ref');
+        const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        if (existingUser) {
-          if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
-            errorDiv.innerText = "Dispositivo vinculado a otro usuario.";
-            return;
-          }
-          currentUser = existingUser;
-        } else {
-          const inviteCodeRef = getUrlParameter('ref');
-          const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
+          device_id: deviceId, 
+          nombre: nameVal, 
+          pin: pinVal, 
+          balance: 0, 
+          retiro_pendiente: false,
+          cuenta_activa: false,
+          codigo_invitacion: codigoPropio,
+          invitado_por: inviteCodeRef || null
+        }]).select().single();
 
-          let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
-            device_id: deviceId, 
-            nombre: nameVal, 
-            pin: pinVal, 
-            balance: 0, 
-            retiro_pendiente: false,
-            cuenta_activa: false,
-            codigo_invitacion: codigoPropio,
-            invitado_por: inviteCodeRef || null
-          }]).select().single();
-
-          if (insertError) {
-            errorDiv.innerText = "Error al registrar: " + insertError.message;
-            return;
-          }
-          currentUser = newUser;
+        if (insertError) {
+          console.error("Error Supabase:", insertError);
+          alert("Error al registrar en la base de datos.");
+          return;
         }
-
-        document.getElementById('auth-screen').remove();
-        document.getElementById('notice-modal').classList.remove('hidden');
-        updateHeaderUser();
-        await loadUserData();
-
-      } catch (err) {
-        errorDiv.innerText = "Excepción: " + err.message;
+        currentUser = newUser;
       }
+
+      document.getElementById('auth-screen').remove();
+      document.getElementById('notice-modal').classList.remove('hidden');
+      updateHeaderUser();
+      await loadUserData();
     }
 
     async function loadUserData() {
@@ -892,7 +916,7 @@
         boxRec.style.display = 'none';
         boxRet.style.display = 'block';
         tabRet.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
-        tabRet.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
+        tabRec.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition uppercase";
       }
     };
 
@@ -908,30 +932,25 @@
       document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
       document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
     };
-    
-      async function notifyDepositTelegram() {
+
+    async function notifyDepositTelegram() {
       const val = parseFloat(document.getElementById('deposit-custom-input').value);
       if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
       
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
 
-      // Si es su primera carga y fue invitado por alguien, activar cuenta y dar recompensa de $2000 al invitador
+      // Si es su primera carga y fue invitado, activar cuenta y validar tope silencioso de 30 referidos
       if (!currentUser.cuenta_activa) {
         await db.from('usuarios').update({ cuenta_activa: true }).eq('id', currentUser.id);
         
         if (currentUser.invitado_por) {
           let { data: invitador } = await db.from('usuarios').select('*').eq('codigo_invitacion', currentUser.invitado_por).maybeSingle();
           if (invitador) {
-            await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
-      
-          if (invitador) {
-            // Contamos cuántos referidos activos ya tiene el invitador
             let { count: totalReferidosActivos } = await db.from('usuarios')
               .select('*', { count: 'exact', head: true })
               .eq('invitado_por', invitador.codigo_invitacion)
               .eq('cuenta_activa', true);
 
-            // Tope silencioso de 30 invitados con recompensa
             if ((totalReferidosActivos || 0) <= 30) {
               await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
             }
@@ -941,16 +960,9 @@
 
       closeWalletModal();
       window.open('https://t.me/MedrarFinanzas', '_blank');
-      }          }
-        }
-      }
-
-      closeWalletModal();
-      window.open('https://t.me/MedrarFinanzas', '_blank');
     }
 
     async function executeWithdrawal() {
-      // REGLA: El usuario no puede retirar si no ha realizado una carga previa (cuenta_activa debe ser true)
       if (!currentUser.cuenta_activa) {
         alert("Para realizar retiros debe contar con una carga previa de saldo en la plataforma.");
         return;
