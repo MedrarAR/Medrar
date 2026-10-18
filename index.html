@@ -478,41 +478,55 @@
         return;
       }
 
-      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+      // Aviso visual temporal en pantalla para saber qué pasa
+      const errorDiv = document.getElementById('multicount-error');
+      errorDiv.classList.remove('hidden');
+      errorDiv.innerText = "Conectando con base de datos...";
 
-      if (existingUser) {
-        if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
-          document.getElementById('multicount-error').classList.remove('hidden');
+      try {
+        let { data: existingUser, error: fetchError } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+
+        if (fetchError) {
+          errorDiv.innerText = "Error al buscar: " + fetchError.message;
           return;
         }
-        currentUser = existingUser;
-      } else {
-        const inviteCodeRef = getUrlParameter('ref');
-        const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
-          device_id: deviceId, 
-          nombre: nameVal, 
-          pin: pinVal, 
-          balance: 0, 
-          retiro_pendiente: false,
-          cuenta_activa: false,
-          codigo_invitacion: codigoPropio,
-          invitado_por: inviteCodeRef || null
-        }]).select().single();
+        if (existingUser) {
+          if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
+            errorDiv.innerText = "Dispositivo vinculado a otro usuario.";
+            return;
+          }
+          currentUser = existingUser;
+        } else {
+          const inviteCodeRef = getUrlParameter('ref');
+          const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        if (insertError) {
-          console.error("Error Supabase:", insertError);
-          alert("Error al registrar en la base de datos: " + (insertError.message || "Verifique la tabla usuarios."));
-          return;
+          let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
+            device_id: deviceId, 
+            nombre: nameVal, 
+            pin: pinVal, 
+            balance: 0, 
+            retiro_pendiente: false,
+            cuenta_activa: false,
+            codigo_invitacion: codigoPropio,
+            invitado_por: inviteCodeRef || null
+          }]).select().single();
+
+          if (insertError) {
+            errorDiv.innerText = "Error al registrar: " + insertError.message;
+            return;
+          }
+          currentUser = newUser;
         }
-        currentUser = newUser;
+
+        document.getElementById('auth-screen').remove();
+        document.getElementById('notice-modal').classList.remove('hidden');
+        updateHeaderUser();
+        await loadUserData();
+
+      } catch (err) {
+        errorDiv.innerText = "Excepción: " + err.message;
       }
-
-      document.getElementById('auth-screen').remove();
-      document.getElementById('notice-modal').classList.remove('hidden');
-      updateHeaderUser();
-      await loadUserData();
     }
 
     async function loadUserData() {
