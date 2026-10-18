@@ -61,7 +61,7 @@
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-  <!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
+<!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN INICIAL -->
   <div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
     <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
       <div class="text-center space-y-1">
@@ -76,12 +76,12 @@
         Dispositivo vinculado a otro usuario.
       </div>
 
-      <form id="auth-form" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
+      <div class="space-y-4">
         <div>
           <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">Nombre del Titular</label>
           <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
             <i class="fa-solid fa-user text-amber-400 text-sm mr-2.5"></i>
-            <input id="auth-name" type="text" required placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
+            <input id="auth-name" type="text" placeholder="Nombre completo" class="bg-transparent text-xs text-white w-full outline-none placeholder:text-gray-500">
           </div>
         </div>
 
@@ -89,14 +89,14 @@
           <label class="text-[11px] font-semibold text-amber-200/80 block mb-1">PIN de Seguridad (4 Dígitos)</label>
           <div class="flex items-center bg-[#001412] border border-amber-500/30 rounded-xl px-3 py-3 focus-within:border-amber-400">
             <i class="fa-solid fa-lock text-amber-400 text-sm mr-2.5"></i>
-            <input id="auth-pin" type="password" required maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-500">
+            <input id="auth-pin" type="password" maxlength="4" placeholder="••••" class="bg-transparent text-xs text-white w-full outline-none tracking-widest font-mono-num placeholder:text-gray-500">
           </div>
         </div>
 
-        <button type="submit" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
+        <button type="button" onclick="handleAuthSubmit()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
           Registrarse / Ingresar
         </button>
-      </form>
+      </div>
     </div>
   </div>
 
