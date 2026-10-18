@@ -894,22 +894,38 @@
       document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
       document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
     };
-
-    async function notifyDepositTelegram() {
+    
+      async function notifyDepositTelegram() {
       const val = parseFloat(document.getElementById('deposit-custom-input').value);
       if (isNaN(val) || val < 5000) { alert("Monto mínimo obligatorio: $5.000 ARS"); return; }
       
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
 
-      // Si es su primera carga y fue invitado por alguien, activar cuenta del invitado y dar recompensa de $2000 al invitador
+      // Si es su primera carga y fue invitado por alguien, activar cuenta y validar tope silencioso de 30
       if (!currentUser.cuenta_activa) {
         await db.from('usuarios').update({ cuenta_activa: true }).eq('id', currentUser.id);
         
         if (currentUser.invitado_por) {
           let { data: invitador } = await db.from('usuarios').select('*').eq('codigo_invitacion', currentUser.invitado_por).maybeSingle();
+          
           if (invitador) {
-            await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
+            // Contamos cuántos referidos activos ya tiene el invitador
+            let { count: totalReferidosActivos } = await db.from('usuarios')
+              .select('*', { count: 'exact', head: true })
+              .eq('invitado_por', invitador.codigo_invitacion)
+              .eq('cuenta_activa', true);
+
+            // Tope silencioso de 30 invitados con recompensa
+            if ((totalReferidosActivos || 0) <= 30) {
+              await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
+            }
           }
+        }
+      }
+
+      closeWalletModal();
+      window.open('https://t.me/MedrarFinanzas', '_blank');
+      }          }
         }
       }
 
