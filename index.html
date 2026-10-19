@@ -307,7 +307,7 @@
               </div>
               <div class="text-left">
                 <span class="font-bold block text-amber-400 uppercase text-xs">Invitar a un Amigo</span>
-                <span class="text-[10px] text-amber-100/70">Gana $2.000 por invitado activo</span>
+                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 5% por invitado activo</span>
               </div>
             </div>
             <button onclick="shareApp()" class="app-button px-3 py-2 rounded-xl text-xs cursor-pointer shadow-md">
@@ -687,7 +687,7 @@
             <span class="font-bold text-white block">${inv.nombre}</span>
             <span class="text-[9px] text-amber-200/60">Estado: ${inv.cuenta_activa ? '<strong class="text-emerald-400">Activo (Carga realizada)</strong>' : '<span class="text-amber-400">Pendiente de Carga</span>'}</span>
           </div>
-          <span class="font-bold text-amber-400 font-mono-num">${inv.cuenta_activa ? '+$2.000 ARS' : '$0 ARS'}</span>
+          <span class="font-bold text-amber-400 font-mono-num">${inv.cuenta_activa ? '+$1.250+ ARS' : '$0 ARS'}</span>
         `;
         container.appendChild(item);
       });
@@ -734,7 +734,7 @@
               </div>
             </div>
             <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
-              Acción Adquirida
+              Operar Acción
             </span>
           </div>
 
@@ -760,7 +760,25 @@
 
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
-      const canBuyWeekly = (now - (currentUser ? currentUser.last_plan_purchase_time || 0 : 0)) >= weekMs;
+
+      // REGLA 1: Refinor solo se puede comprar 1 vez histórica por usuario
+      let canBuy = true;
+      let btnText = `Activar Acción ($${fmt(p.cost)} ARS)`;
+
+      if (p.id === 'refinor') {
+        const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
+        if (hasBoughtRefinor) {
+          canBuy = false;
+          btnText = 'Acción ya adquirida (Única vez)';
+        }
+      } else {
+        // REGLA 2: El resto se puede comprar 1 vez por semana (7 días)
+        const canBuyWeekly = (now - (currentUser ? currentUser.last_plan_purchase_time || 0 : 0)) >= weekMs;
+        if (!canBuyWeekly) {
+          canBuy = false;
+          btnText = 'Disponible en 7 días';
+        }
+      }
 
       content.innerHTML = `
         <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
@@ -779,9 +797,9 @@
           <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
         </div>
         <button onclick="purchasePlan('${p.id}')" 
-          ${!canBuyWeekly ? 'disabled' : ''}
-          class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-          ${canBuyWeekly ? `Activar Acción ($${fmt(p.cost)} ARS)` : 'Acción Adquirida'}
+          ${!canBuy ? 'disabled' : ''}
+          class="${canBuy ? 'app-button' : 'bg-amber-500/10 text-amber-200/40 cursor-not-allowed'} w-full py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md font-bold">
+          ${btnText}
         </button>
       `;
 
@@ -803,9 +821,19 @@
 
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
-      if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
-        closeActionSheet();
-        return;
+
+      if (p.id === 'refinor') {
+        const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
+        if (hasBoughtRefinor) {
+          alert("La acción Refinor solo puede adquirirse una única vez por usuario.");
+          closeActionSheet();
+          return;
+        }
+      } else {
+        if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
+          closeActionSheet();
+          return;
+        }
       }
 
       if (currentUser.balance < p.cost) {
@@ -828,7 +856,13 @@
           completada: false
         }]);
 
-        await updateDBUser({ balance: currentUser.balance - p.cost, last_plan_purchase_time: now });
+        // Actualizamos saldo y timestamp de compra (solo si no es refinor, o actualizamos igual el balance)
+        let updateData = { balance: currentUser.balance - p.cost };
+        if (p.id !== 'refinor') {
+          updateData.last_plan_purchase_time = now;
+        }
+
+        await updateDBUser(updateData);
         closeActionSheet();
         await loadUserData();
         alert("¡Acción adquirida correctamente!");
@@ -939,7 +973,7 @@
       
       await db.from('depositos').insert([{ user_id: currentUser.id, monto: val, estado: 'pendiente' }]);
 
-      // Si es su primera carga y fue invitado, activar cuenta y validar tope silencioso de 30 referidos
+      // Activación de cuenta y cálculo de referidos: $1.000 + 5% del monto de carga del invitado
       if (!currentUser.cuenta_activa) {
         await db.from('usuarios').update({ cuenta_activa: true }).eq('id', currentUser.id);
         
@@ -952,7 +986,8 @@
               .eq('cuenta_activa', true);
 
             if ((totalReferidosActivos || 0) <= 30) {
-              await db.from('usuarios').update({ balance: (invitador.balance || 0) + 2000 }).eq('id', invitador.id);
+              const premioReferido = 1000 + (val * 0.05);
+              await db.from('usuarios').update({ balance: (invitador.balance || 0) + premioReferido }).eq('id', invitador.id);
             }
           }
         }
