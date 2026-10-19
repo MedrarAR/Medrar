@@ -798,18 +798,30 @@
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
 
+      // 1. REGLA REFINOR: Única vez histórica
       if (p.id === 'refinor') {
         const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
         if (hasBoughtRefinor) {
-          alert("La acción Refinor solo puede adquirirse una única vez por usuario.");
           closeActionSheet();
           return;
         }
       } else {
-        if ((now - (currentUser.last_plan_purchase_time || 0)) < weekMs) {
-          alert("Solo puede adquirir una acción por semana.");
-          closeActionSheet();
-          return;
+        // 2. REGLA OTRAS ACCIONES: Validación por tipo de acción (última compra de ESTA misma acción)
+        // Buscamos la última compra registrada de este plan específico en el historial del usuario
+        let { data: lastActionOfThisType } = await db.from('acciones_activas')
+          .select('fecha_inicio')
+          .eq('user_id', currentUser.id)
+          .eq('plan_id', p.id)
+          .order('fecha_inicio', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (lastActionOfThisType) {
+          const elapsedSinceLast = now - lastActionOfThisType.fecha_inicio;
+          if (elapsedSinceLast < weekMs) {
+            closeActionSheet();
+            return; // Bloqueo silencioso si no pasaron los 7 días para esta acción específica
+          }
         }
       }
 
@@ -834,10 +846,6 @@
         }]);
 
         let updateData = { balance: currentUser.balance - p.cost };
-        if (p.id !== 'refinor') {
-          updateData.last_plan_purchase_time = now;
-        }
-
         await updateDBUser(updateData);
         closeActionSheet();
         await loadUserData();
