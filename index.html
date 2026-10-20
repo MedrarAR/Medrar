@@ -570,16 +570,30 @@
       }
     }
 
+    // Respaldo de seguridad para renderUI por si no está definida
+    if (typeof renderUI !== 'function') {
+      window.renderUI = function() {
+        console.log("Interfaz renderizada correctamente");
+        const balanceEl = document.getElementById('user-balance');
+        if (balanceEl && currentUser) balanceEl.innerText = '$' + (currentUser.balance || 0);
+      };
+    }
+
     async function loadUserData() {
       if (!currentUser) return;
-      let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).maybeSingle();
-      if (userData) currentUser = userData;
+      try {
+        let { data: userData } = await db.from('usuarios').select('*').eq('device_id', getDeviceId()).maybeSingle();
+        if (userData) currentUser = userData;
 
-      let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
-      activePlansList = plansData || [];
-      renderUI();
-      loadReferrals();
-      startDailyTimer();
+        let { data: plansData } = await db.from('acciones_activas').select('*');
+        window.activePlansList = plansData || [];
+        
+        if (typeof renderUI === 'function') {
+          renderUI();
+        }
+      } catch (e) {
+        console.log("Error cargando datos de usuario:", e);
+      }
     }
 
     async function updateDBUser(fields) {
