@@ -205,15 +205,18 @@
           </button>
         </div>
 
-        <!-- SELECTOR DE MERCADO: BÁSICO / PREMIUM -->
-        <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
-          <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
-            Básico
-          </button>
-          <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center">
-            Premium
-          </button>
-        </div>
+        <!-- Selector de Categorías de Mercado -->
+<div class="grid grid-cols-3 gap-1 bg-[#001412] p-1.5 rounded-xl border border-amber-500/20 mb-4">
+  <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs">
+    Básico
+  </button>
+  <button id="switch-express" onclick="switchPlanMode('express')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs">
+    Express
+  </button>
+  <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs">
+    Premium
+  </button>
+</div>
 
         <!-- CONTENEDOR BÁSICO (ACCIONES) -->
         <div id="section-basico" class="space-y-3.5">
@@ -222,19 +225,111 @@
           </div>
           <div id="plans-container" class="space-y-3.5"></div>
         </div>
+<!-- SECCIÓN EXPRESS (Dividida en Express 1 y Express 2) -->
+<div id="section-express" class="hidden space-y-5 pb-6">
+  <!-- Aviso de Horario y Restricción -->
+  <div class="bg-[#00201D] border border-amber-500/30 p-3.5 rounded-2xl flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+      <i class="fa-solid fa-bolt text-sm"></i>
+    </div>
+    <div>
+      <h4 class="text-white font-bold text-xs">Mercado Express (12:00 a 13:00 hs)</h4>
+      <p class="text-[10px] text-amber-200/70 font-mono-num">Disponible solo en horario estricto y mediante pago por depósito.</p>
+    </div>
+  </div>
 
+  <!-- Grupo Express 1 -->
+  <div class="space-y-3">
+    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Express 1 (Costo $8k - $18k)</h3>
+    <div id="express1-container" class="space-y-3">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+  </div>
+
+  <!-- Grupo Express 2 -->
+  <div class="space-y-3 pt-2">
+    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Express 2 (Costo $20k - $45k)</h3>
+    <div id="express2-container" class="space-y-3">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+  </div>
+</div>
         <!-- CONTENEDOR PREMIUM -->
-        <div id="section-premium" class="hidden space-y-3.5">
-          <div class="app-card p-6 text-center space-y-3 border-amber-500/30 bg-[#001C1A]">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl">
-              <i class="fa-solid fa-clock animate-pulse"></i>
-            </div>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider font-mono-num">Próximamente</h3>
-            <p class="text-xs text-amber-200/70 font-mono-num">Nuevas funciones y secciones exclusivas estarán disponibles muy pronto.</p>
-          </div>
-        </div>
+        <!-- Sección Premium -->
+<div id="section-premium" class="hidden space-y-4">
+  <div class="bg-[#00201D] border border-amber-500/30 p-4 rounded-2xl text-center space-y-1">
+    <h3 class="text-white font-bold text-sm">Acciones Premium</h3>
+    <p class="text-[11px] text-amber-200/70">Exclusivo para inversores de alto rendimiento. Muy pronto disponibles.</p>
+  </div>
 
+  <div class="grid grid-cols-2 gap-3">
+    <!-- Placeholder 1 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
       </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 2 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 3 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 4 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 5 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Placeholder 6 -->
+    <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-lock text-sm"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-white text-xs">Premium</h4>
+        <span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- ====================================== -->
       <!-- VISTA 2: ACTIVOS                       -->
@@ -249,9 +344,40 @@
         <div id="active-products-container" class="space-y-3"></div>
 
       </div>
+<!-- VISTA 3: HISTORIAL -->
+<div id="view-historial" class="hidden p-4 space-y-4 pb-24">
+  <div class="app-card p-4 space-y-3">
+    <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+      <div>
+        <h3 class="text-white font-bold text-sm">Historial de Liquidez</h3>
+        <span class="text-[10px] text-amber-200/60 font-mono-num">Desglose de capital y operaciones</span>
+      </div>
+      <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+      </div>
+    </div>
 
+    <div class="grid grid-cols-2 gap-2 text-xs font-mono-num">
+      <div class="bg-[#001412] p-3 rounded-xl border border-amber-500/20">
+        <span class="text-amber-200/60 block text-[9px] uppercase">Disponible Actual</span>
+        <strong id="hist-disponible" class="text-amber-400 text-sm font-bold">$0 ARS</strong>
+      </div>
+      <div class="bg-[#001412] p-3 rounded-xl border border-amber-500/20">
+        <span class="text-amber-200/60 block text-[9px] uppercase">Total Retirado</span>
+        <strong id="hist-retirado" class="text-white text-sm font-bold">$0 ARS</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Registros de Actividad</h4>
+    <div id="history-records-container" class="space-y-2">
+      <!-- Los registros se cargan dinámicamente -->
+    </div>
+  </div>
+</div>
       <!-- ====================================== -->
-      <!-- VISTA 3: PERFIL                        -->
+      <!-- VISTA 4: PERFIL                        -->
       <!-- ====================================== -->
       <div id="view-perfil" class="hidden p-4 space-y-4">
         
@@ -338,7 +464,19 @@
             <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
           </a>
         </div>
-
+<!-- Botón de Consultas / Soporte con el Gestor -->
+<a href="https://t.me/MedrarGestor" target="_blank" class="w-full bg-[#00201D] border border-amber-500/30 hover:border-amber-400 p-3.5 rounded-xl flex items-center justify-between transition cursor-pointer group">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+      <i class="fa-solid fa-headset text-sm"></i>
+    </div>
+    <div>
+      <h4 class="text-xs font-bold text-white">Consultas con el Gestor</h4>
+      <span class="text-[10px] text-amber-200/60 font-mono-num">t.me/MedrarGestor</span>
+    </div>
+  </div>
+  <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+</a>
         <div class="pt-2">
           <button onclick="if(confirm('¿Cerrar sesión?')) location.reload();" class="w-full py-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md">
             <i class="fa-solid fa-power-off"></i> Salir de la Cuenta
@@ -461,12 +599,28 @@
       document.getElementById('notice-modal').classList.add('hidden');
     };
 
+    // Actualización de montos y adición de planes Express 1 y Express 2
     const plans = [
-      { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png' },
-      { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png' },
-      { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png' },
-      { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png' },
-      { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png' }
+      // Básicas actualizadas
+      { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png', category: 'basico' },
+      { id: 'puma', name: 'Puma Energy', cost: 10000, days: 5, daily: 1200, total: 16000, logo: './puma.png', category: 'basico' },
+      { id: 'shell', name: 'Shell Argentina', cost: 20000, days: 10, daily: 1233, total: 32330, logo: './shell.png', category: 'basico' },
+      { id: 'axion', name: 'Axion Energy', cost: 30000, days: 20, daily: 1150, total: 53000, logo: './axion.png', category: 'basico' },
+      { id: 'ypf', name: 'YPF Yacimientos', cost: 45000, days: 30, daily: 2150, total: 109500, logo: './ypf.png', category: 'basico' },
+
+      // Express 1 (Disponibles de 12:00 a 13:00 hs - Solo pago por depósito/carga)
+      { id: 'refishop', name: 'Refi-Shop', cost: 8000, days: 1, daily: 9200, total: 9200, logo: './refishop.png', category: 'express1', expressGroup: 1 },
+      { id: 'pumasuper7', name: 'Puma Super 7', cost: 10000, days: 1, daily: 11300, total: 11300, logo: './pumasuper7.png', category: 'express1', expressGroup: 1 },
+      { id: 'shellselect', name: 'Shell Select', cost: 13000, days: 1, daily: 14400, total: 14400, logo: './shellselect.png', category: 'express1', expressGroup: 1 },
+      { id: 'spot', name: 'Spot!', cost: 15000, days: 1, daily: 16500, total: 16500, logo: './spot.png', category: 'express1', expressGroup: 1 },
+      { id: 'ypffull', name: 'YPF Full', cost: 18000, days: 1, daily: 19900, total: 19900, logo: './ypffull.png', category: 'express1', expressGroup: 1 },
+
+      // Express 2 (Disponibles de 12:00 a 13:00 hs - Solo pago por depósito/carga)
+      { id: 'refinormax', name: 'Refinor Premium Max', cost: 20000, days: 1, daily: 22100, total: 22100, logo: './refinormax.png', category: 'express2', expressGroup: 2 },
+      { id: 'pumamax', name: 'Puma Max', cost: 25000, days: 1, daily: 27300, total: 27300, logo: './pumamax.png', category: 'express2', expressGroup: 2 },
+      { id: 'shellvpower', name: 'Shell V-Power', cost: 30000, days: 1, daily: 33000, total: 33000, logo: './shellvpower.png', category: 'express2', expressGroup: 2 },
+      { id: 'axionquantium', name: 'QUANTIUM Axion', cost: 40000, days: 1, daily: 43500, total: 43500, logo: './axionquantium.png', category: 'express2', expressGroup: 2 },
+      { id: 'ypfinfinia', name: 'Infinia YPF', cost: 45000, days: 1, daily: 50000, total: 50000, logo: './ypfinfinia.png', category: 'express2', expressGroup: 2 }
     ];
 
     let currentUser = null;
@@ -794,7 +948,16 @@
       if (!currentUser) return;
       const p = plans.find(item => item.id === planId);
       if (!p) return;
+// VALIDACIÓN PARA ACCIONES EXPRESS (Solo martes y jueves de 12 a 13 hs y pago por depósito)
+      if (p.category && p.category.includes('express')) {
+        const currentDay = new Date().getDay(); // 2 = Martes, 4 = Jueves
+        const isTuesdayOrThursday = (currentDay === 2 || currentDay === 4);
 
+        if (!isTuesdayOrThursday || currentHour !== 12) {
+          alert("Las acciones Express solo están disponibles los días martes y jueves en su ventana exclusiva de 12:00 PM a 13:00 PM.");
+          closeActionSheet();
+          return;
+        }
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
 
@@ -945,7 +1108,7 @@
     window.calculateWithdrawal = function() {
       const amtInput = document.getElementById('withdraw-custom-input').value;
       const amt = parseFloat(amtInput) || 0;
-      const fee = amt * 0.05;
+      const fee = amt * 0.10;
       const net = amt - fee;
       document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
       document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
@@ -1011,12 +1174,12 @@
       const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
       const pin = document.getElementById('withdraw-pin-confirm').value.trim();
       
-      if (isNaN(amt) || amt <= 0 || amt > 10000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
+      if (isNaN(amt) || amt <= 0 || amt > 50000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
       if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
       if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
       if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
 
-      const fee = amt * 0.05;
+      const fee = amt * 0.10;
       const net = amt - fee;
 
       await db.from('retiros').insert([{ 
