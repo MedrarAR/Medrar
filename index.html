@@ -317,7 +317,7 @@
               </div>
               <div class="text-left">
                 <span class="font-bold block text-amber-400 uppercase text-xs">Invitar a un Amigo</span>
-                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 10% por invitado activo</span>
+                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 5% por invitado activo</span>
               </div>
             </div>
             <button onclick="shareApp()" class="app-button px-3 py-2 rounded-xl text-xs cursor-pointer shadow-md">
@@ -405,7 +405,7 @@
         </div>
 
         <div class="grid grid-cols-2 p-1 bg-[#001412] border border-amber-500/20 rounded-xl text-xs font-bold">
-          <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('recargar')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 transition cursor-pointer uppercase">Depositar</button>
+          <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('depositar')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 transition cursor-pointer uppercase">Depositar</button>
           <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase">Retirar</button>
         </div>
 
@@ -435,13 +435,13 @@
           </div>
 
           <div>
-            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $25.000)</label>
-            <input id="withdraw-custom-input" type="number" max="25000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $50.000)</label>
+            <input id="withdraw-custom-input" type="number" max="50000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
           </div>
 
-          <!-- CALCULADORA DE COMISIÓN (5%) -->
+          <!-- CALCULADORA DE COMISIÓN (10%) -->
           <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
-            <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
+            <div class="flex justify-between"><span>Comisión (10%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
             <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
           </div>
 
@@ -490,16 +490,16 @@
       { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png', type: 'basico' },
       
       // 10 Planes Express (Todos con duración de 1 día)
-      { id: 'exp_1', name: 'Express Flash Alpha', cost: 5000, days: 1, daily: 1200, total: 6200, logo: './ypf.png', type: 'express' },
-      { id: 'exp_2', name: 'Express Beta Start', cost: 10000, days: 1, daily: 2500, total: 12500, logo: './shell.png', type: 'express' },
-      { id: 'exp_3', name: 'Express Gamma 24H', cost: 15000, days: 1, daily: 4000, total: 19000, logo: './puma.png', type: 'express' },
-      { id: 'exp_4', name: 'Express Delta Oil', cost: 20000, days: 1, daily: 5500, total: 25500, logo: './refinor.png', type: 'express' },
-      { id: 'exp_5', name: 'Express Epsilon Fast', cost: 30000, days: 1, daily: 8500, total: 38500, logo: './axion.png', type: 'express' },
-      { id: 'exp_6', name: 'Express Zeta Prime', cost: 45000, days: 1, daily: 13000, total: 58000, logo: './ypf.png', type: 'express' },
-      { id: 'exp_7', name: 'Express Eta Power', cost: 60000, days: 1, daily: 18000, total: 78000, logo: './shell.png', type: 'express' },
-      { id: 'exp_8', name: 'Express Theta Fuel', cost: 80000, days: 1, daily: 24500, total: 104500, logo: './puma.png', type: 'express' },
-      { id: 'exp_9', name: 'Express Iota Rich', cost: 100000, days: 1, daily: 31000, total: 131000, logo: './refinor.png', type: 'express' },
-      { id: 'exp_10', name: 'Express Omega Master', cost: 150000, days: 1, daily: 48000, total: 198000, logo: './axion.png', type: 'express' }
+      { id: 'exp_1', name: 'Refi-Shop', cost: 8000, days: 1, daily: 1200, total: 9200, logo: './refishop.png', type: 'express' },
+      { id: 'exp_2', name: 'Puma Super 7', cost: 10000, days: 1, daily: 1300, total: 11300, logo: './pumasuper7.png', type: 'express' },
+      { id: 'exp_3', name: 'Shell Select', cost: 13000, days: 1, daily: 1400, total: 14400, logo: './shellselect.png', type: 'express' },
+      { id: 'exp_4', name: 'Spot!', cost: 15000, days: 1, daily: 1600, total: 16500, logo: './spot.png', type: 'express' },
+      { id: 'exp_5', name: 'YPF Full', cost: 18000, days: 1, daily: 1900, total: 19900, logo: './ypfull.png', type: 'express' },
+      { id: 'exp_6', name: 'Refinor Premium Max', cost: 20000, days: 1, daily: 2100, total: 22100, logo: './refimax.png', type: 'express' },
+      { id: 'exp_7', name: 'Puma Max', cost: 25000, days: 1, daily: 2300, total: 27300, logo: './pumamax.png', type: 'express' },
+      { id: 'exp_8', name: 'Shell V-Powe', cost: 30000, days: 1, daily: 3300, total: 33000, logo: './shellvpower.png', type: 'express' },
+      { id: 'exp_9', name: 'QUANTIUM', cost: 40000, days: 1, daily: 3500, total: 43500, logo: './quantium.png', type: 'express' },
+      { id: 'exp_10', name: 'Infinia YPF', cost: 45000, days: 1, daily: 5000, total: 50000, logo: './infinia.png', type: 'express' }
     ];
 
     let currentUser = null;
@@ -1033,7 +1033,7 @@
       const tabRec = document.getElementById('wallet-tab-recargar');
       const tabRet = document.getElementById('wallet-tab-retirar');
 
-      if (mode === 'recargar') {
+      if (mode === 'depositar') {
         boxRec.style.display = 'block';
         boxRet.style.display = 'none';
         tabRec.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition uppercase";
@@ -1053,7 +1053,7 @@
     window.calculateWithdrawal = function() {
       const amtInput = document.getElementById('withdraw-custom-input').value;
       const amt = parseFloat(amtInput) || 0;
-      const fee = amt * 0.05;
+      const fee = amt * 0.10;
       const net = amt - fee;
       document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
       document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
@@ -1077,7 +1077,7 @@
               .eq('cuenta_activa', true);
 
             if ((totalReferidosActivos || 0) <= 30) {
-              const premioReferido = 1000 + (val * 0.10);
+              const premioReferido = 1000 + (val * 0.05);
               await db.from('usuarios').update({ balance: (invitador.balance || 0) + premioReferido }).eq('id', invitador.id);
             }
           }
@@ -1103,7 +1103,7 @@
         const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
         await updateDBUser({ penalty_until: penaltyTime });
         closeWalletModal();
-        alert("Operación restringida fuera del horario hábil (Lunes y Viernes de 10:00 a 14:00 hs).");
+        alert("Operación restringida fuera del horario hábil.");
         return;
       }
 
@@ -1120,12 +1120,12 @@
       const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
       const pin = document.getElementById('withdraw-pin-confirm').value.trim();
       
-      if (isNaN(amt) || amt <= 0 || amt > 25000) { alert("El monto máximo por retiro es de $25.000 ARS"); return; }
+      if (isNaN(amt) || amt <= 0 || amt > 50000) { alert("El monto máximo por retiro es de $50.000 ARS"); return; }
       if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
       if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
       if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
 
-      const fee = amt * 0.05;
+      const fee = amt * 0.10;
       const net = amt - fee;
 
       await db.from('retiros').insert([{ 
@@ -1144,14 +1144,14 @@
 
       closeWalletModal();
       switchTab('perfil');
-      alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
+      alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (10%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
     }
 
     async function confirmWithdrawalReceived() {
       if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
         await updateDBUser({ retiro_pendiente: false });
         alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
-        openWalletModal('recargar');
+        openWalletModal('depositar');
       }
     }
 
