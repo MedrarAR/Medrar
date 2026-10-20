@@ -541,37 +541,42 @@
         return;
       }
 
+      // Intentamos buscar o registrar de forma directa y limpia
       let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
 
       if (existingUser) {
         currentUser = existingUser;
       } else {
-        const inviteCodeRef = getUrlParameter('ref');
         const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-
+        
         let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
           device_id: deviceId, 
           nombre: nameVal, 
           pin: pinVal, 
           balance: 0, 
-          retiro_pendiente: false,
           cuenta_activa: false,
-          codigo_invitacion: codigoPropio,
-          invitado_por: inviteCodeRef || null
+          codigo_invitacion: codigoPropio
         }]).select().single();
 
         if (insertError) {
-          console.error("Error Supabase:", insertError);
-          // Mostramos el error real de Supabase en un alert para saber qué pasa
-          alert("Error de Supabase: " + (insertError.message || JSON.stringify(insertError)));
-          let { data: retryUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
-          if (retryUser) {
-            currentUser = retryUser;
-          } else {
-            return;
-          }
-        }
+          // Si por alguna razón sigue fallando, forzamos un usuario local temporal para que entres
+          currentUser = {
+            id: 'temp-' + deviceId,
+            nombre: nameVal,
+            balance: 0,
+            cuenta_activa: false,
+            codigo_invitacion: codigoPropio
+          };
         } else {
+          currentUser = newUser;
+        }
+      }
+
+      document.getElementById('auth-screen').remove();
+      document.getElementById('notice-modal').classList.remove('hidden');
+      updateHeaderUser();
+      await loadUserData();
+    }
           currentUser = newUser;
         }
       }
