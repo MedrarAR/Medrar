@@ -532,8 +532,14 @@
     }
 
     async function handleAuthSubmit() {
-      const nameVal = document.getElementById('auth-name').value.trim();
-      const pinVal = document.getElementById('auth-pin').value.trim();
+      // PRUEBA: Si ves este cartel, significa que el botón sí funciona
+      alert("Botón presionado correctamente");
+
+      const nameInput = document.getElementById('auth-name');
+      const pinInput = document.getElementById('auth-pin');
+      
+      const nameVal = nameInput ? nameInput.value.trim() : '';
+      const pinVal = pinInput ? pinInput.value.trim() : '';
       const deviceId = getDeviceId();
 
       if (!nameVal || pinVal.length !== 4) {
@@ -541,7 +547,6 @@
         return;
       }
 
-      // Definimos un usuario local predeterminado para asegurar que la app avance
       currentUser = {
         id: 'user-' + deviceId,
         nombre: nameVal,
@@ -551,7 +556,6 @@
         codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
       };
 
-      // Intentamos guardar o actualizar en segundo plano sin bloquear la pantalla
       try {
         let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
         if (existingUser) {
@@ -569,9 +573,22 @@
           if (newUser) currentUser = newUser;
         }
       } catch (e) {
-        console.log("Modo offline o error menor de red, continuando localmente:", e);
+        console.log("Modo local activo:", e);
       }
 
+      // Remover pantalla de acceso
+      const authScreen = document.getElementById('auth-screen');
+      if (authScreen) authScreen.remove();
+
+      const noticeModal = document.getElementById('notice-modal');
+      if (noticeModal) {
+        noticeModal.classList.remove('hidden');
+        noticeModal.style.display = 'block';
+      }
+
+      if (typeof updateHeaderUser === 'function') updateHeaderUser();
+      if (typeof loadUserData === 'function') await loadUserData();
+    }
       // Esto es lo que hace que avance de la pantalla de inicio obligatoriamente
       const authScreen = document.getElementById('auth-screen');
       if (authScreen) authScreen.remove();
