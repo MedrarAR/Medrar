@@ -553,13 +553,13 @@
           </div>
 
           <div>
-            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $10.000)</label>
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $50.000)</label>
             <input id="withdraw-custom-input" type="number" max="10000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
           </div>
 
-          <!-- CALCULADORA DE COMISIÓN (5%) -->
+          <!-- CALCULADORA DE COMISIÓN (10%) -->
           <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
-            <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
+            <div class="flex justify-between"><span>Comisión (10%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
             <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
           </div>
 
@@ -1166,76 +1166,504 @@
         return;
       }
 
-      if (currentUser.retiro_pendiente) {
-        alert("Tiene un proceso activo. Confirme la recepción en su perfil para continuar.");
+const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_D1aQLBcvmYBMZPUonusmsQ_TNRT9Wtb';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    window.closeNoticeModal = () => {
+      document.getElementById('notice-modal').classList.add('hidden');
+    };
+
+    const plans = [
+      // Básicas actualizadas
+      { id: 'refinor', name: 'Refinor (Norte)', category: 'basico', cost: 5000, days: 3, daily: 700, total: 7100, logo: './refinor.png' },
+      { id: 'puma', name: 'Puma Energy', category: 'basico', cost: 10000, days: 5, daily: 1200, total: 16000, logo: './puma.png' },
+      { id: 'shell', name: 'Shell Argentina', category: 'basico', cost: 20000, days: 10, daily: 1233, total: 32330, logo: './shell.png' },
+      { id: 'axion', name: 'Axion Energy', category: 'basico', cost: 30000, days: 20, daily: 1150, total: 53000, logo: './axion.png' },
+      { id: 'ypf', name: 'YPF Yacimientos', category: 'basico', cost: 45000, days: 30, daily: 2150, total: 109500, logo: './ypf.png' },
+
+      // Express 1 (Martes y Jueves de 12:00 a 13:00 hs - Solo pago por depósito)
+      { id: 'refishop', name: 'Refi-Shop', category: 'express1', cost: 8000, days: 1, daily: 3000, total: 11000, logo: './refishop.png' },
+      { id: 'pumasuper7', name: 'Puma Super 7', category: 'express1', cost: 10000, days: 1, daily: 3800, total: 13800, logo: './pumasuper7.png' },
+      { id: 'shellselect', name: 'Shell Select', category: 'express1', cost: 13000, days: 1, daily: 4500, total: 17500, logo: './shellselect.png' },
+      { id: 'spot', name: 'Spot!', category: 'express1', cost: 15000, days: 1, daily: 5800, total: 20800, logo: './spot.png' },
+      { id: 'ypffull', name: 'YPF Full', category: 'express1', cost: 18000, days: 1, daily: 7000, total: 25000, logo: './ypffull.png' },
+
+      // Express 2 (Martes y Jueves de 12:00 a 13:00 hs - Solo pago por depósito)
+      { id: 'refinormax', name: 'Refinor Premium Max', category: 'express2', cost: 20000, days: 1, daily: 8000, total: 28000, logo: './refinormax.png' },
+      { id: 'pumamax', name: 'Puma Max', category: 'express2', cost: 25000, days: 1, daily: 10000, total: 35000, logo: './pumamax.png' },
+      { id: 'shellvpower', name: 'Shell V-Power', category: 'express2', cost: 30000, days: 1, daily: 12200, total: 42200, logo: './shellvpower.png' },
+      { id: 'axionquantium', name: 'QUANTIUM Axion', category: 'express2', cost: 40000, days: 1, daily: 15500, total: 55500, logo: './axionquantium.png' },
+      { id: 'ypfinfinia', name: 'Infinia YPF', category: 'express2', cost: 45000, days: 1, daily: 18500, total: 63500, logo: './ypfinfinia.png' }
+    ];
+
+    let currentUser = null;
+    let activePlansList = [];
+    let hideBalance = false;
+
+    function getDeviceId() {
+      let devId = localStorage.getItem('medrar_device_id');
+      if (!devId) {
+        devId = 'DEV-' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+        localStorage.setItem('medrar_device_id', devId);
+      }
+      return devId;
+    }
+
+    function getUrlParameter(name) {
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    function fmt(n) {
+      return new Intl.NumberFormat('es-AR').format(Math.round(n || 0));
+    }
+
+    async function checkExistingSession() {
+      const deviceId = getDeviceId();
+      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+
+      if (existingUser) {
+        currentUser = existingUser;
+        const authScreen = document.getElementById('auth-screen');
+        if (authScreen) authScreen.remove();
+        updateHeaderUser();
+        await loadUserData();
+      }
+    }
+
+    async function handleAuth(event) {
+      if (event) event.preventDefault();
+      const nameInput = document.getElementById('auth-name') || document.getElementById('prof-name-input');
+      const pinInput = document.getElementById('auth-pin') || document.getElementById('prof-pin-input');
+      
+      const nombre = nameInput ? nameInput.value.trim() : '';
+      const pin = pinInput ? pinInput.value.trim() : '';
+      const deviceId = getDeviceId();
+
+      if (!nombre || pin.length < 4) {
+        alert("Ingrese su nombre y un PIN válido de al menos 4 dígitos.");
         return;
       }
 
+      let { data: existing } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+
+      if (existing) {
+        currentUser = existing;
+      } else {
+        const referidoCodigo = getUrlParameter('ref');
+        let { data: newUser, error } = await db.from('usuarios').insert([{
+          nombre: nombre,
+          pin: pin,
+          device_id: deviceId,
+          balance: 0,
+          invitado_por: referidoCodigo || null
+        }]).select().single();
+
+        if (error) {
+          console.error("Error Supabase:", error);
+          alert("Error al registrar en la base de datos.");
+          return;
+        }
+        currentUser = newUser;
+      }
+
+      const authScreen = document.getElementById('auth-screen');
+      if (authScreen) authScreen.remove();
+      updateHeaderUser();
+      await loadUserData();
+    }
+
+    async function loadUserData() {
+      if (!currentUser) return;
+      let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).maybeSingle();
+      if (userData) currentUser = userData;
+
+      let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
+      activePlansList = plansData || [];
+      renderUI();
+      loadReferrals();
+    }
+
+    async function updateDBUser(fields) {
+      if (!currentUser) return;
+      let { data, error } = await db.from('usuarios').update(fields).eq('id', currentUser.id).select().single();
+      if (!error && data) currentUser = data;
+      renderUI();
+    }
+
+    function updateHeaderUser() {
+      const nameEl = document.getElementById('header-user-name');
+      if (nameEl && currentUser) nameEl.innerText = currentUser.nombre;
+    }
+
+    function renderUI() {
+      if (!currentUser) return;
+      const balEl = document.getElementById('user-balance-display');
+      if (balEl) {
+        balEl.innerText = hideBalance ? '••••••••' : `$${fmt(currentUser.balance)} ARS`;
+      }
+      renderPlans();
+      renderProducts();
+    }
+
+    window.switchPlanMode = function(mode) {
+      const btnBasico = document.getElementById('switch-basico');
+      const btnExpress = document.getElementById('switch-express');
+      const btnPremium = document.getElementById('switch-premium');
+      const secBasico = document.getElementById('section-basico');
+      const secExpress = document.getElementById('section-express');
+      const secPremium = document.getElementById('section-premium');
+
+      [btnBasico, btnExpress, btnPremium].forEach(b => {
+        if(b) b.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs";
+      });
+      [secBasico, secExpress, secPremium].forEach(s => {
+        if(s) s.classList.add('hidden');
+      });
+
+      if (mode === 'basico') {
+        if(btnBasico) btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
+        if(secBasico) secBasico.classList.remove('hidden');
+      } else if (mode === 'express') {
+        if(btnExpress) btnExpress.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
+        if(secExpress) secExpress.classList.remove('hidden');
+        renderExpressPlans();
+      } else {
+        if(btnPremium) btnPremium.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
+        if(secPremium) secPremium.classList.remove('hidden');
+      }
+    };
+
+    function renderPlans() {
+      const container = document.getElementById('plans-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const basicPlans = plans.filter(p => p.category === 'basico');
+      basicPlans.forEach(p => {
+        const card = document.createElement('div');
+        card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
+        card.onclick = () => openActionSheet(p);
+        
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-xs">${p.name}</h4>
+                <span class="text-[10px] text-amber-400 font-mono-num">Ciclo: ${p.days} días</span>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
+              Operar Acción
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Rendimiento</span>
+              <strong class="text-white">+$${fmt(p.daily)} / d</strong>
+            </div>
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Retorno Total</span>
+              <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderExpressPlans() {
+      const c1 = document.getElementById('express1-container');
+      const c2 = document.getElementById('express2-container');
+      if (!c1 || !c2) return;
+      c1.innerHTML = '';
+      c2.innerHTML = '';
+
+      const express1 = plans.filter(p => p.category === 'express1');
+      const express2 = plans.filter(p => p.category === 'express2');
+
+      const renderGroup = (list, targetContainer) => {
+        list.forEach(p => {
+          const card = document.createElement('div');
+          card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
+          card.onclick = () => openActionSheet(p);
+          
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                  <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-xs">${p.name}</h4>
+                  <span class="text-[10px] text-amber-400 font-mono-num">Duración: 24 hs</span>
+                </div>
+              </div>
+              <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
+                Express (Mar/Jue 12h)
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
+              <div>
+                <span class="text-amber-200/60 block text-[9px] uppercase">Costo Inversión</span>
+                <strong class="text-white">$${fmt(p.cost)} ARS</strong>
+              </div>
+              <div>
+                <span class="text-amber-200/60 block text-[9px] uppercase">Retorno Total</span>
+                <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
+              </div>
+            </div>
+          `;
+          targetContainer.appendChild(card);
+        });
+      };
+
+      renderGroup(express1, c1);
+      renderGroup(express2, c2);
+    }
+
+    function openActionSheet(p) {
+      const sheet = document.getElementById('action-sheet');
+      const overlay = document.getElementById('action-sheet-overlay');
+      const content = document.getElementById('action-sheet-content');
+
+      let subtitle = `Costo: $${fmt(p.cost)} ARS`;
+      if (p.category && p.category.includes('express')) {
+        subtitle = `⚡ Express (Martes y Jueves de 12:00 a 13:00 hs)`;
+      }
+
+      if(content) {
+        content.innerHTML = `
+          <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+            <div class="flex items-center gap-3">
+              <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+              <div>
+                <h4 class="text-sm font-bold text-white">${p.name}</h4>
+                <span class="text-[10px] text-amber-400 font-mono-num">${subtitle}</span>
+              </div>
+            </div>
+            <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="space-y-2 text-xs font-mono-num text-amber-100/80 bg-[#001412] p-3 rounded-xl border border-amber-500/20">
+            <p>• Ciclo operativo: <strong>${p.days} ${p.days === 1 ? 'día (24 hs)' : 'días'}</strong></p>
+            <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
+          </div>
+          <button onclick="purchasePlan('${p.id}')" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md font-bold">
+            ${p.category && p.category.includes('express') ? 'Adquirir por Depósito' : `Activar Acción ($${fmt(p.cost)} ARS)`}
+          </button>
+        `;
+      }
+
+      if(overlay) overlay.classList.remove('hidden');
+      setTimeout(() => { if(sheet) sheet.style.transform = 'translateY(0)'; }, 10);
+    }
+
+    window.closeActionSheet = function() {
+      const sheet = document.getElementById('action-sheet');
+      const overlay = document.getElementById('action-sheet-overlay');
+      if(sheet) sheet.style.transform = 'translateY(100%)';
+      setTimeout(() => { if(overlay) overlay.classList.add('hidden'); }, 200);
+    };
+
+    async function purchasePlan(planId) {
+      if (!currentUser) return;
+      const p = plans.find(item => item.id === planId);
+      if (!p) return;
+
+      const now = Date.now();
+      const currentHour = new Date().getHours();
+      const weekMs = 7 * 24 * 60 * 60 * 1000;
+
+      // VALIDACIÓN PARA ACCIONES EXPRESS (Solo Martes y Jueves de 12 a 13 hs y pago por depósito)
+      if (p.category && p.category.includes('express')) {
+        const currentDay = new Date().getDay(); // 2 = Martes, 4 = Jueves
+        const isTuesdayOrThursday = (currentDay === 2 || currentDay === 4);
+
+        if (!isTuesdayOrThursday || currentHour !== 12) {
+          alert("Las acciones Express solo están disponibles los días martes y jueves en su ventana exclusiva de 12:00 PM a 13:00 PM.");
+          closeActionSheet();
+          return;
+        }
+
+        let { data: existingExpress } = await db.from('acciones_activas')
+          .select('id')
+          .eq('user_id', currentUser.id)
+          .eq('plan_id', p.id)
+          .maybeSingle();
+
+        if (existingExpress) {
+          alert("Esta acción Express ya fue adquirida anteriormente.");
+          closeActionSheet();
+          return;
+        }
+
+        alert("Las acciones Express se adquieren exclusivamente cargando el monto exacto por depósito. Realice el depósito.");
+        closeActionSheet();
+        openWalletModal('recargar');
+        return;
+      }
+
+      if (p.id === 'refinor') {
+        const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
+        if (hasBoughtRefinor) {
+          alert("La acción Refinor solo se puede adquirir una sola vez.");
+          closeActionSheet();
+          return;
+        }
+      } else {
+        let { data: lastActionOfThisType } = await db.from('acciones_activas')
+          .select('fecha_inicio')
+          .eq('user_id', currentUser.id)
+          .eq('plan_id', p.id)
+          .order('fecha_inicio', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (lastActionOfThisType) {
+          if ((now - lastActionOfThisType.fecha_inicio) < weekMs) {
+            alert("Debe esperar 7 días para volver a adquirir esta acción.");
+            closeActionSheet();
+            return;
+          }
+        }
+      }
+
+      if (currentUser.balance < p.cost) {
+        alert("Saldo insuficiente. Se requiere carga obligatoria.");
+        closeActionSheet();
+        openWalletModal('recargar');
+        return;
+      }
+
+      if (confirm(`¿Adquirir acción ${p.name} por $${fmt(p.cost)} ARS?`)) {
+        await db.from('acciones_activas').insert([{
+          user_id: currentUser.id,
+          plan_id: p.id,
+          nombre_accion: p.name,
+          monto_invertido: p.cost,
+          total_retorno: p.total,
+          logo: p.logo,
+          fecha_inicio: now,
+          fecha_fin: now + (p.days * 86400000),
+          completada: false
+        }]);
+
+        let updateData = { balance: currentUser.balance - p.cost };
+        await updateDBUser(updateData);
+        closeActionSheet();
+        await loadUserData();
+        alert("¡Acción adquirida correctamente!");
+        switchTab('activos');
+      }
+    }
+
+    window.calculateWithdrawal = function() {
+      const amtInput = document.getElementById('withdraw-custom-input').value;
+      const amt = parseFloat(amtInput) || 0;
+      const fee = amt * 0.10; // 10% de comisión
+      const net = amt - fee;
+      const feeEl = document.getElementById('calc-fee');
+      const netEl = document.getElementById('calc-net');
+      if(feeEl) feeEl.innerText = `$${fmt(fee)} ARS`;
+      if(netEl) netEl.innerText = `$${fmt(net)} ARS`;
+    };
+
+    async function executeWithdrawal() {
       const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
       const pin = document.getElementById('withdraw-pin-confirm').value.trim();
       
-      if (isNaN(amt) || amt <= 0 || amt > 50000) { alert("El monto máximo por retiro es de $10.000 ARS"); return; }
+      if (isNaN(amt) || amt <= 0 || amt > 50000) { alert("El monto máximo por retiro es de $50.000 ARS"); return; }
       if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
       if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
-      if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
+      if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en el Perfil"); return; }
 
       const fee = amt * 0.10;
       const net = amt - fee;
 
-      await db.from('retiros').insert([{ 
-        user_id: currentUser.id, 
-        monto: amt, 
+      await db.from('retiros').insert([{
+        user_id: currentUser.id,
+        monto: amt,
         comision: fee,
         monto_neto: net,
-        cvu_destino: currentUser.cvu || currentUser.alias, 
-        estado: 'pendiente' 
+        cvu_destino: currentUser.cvu || currentUser.alias,
+        estado: 'pendiente'
       }]);
 
-      await updateDBUser({ 
-        balance: currentUser.balance - amt, 
-        retiro_pendiente: true 
+      await updateDBUser({
+        balance: currentUser.balance - amt,
+        retiro_pendiente: true
       });
 
       closeWalletModal();
       switchTab('perfil');
-      alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
+      alert(`Retiro solicitado con éxito. Monto bruto: $${fmt(amt)} ARS | Neto a recibir: $${fmt(net)} ARS`);
+      await loadUserData();
     }
 
-    async function confirmWithdrawalReceived() {
-      if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
-        await updateDBUser({ retiro_pendiente: false });
-        alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
-        openWalletModal('recargar');
+    async function loadHistorialData() {
+      if (!currentUser) return;
+      const dispEl = document.getElementById('hist-disponible');
+      const retEl = document.getElementById('hist-retirado');
+      const recContainer = document.getElementById('history-records-container');
+
+      if(dispEl) dispEl.innerText = `$${fmt(currentUser.balance)} ARS`;
+
+      let { data: retiros } = await db.from('retiros').select('monto').eq('user_id', currentUser.id);
+      let totalRetirado = (retiros || []).reduce((acc, r) => acc + (r.monto || 0), 0);
+      if(retEl) retEl.innerText = `$${fmt(totalRetirado)} ARS`;
+
+      let { data: depositos } = await db.from('depositos').select('*').eq('user_id', currentUser.id);
+      
+      let html = '';
+      if (retiros && retiros.length > 0) {
+        retiros.forEach(r => {
+          html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
+            <div><strong class="text-amber-400 block text-xs">Solicitud de Retiro</strong><span class="text-[10px] text-amber-200/60">Monto: $${fmt(r.monto)} ARS</span></div>
+            <span class="text-[10px] text-emerald-400 font-bold">Registrado</span>
+          </div>`;
+        });
       }
+      if (depositos && depositos.length > 0) {
+        depositos.forEach(d => {
+          html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
+            <div><strong class="text-white block text-xs">Depósito / Carga</strong><span class="text-[10px] text-amber-200/60">Monto: $${fmt(d.monto)} ARS</span></div>
+            <span class="text-[10px] text-amber-400 font-bold">${d.estado || 'Procesado'}</span>
+          </div>`;
+        });
+      }
+
+      html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
+        <div><strong class="text-white block text-xs">Bono / Actividad General</strong><span class="text-[10px] text-amber-200/60">Acreditado a saldo disponible</span></div>
+        <span class="text-[10px] text-emerald-400 font-bold">Activo</span>
+      </div>`;
+
+      if(recContainer) recContainer.innerHTML = html;
     }
 
     function switchTab(tabName) {
-      ['terminal', 'activos', 'perfil'].forEach(t => {
-        document.getElementById(`view-${t}`).classList.add('hidden');
+      ['terminal', 'activos', 'historial', 'perfil'].forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
         const pillBtn = document.getElementById(`pill-btn-${t}`);
-        if(pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition";
+        if(viewEl) viewEl.classList.add('hidden');
+        if(pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition px-1";
       });
-      document.getElementById(`view-${tabName}`).classList.remove('hidden');
-      const activePill = document.getElementById(`pill-btn-${tabName}`);
-      if(activePill) activePill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
+      
+      const targetView = document.getElementById(`view-${tabName}`);
+      const targetPill = document.getElementById(`pill-btn-${tabName}`);
+      if(targetView) targetView.classList.remove('hidden');
+      if(targetPill) targetPill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition px-1";
 
       if (tabName === 'activos') renderProducts();
+      if (tabName === 'historial') loadHistorialData();
       if (tabName === 'perfil') loadReferrals();
     }
 
-    function renderUI() {
-      renderBalanceDisplay();
-      if (currentUser) {
-        document.getElementById('prof-name-input').value = currentUser.nombre || '';
-        document.getElementById('prof-cvu-input').value = currentUser.cvu || '';
-        document.getElementById('prof-alias-input').value = currentUser.alias || '';
-        updateHeaderUser();
-      }
-      renderPlans();
-    }
-
-    checkExistingSession();
-    startDailyTimer();
-  </script>
-</body>
-  </html>
+    // Inicialización automática al cargar la página
+    window.onload = async function() {
+      await checkExistingSession();
+    };
