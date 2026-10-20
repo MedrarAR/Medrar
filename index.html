@@ -562,13 +562,15 @@
 
         if (insertError) {
           console.error("Error Supabase:", insertError);
+          // Mostramos el error real de Supabase en un alert para saber qué pasa
+          alert("Error de Supabase: " + (insertError.message || JSON.stringify(insertError)));
           let { data: retryUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
           if (retryUser) {
             currentUser = retryUser;
           } else {
-            alert("Error al registrar en la base de datos. Verifique su conexión.");
             return;
           }
+        }
         } else {
           currentUser = newUser;
         }
