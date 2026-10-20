@@ -532,72 +532,42 @@
     }
 
     async function handleAuthSubmit() {
-      const nameVal = document.getElementById('auth-name').value.trim();
-      const pinVal = document.getElementById('auth-pin').value.trim();
-      
-      if (!nameVal || pinVal.length !== 4) {
-        alert("Ingrese nombre y PIN de 4 dígitos válido.");
-        return;
-      }
-
-      const authScreen = document.getElementById('auth-screen');
-      if (authScreen) authScreen.remove();
-
-      const noticeModal = document.getElementById('notice-modal');
-      if (noticeModal) noticeModal.classList.remove('hidden');
-
       try {
-        const deviceId = getDeviceId();
-        let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+        const nameInput = document.querySelector('#auth-name') || document.querySelector('input[type="text"]');
+        const pinInput = document.querySelector('#auth-pin') || document.querySelector('input[type="password"]');
         
-        if (existingUser) {
-          currentUser = existingUser;
-        } else {
-          let { data: newUser } = await db.from('usuarios').insert([{
-            device_id: deviceId,
-            nombre: nameVal,
-            pin: pinVal,
-            balance: 0,
-            cuenta_activa: false,
-            codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
-          }]).select().single();
-          
-          if (newUser) currentUser = newUser;
-        }
-      } catch (e) {
-        console.log("Modo local activo:", e);
-      }
+        const nameVal = nameInput ? nameInput.value.trim() : '';
+        const pinVal = pinInput ? pinInput.value.trim() : '';
 
-      if (typeof updateHeaderUser === 'function') updateHeaderUser();
-      if (typeof loadUserData === 'function') await loadUserData();
-    }
-      // Esto es lo que hace que avance de la pantalla de inicio obligatoriamente
-      const authScreen = document.getElementById('auth-screen');
-      if (authScreen) authScreen.remove();
-      
-      const noticeModal = document.getElementById('notice-modal');
-      if (noticeModal) noticeModal.classList.remove('hidden');
-      
-      updateHeaderUser();
-      await loadUserData();
-    }
-          currentUser = newUser;
+        if (!nameVal || pinVal.length !== 4) {
+          alert("Ingrese nombre y PIN de 4 dígitos válido.");
+          return;
         }
-      }
 
-      document.getElementById('auth-screen').remove();
-      document.getElementById('notice-modal').classList.remove('hidden');
-      updateHeaderUser();
-      await loadUserData();
-    }
-          currentUser = newUser;
+        const authScreen = document.getElementById('auth-screen');
+        if (authScreen) authScreen.remove();
+
+        const noticeModal = document.getElementById('notice-modal');
+        if (noticeModal) {
+          noticeModal.classList.remove('hidden');
+          noticeModal.style.display = 'block';
         }
-      }
 
-      document.getElementById('auth-screen').remove();
-      document.getElementById('notice-modal').classList.remove('hidden');
-      updateHeaderUser();
-      await loadUserData();
+        currentUser = {
+          id: 'temp-' + Date.now(),
+          nombre: nameVal,
+          pin: pinVal,
+          balance: 0,
+          cuenta_activa: false,
+          codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
+        };
+
+        if (typeof updateHeaderUser === 'function') updateHeaderUser();
+        if (typeof loadUserData === 'function') await loadUserData();
+
+      } catch (err) {
+        alert("Error al procesar: " + err.message);
+      }
     }
 
     async function loadUserData() {
