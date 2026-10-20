@@ -862,11 +862,48 @@
       if (!currentUser) return;
       const p = plans.find(item => item.id === planId);
       if (!p) return;
+      // 1. Validar restricción de días y horarios exclusivos para planes Express
+      if (p.type === 'express') {
+        const now = new Date();
+        const day = now.getDay(); // 2 = Martes, 4 = Jueves
+        const hours = now.getHours();
+        
+        // Valida que sea Martes (2) o Jueves (4) y que la hora esté entre las 19 y las 20 (19:00 - 20:00)
+        if ((day !== 2 && day !== 4) || hours !== 19) {
+          alert("Los planes Express solo están disponibles para adquisición los días martes y jueves de 19:00 a 20:00 hs.");
+          closeActionSheet();
+          return;
+        }
 
+        // 2. Validar depósito adicional obligatorio para Express
+        if (!currentUser.deposito_express_realizado) {
+          alert("Para adquirir un plan Express se requiere realizar un depósito adicional/nuevo en la plataforma.");
+          closeActionSheet();
+          openWalletModal('depositar');
+          return;
+        }
+      }
+if (!currentUser.cuenta_activa) {
+        alert("Para operar en el mercado y adquirir acciones debe contar con una carga previa de saldo en la plataforma.");
+        closeActionSheet();
+        openWalletModal('depositar');
+        return;
+}
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
 
-      if (p.id === 'refinor') {
+      // Validar si ya adquirió este plan específico (1 vez por usuario)
+      let { data: existingAction } = await db.from('acciones_activas')
+        .select('id')
+        .eq('user_id', currentUser.id)
+        .eq('plan_id', p.id)
+        .maybeSingle();
+
+      if (existingAction) {
+        alert(`Ya tienes activo o has adquirido el plan ${p.name}. Solo se permite 1 adquisición por usuario.`);
+        closeActionSheet();
+        return;
+      }if (p.id === 'refinor') {
         const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
         if (hasBoughtRefinor) {
           closeActionSheet();
@@ -893,7 +930,7 @@
       if (currentUser.balance < p.cost) {
         alert("Saldo insuficiente. Se requiere carga obligatoria.");
         closeActionSheet();
-        openWalletModal('recargar');
+        openWalletModal('depositar');
         return;
       }
 
