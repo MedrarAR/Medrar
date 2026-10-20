@@ -544,10 +544,6 @@
       let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
 
       if (existingUser) {
-        if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
-          document.getElementById('multicount-error').classList.remove('hidden');
-          return;
-        }
         currentUser = existingUser;
       } else {
         const inviteCodeRef = getUrlParameter('ref');
@@ -566,10 +562,16 @@
 
         if (insertError) {
           console.error("Error Supabase:", insertError);
-          alert("Error al registrar en la base de datos.");
-          return;
+          let { data: retryUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+          if (retryUser) {
+            currentUser = retryUser;
+          } else {
+            alert("Error al registrar en la base de datos. Verifique su conexión.");
+            return;
+          }
+        } else {
+          currentUser = newUser;
         }
-        currentUser = newUser;
       }
 
       document.getElementById('auth-screen').remove();
