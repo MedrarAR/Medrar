@@ -60,9 +60,12 @@
 </head>
 <body class="antialiased min-h-screen p-0 sm:p-4 flex justify-center bg-[#000A09]">
 
-  <!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN -->
+  <!-- ========================================== -->
+  <!-- 1. PANTALLA DE REGISTRO / AUTENTICACIÓN    -->
+  <!-- ========================================== -->
   <div id="auth-screen" class="fixed inset-0 z-[80] bg-[#001412] flex items-center justify-center p-4">
     <div class="app-card w-full max-w-sm p-6 space-y-5 bg-[#001F1C] border-amber-500/40">
+      
       <div class="text-center space-y-1">
         <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-xl mb-2">
           <i class="fa-solid fa-user-shield"></i>
@@ -93,37 +96,49 @@
         </div>
 
         <button type="button" onclick="handleAuthSubmit()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-          Registrarse / Ingresarx
+          Registrarse / Ingresar
         </button>
       </div>
+
     </div>
   </div>
 
-  <!-- 2. POPUP DE BIENVENIDA INSTITUCIONAL -->
+  <!-- ========================================== -->
+  <!-- 2. POPUP DE BIENVENIDA INSTITUCIONAL       -->
+  <!-- ========================================== -->
   <div id="notice-modal" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="app-card w-full max-w-sm p-6 space-y-5 text-center border-amber-500/40 bg-[#001F1C]">
+      
       <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
         <i class="fa-solid fa-chart-line"></i>
       </div>
+
       <div class="space-y-1">
         <h3 class="text-lg font-bold text-white">MEDRAR MOBILE</h3>
         <p class="text-xs text-amber-200/70">Plataforma de Mercado Petrolero</p>
       </div>
+
       <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
         <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
         <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
       </div>
+
       <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
         ¡Listo!
       </button>
+
     </div>
   </div>
 
-  <!-- 3. CONTENEDOR PRINCIPAL DE LA APLICACIÓN -->
+  <!-- ========================================== -->
+  <!-- 3. CONTENEDOR PRINCIPAL DE LA APLICACIÓN   -->
+  <!-- ========================================== -->
   <main class="w-full max-w-md mx-auto bg-[#001412] border-x border-amber-500/20 min-h-screen sm:rounded-3xl shadow-2xl flex flex-col justify-between relative pb-32 overflow-hidden">
 
     <div>
+      <!-- HEADER CON SALUDO Y PERFIL -->
       <header class="bg-[#002B27] border-b border-amber-500/20 px-4 py-3.5 flex items-center justify-between sticky top-0 z-40">
+        
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold p-1 overflow-hidden shadow-inner">
             <img src="./medrar.png" alt="MEDRAR" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
@@ -133,16 +148,25 @@
             <span id="header-greeting" class="font-bold text-white text-xs tracking-wide block truncate max-w-[150px]">Hola, ---</span>
           </div>
         </div>
+
         <div class="flex items-center gap-2">
+          <!-- BOTÓN CONSULTAS GESTOR -->
+          <a href="https://t.me/MedrarFinanzas" target="_blank" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm cursor-pointer hover:bg-amber-500/20 transition" title="Consultas con el Gestor">
+            <i class="fa-solid fa-headset"></i>
+          </a>
           <button onclick="switchTab('perfil')" class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm cursor-pointer hover:bg-amber-500/20 transition">
             <i class="fa-solid fa-user"></i>
           </button>
         </div>
+
       </header>
 
-      <!-- VISTA 1: TERMINAL -->
+      <!-- ====================================== -->
+      <!-- VISTA 1: TERMINAL                      -->
+      <!-- ====================================== -->
       <div id="view-terminal" class="p-4 space-y-4">
         
+        <!-- TARJETA DE CAPITAL / SALDO -->
         <div class="app-card p-5 space-y-4">
           <div class="flex items-center justify-between text-xs text-amber-200/80">
             <span class="uppercase tracking-wider text-[11px] font-bold text-amber-400">Capital de Ingreso</span>
@@ -150,12 +174,14 @@
               <i id="balance-eye-icon" class="fa-solid fa-eye text-xs"></i>
             </button>
           </div>
+
           <div>
             <h1 id="home-balance" class="text-3xl font-extrabold text-white tracking-tight font-mono-num flex items-baseline gap-1">
               <span id="bal-entero">$0</span><span id="bal-decimal" class="text-lg text-amber-400/90">,00</span> <span class="text-xs font-normal text-amber-200/60 ml-1">ARS</span>
             </h1>
             <p class="text-[11px] text-amber-100/70 mt-1">Liquidez disponible para operaciones o extracción inmediata</p>
           </div>
+
           <div class="grid grid-cols-2 gap-3 pt-2">
             <button onclick="openWalletModal('recargar')" class="app-button py-3 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md">
               <i class="fa-solid fa-plus-circle"></i> Depositar
@@ -166,6 +192,7 @@
           </div>
         </div>
 
+        <!-- BONO DIARIO -->
         <div class="app-card p-4 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base border border-amber-500/30 shrink-0">
@@ -181,19 +208,17 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-3 gap-1 bg-[#001412] p-1.5 rounded-xl border border-amber-500/20 mb-4">
-          <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs">
+        <!-- SELECTOR DE MERCADO: BÁSICO / EXPRESS -->
+        <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
+          <button id="switch-basico" onclick="switchPlanMode('basico')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md">
             Básico
           </button>
-          <button id="switch-express" onclick="switchPlanMode('express')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs">
+          <button id="switch-express" onclick="switchPlanMode('express')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center">
             Express
-          </button>
-          <button id="switch-premium" onclick="switchPlanMode('premium')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs">
-            Premium
           </button>
         </div>
 
-        <!-- SECCIÓN BÁSICO -->
+        <!-- CONTENEDOR BÁSICO (ACCIONES) -->
         <div id="section-basico" class="space-y-3.5">
           <div class="flex items-center justify-between pt-1">
             <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Mercado de Acciones</h3>
@@ -201,113 +226,75 @@
           <div id="plans-container" class="space-y-3.5"></div>
         </div>
 
-        <!-- SECCIÓN EXPRESS -->
-        <div id="section-express" class="hidden space-y-5 pb-6">
-          <div class="bg-[#00201D] border border-amber-500/30 p-3.5 rounded-2xl flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-              <i class="fa-solid fa-bolt text-sm"></i>
-            </div>
-            <div>
-              <h4 class="text-white font-bold text-xs">Mercado Express (12:00 a 13:00 hs)</h4>
-              <p class="text-[10px] text-amber-200/70 font-mono-num">Disponible solo en horario estricto y mediante pago por depósito.</p>
-            </div>
+        <!-- CONTENEDOR EXPRESS -->
+        <div id="section-express" class="hidden space-y-3.5">
+          <div class="flex items-center justify-between pt-1">
+            <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Planes Express (Corto Plazo)</h3>
           </div>
-
-          <div class="space-y-3">
-            <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Express 1 (Costo $8k - $18k)</h3>
-            <div id="express1-container" class="space-y-3"></div>
-          </div>
-
-          <div class="space-y-3 pt-2">
-            <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Express 2 (Costo $20k - $45k)</h3>
-            <div id="express2-container" class="space-y-3"></div>
-          </div>
-        </div>
-
-        <!-- SECCIÓN PREMIUM -->
-        <div id="section-premium" class="hidden space-y-4">
-          <div class="bg-[#00201D] border border-amber-500/30 p-4 rounded-2xl text-center space-y-1">
-            <h3 class="text-white font-bold text-sm">Acciones Premium</h3>
-            <p class="text-[11px] text-amber-200/70">Exclusivo para inversores de alto rendimiento. Muy pronto disponibles.</p>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400"><i class="fa-solid fa-lock text-sm"></i></div>
-              <div><h4 class="font-bold text-white text-xs">Premium</h4><span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span></div>
-            </div>
-            <div class="app-card p-4 flex flex-col items-center justify-center text-center space-y-2 opacity-75 border border-dashed border-amber-500/40">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400"><i class="fa-solid fa-lock text-sm"></i></div>
-              <div><h4 class="font-bold text-white text-xs">Premium</h4><span class="text-[10px] text-amber-400 font-mono-num uppercase tracking-wider font-bold">Próximamente</span></div>
-            </div>
-          </div>
+          <div id="express-plans-container" class="space-y-3.5"></div>
         </div>
 
       </div>
 
-      <!-- VISTA 2: ACTIVOS -->
+      <!-- ====================================== -->
+      <!-- VISTA 2: ACTIVOS E HISTORIAL           -->
+      <!-- ====================================== -->
       <div id="view-activos" class="hidden p-4 space-y-4">
-        <div class="app-card p-4">
-          <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación</h2>
-          <p class="text-[11px] text-amber-100/70 mt-1">Al cumplirse el ciclo operativo, el capital inicial y los dividendos se acreditan automáticamente.</p>
+        
+        <div class="app-card p-4 space-y-2">
+          <h2 class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono-num">Activos en Operación e Historial</h2>
+          <p class="text-[11px] text-amber-100/70">Monitoree sus inversiones activas y revise el registro de operaciones completadas.</p>
         </div>
+
+        <!-- Pestañas internas de Activos / Historial -->
+        <div class="grid grid-cols-2 p-1 bg-[#001F1C] border border-amber-500/30 rounded-xl font-mono-num text-xs">
+          <button id="subtab-activos-btn" onclick="switchAssetSubTab('activos')" class="py-2 rounded-lg bg-amber-400 text-slate-950 font-bold uppercase transition">Activos</button>
+          <button id="subtab-historial-btn" onclick="switchAssetSubTab('historial')" class="py-2 rounded-lg text-amber-200/70 uppercase transition">Historial</button>
+        </div>
+
+        <!-- Lista de Activos -->
         <div id="active-products-container" class="space-y-3"></div>
+
+        <!-- Lista de Historial -->
+        <div id="history-products-container" class="hidden space-y-3"></div>
+
       </div>
 
-      <!-- VISTA 3: HISTORIAL -->
-      <div id="view-historial" class="hidden p-4 space-y-4 pb-24">
-        <div class="app-card p-4 space-y-3">
-          <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
-            <div>
-              <h3 class="text-white font-bold text-sm">Historial de Liquidez</h3>
-              <span class="text-[10px] text-amber-200/60 font-mono-num">Desglose de capital y operaciones</span>
-            </div>
-            <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2 text-xs font-mono-num">
-            <div class="bg-[#001412] p-3 rounded-xl border border-amber-500/20">
-              <span class="text-amber-200/60 block text-[9px] uppercase">Disponible Actual</span>
-              <strong id="hist-disponible" class="text-amber-400 text-sm font-bold">$0 ARS</strong>
-            </div>
-            <div class="bg-[#001412] p-3 rounded-xl border border-amber-500/20">
-              <span class="text-amber-200/60 block text-[9px] uppercase">Total Retirado</span>
-              <strong id="hist-retirado" class="text-white text-sm font-bold">$0 ARS</strong>
-            </div>
-          </div>
-        </div>
-        <div class="space-y-2">
-          <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider px-1">Registros de Actividad</h4>
-          <div id="history-records-container" class="space-y-2"></div>
-        </div>
-      </div>
-
-      <!-- VISTA 4: PERFIL -->
+      <!-- ====================================== -->
+      <!-- VISTA 3: PERFIL                        -->
+      <!-- ====================================== -->
       <div id="view-perfil" class="hidden p-4 space-y-4">
+        
+        <!-- DATOS BANCARIOS Y DE CUENTA -->
         <div class="app-card p-4 space-y-3 text-xs">
           <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2.5 text-amber-400 font-bold">
             <i class="fa-solid fa-user-shield text-sm"></i>
             <span class="uppercase tracking-wider">Datos de Cuenta y Retiro</span>
           </div>
+
           <div class="space-y-3 font-mono-num">
             <div>
               <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Titular</label>
               <input id="prof-name-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="Nombre completo">
             </div>
+
             <div>
               <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">CVU Destino (22 dígitos)</label>
               <input id="prof-cvu-input" type="text" maxlength="22" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="0000000000000000000000">
             </div>
+
             <div>
               <label class="text-amber-200/80 block text-[10px] mb-1 uppercase font-bold">Alias Bancario</label>
               <input id="prof-alias-input" type="text" class="w-full bg-[#001412] border border-amber-500/40 rounded-xl p-3 text-white outline-none text-xs focus:border-amber-400" placeholder="tu.alias.mp">
             </div>
+
             <button onclick="saveProfileData()" class="app-button w-full py-3 rounded-xl cursor-pointer uppercase tracking-wider text-xs shadow-md mt-2">
               Guardar Cambios
             </button>
           </div>
         </div>
 
+        <!-- CONFIRMACIÓN DE RECEPCIÓN DE RETIRO -->
         <div id="withdrawal-confirm-box" class="hidden app-card p-4 space-y-3 border-amber-500/40 bg-[#002B27]">
           <div class="flex items-center gap-2.5 text-amber-400 font-bold text-xs">
             <i class="fa-solid fa-circle-check text-base"></i>
@@ -321,6 +308,7 @@
           </button>
         </div>
 
+        <!-- SECCIÓN DE REFERIDOS E INVITACIONES -->
         <div class="app-card p-4 space-y-3 font-mono-num">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -329,13 +317,14 @@
               </div>
               <div class="text-left">
                 <span class="font-bold block text-amber-400 uppercase text-xs">Invitar a un Amigo</span>
-                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 5% por invitado activo</span>
+                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 10% por invitado activo</span>
               </div>
             </div>
             <button onclick="shareApp()" class="app-button px-3 py-2 rounded-xl text-xs cursor-pointer shadow-md">
               Compartir
             </button>
           </div>
+
           <div class="border-t border-amber-500/20 pt-3 space-y-2">
             <span class="text-[11px] text-amber-200/80 font-bold uppercase block">Mis Referidos Invitados</span>
             <div id="referrals-list-container" class="space-y-2 max-h-48 overflow-y-auto">
@@ -346,6 +335,7 @@
           </div>
         </div>
 
+        <!-- CANAL OFICIAL TELEGRAM Y GESTOR -->
         <div class="space-y-2.5 pt-1">
           <a href="https://t.me/+py85X-jN3YM2MmJh" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
             <div class="flex items-center gap-3">
@@ -357,20 +347,17 @@
             </div>
             <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
           </a>
+          <a href="https://t.me/MedrarFinanzas" target="_blank" class="app-card p-3.5 flex items-center justify-between text-white text-xs hover:border-amber-400 transition">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-headset text-2xl text-amber-400"></i>
+              <div>
+                <span class="font-bold block text-amber-400 font-mono-num uppercase">Consultas con el Gestor</span>
+                <span class="text-[10px] text-amber-100/70 font-mono-num">Soporte directo 24/7</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
+          </a>
         </div>
-
-        <a href="https://t.me/MedrarGestor" target="_blank" class="w-full bg-[#00201D] border border-amber-500/30 hover:border-amber-400 p-3.5 rounded-xl flex items-center justify-between transition cursor-pointer group">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
-              <i class="fa-solid fa-headset text-sm"></i>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold text-white">Consultas con el Gestor</h4>
-              <span class="text-[10px] text-amber-200/60 font-mono-num">t.me/MedrarGestor</span>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
-        </a>
 
         <div class="pt-2">
           <button onclick="if(confirm('¿Cerrar sesión?')) location.reload();" class="w-full py-3 bg-rose-950/40 border border-rose-500/30 text-rose-300 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md">
@@ -382,7 +369,9 @@
 
     </div>
 
-    <!-- CÁPSULA FLOTANTE INFERIOR -->
+    <!-- ========================================== -->
+    <!-- CÁPSULA FLOTANTE INFERIOR DE NAVEGACIÓN    -->
+    <!-- ========================================== -->
     <div class="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 w-max">
       <div class="floating-pill px-4 py-2.5 rounded-full flex items-center gap-6">
         <button onclick="switchTab('terminal')" id="pill-btn-terminal" class="flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition">
@@ -402,18 +391,25 @@
 
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#002B27] border-t border-amber-500/20 h-12 z-30 shadow-2xl"></nav>
 
-    <!-- MODAL BILLETERA -->
+    <!-- ========================================== -->
+    <!-- MODAL DE BILLETERA (DEPÓSITOS Y RETIROS)   -->
+    <!-- ========================================== -->
     <div id="wallet-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs hidden flex items-center justify-center p-4">
       <div class="app-card w-full max-w-sm p-5 space-y-4 text-white bg-[#001F1C] border-amber-500/40">
+        
         <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
           <h3 class="text-xs font-bold text-white uppercase tracking-widest"><i class="fa-solid fa-wallet text-amber-400 mr-1.5"></i> Gestión Financiera</h3>
-          <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer p-1"><i class="fa-solid fa-xmark"></i></button>
+          <button onclick="closeWalletModal()" class="text-amber-400 hover:text-amber-300 text-sm cursor-pointer p-1">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
+
         <div class="grid grid-cols-2 p-1 bg-[#001412] border border-amber-500/20 rounded-xl text-xs font-bold">
           <button id="wallet-tab-recargar" type="button" onclick="setWalletMode('recargar')" class="py-2.5 rounded-lg bg-amber-400 text-slate-950 transition cursor-pointer uppercase">Depositar</button>
           <button id="wallet-tab-retirar" type="button" onclick="setWalletMode('retirar')" class="py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase">Retirar</button>
         </div>
-        
+
+        <!-- DEPÓSITO -->
         <div id="wallet-recarga-box" class="space-y-3.5 text-xs font-mono-num">
           <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1">
             <span class="text-[10px] text-amber-200/70 uppercase block">CVU Oficial</span>
@@ -431,31 +427,40 @@
           </button>
         </div>
 
+        <!-- RETIRO -->
         <div id="wallet-retiro-box" class="hidden space-y-3 text-xs font-mono-num">
           <div class="p-3 bg-[#001412] border border-amber-500/30 rounded-xl space-y-1 text-[11px]">
             <div class="flex justify-between text-amber-200/80"><span>Titular:</span><strong id="w-dest-name" class="text-white">---</strong></div>
             <div class="flex justify-between text-amber-200/80"><span>CVU/Alias:</span><strong id="w-dest-cvu" class="text-white truncate max-w-[160px]">---</strong></div>
           </div>
+
           <div>
-            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $50.000)</label>
-            <input id="withdraw-custom-input" type="number" max="50000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
+            <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">Monto a Retirar (Máx $25.000)</label>
+            <input id="withdraw-custom-input" type="number" max="25000" placeholder="5000" oninput="calculateWithdrawal()" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 font-bold text-amber-400 outline-none">
           </div>
+
+          <!-- CALCULADORA DE COMISIÓN (5%) -->
           <div class="p-3 bg-[#001412] border border-amber-500/20 rounded-xl space-y-1 text-[11px] text-amber-100/80">
-            <div class="flex justify-between"><span>Comisión (10%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
+            <div class="flex justify-between"><span>Comisión (5%):</span><span id="calc-fee" class="text-rose-400 font-bold">$0 ARS</span></div>
             <div class="flex justify-between border-t border-amber-500/10 pt-1"><span>Recibirás en cuenta:</span><strong id="calc-net" class="text-amber-400 font-bold text-xs">$0 ARS</strong></div>
           </div>
+
           <div>
             <label class="text-[10px] text-amber-200/80 block mb-1 uppercase">PIN de Autorización (4 Dígitos)</label>
             <input id="withdraw-pin-confirm" type="password" maxlength="4" placeholder="••••" class="w-full bg-[#001412] border border-amber-500/30 rounded-xl p-3 text-white tracking-widest outline-none">
           </div>
+
           <button id="btn-submit-withdraw" onclick="executeWithdrawal()" class="app-button w-full py-3.5 rounded-xl cursor-pointer uppercase tracking-wider shadow-md">
             Solicitar Retiro
           </button>
         </div>
+
       </div>
     </div>
 
-    <!-- MODAL INFERIOR DE ACCIONES -->
+    <!-- ========================================== -->
+    <!-- MODAL INFERIOR DE ACCIONES (BOTTOM SHEET)  -->
+    <!-- ========================================== -->
     <div id="action-sheet-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden" onclick="closeActionSheet()"></div>
     <div id="action-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#001F1C] border-t border-amber-500/40 rounded-t-3xl p-5 transform translate-y-full max-w-md mx-auto shadow-2xl space-y-4">
       <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-2"></div>
@@ -464,34 +469,28 @@
 
   </main>
 
-  <!-- SCRIPTS Y LÓGICA DE LA APLICACIÓN -->
+  <!-- ========================================== -->
+  <!-- SCRIPTS Y LÓGICA DE LA APLICACIÓN          -->
+  <!-- ========================================== -->
   <script>
     const SUPABASE_URL = 'https://haxyklqptaokqizajtjj.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUonusmsQ_TNRT9Wtb';
+    const SUPABASE_KEY = 'sb_publishable_D1aQLBcvMYbMZPUOnusmsQ_TNRT9wTb';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     window.closeNoticeModal = () => {
       document.getElementById('notice-modal').classList.add('hidden');
     };
 
+    // Planes Básicos y Express actualizados
     const plans = [
-      { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png', category: 'basico' },
-      { id: 'puma', name: 'Puma Energy', cost: 10000, days: 5, daily: 1200, total: 16000, logo: './puma.png', category: 'basico' },
-      { id: 'shell', name: 'Shell Argentina', cost: 20000, days: 10, daily: 1233, total: 32330, logo: './shell.png', category: 'basico' },
-      { id: 'axion', name: 'Axion Energy', cost: 30000, days: 20, daily: 1150, total: 53000, logo: './axion.png', category: 'basico' },
-      { id: 'ypf', name: 'YPF Yacimientos', cost: 45000, days: 30, daily: 2150, total: 109500, logo: './ypf.png', category: 'basico' },
-
-      { id: 'refishop', name: 'Refi-Shop', cost: 8000, days: 1, daily: 9200, total: 9200, logo: './refishop.png', category: 'express1', expressGroup: 1 },
-      { id: 'pumasuper7', name: 'Puma Super 7', cost: 10000, days: 1, daily: 11300, total: 11300, logo: './pumasuper7.png', category: 'express1', expressGroup: 1 },
-      { id: 'shellselect', name: 'Shell Select', cost: 13000, days: 1, daily: 14400, total: 14400, logo: './shellselect.png', category: 'express1', expressGroup: 1 },
-      { id: 'spot', name: 'Spot!', cost: 15000, days: 1, daily: 16500, total: 16500, logo: './spot.png', category: 'express1', expressGroup: 1 },
-      { id: 'ypffull', name: 'YPF Full', cost: 18000, days: 1, daily: 19900, total: 19900, logo: './ypffull.png', category: 'express1', expressGroup: 1 },
-
-      { id: 'refinormax', name: 'Refinor Premium Max', cost: 20000, days: 1, daily: 22100, total: 22100, logo: './refinormax.png', category: 'express2', expressGroup: 2 },
-      { id: 'pumamax', name: 'Puma Max', cost: 25000, days: 1, daily: 27300, total: 27300, logo: './pumamax.png', category: 'express2', expressGroup: 2 },
-      { id: 'shellvpower', name: 'Shell V-Power', cost: 30000, days: 1, daily: 33000, total: 33000, logo: './shellvpower.png', category: 'express2', expressGroup: 2 },
-      { id: 'axionquantium', name: 'QUANTIUM Axion', cost: 40000, days: 1, daily: 43500, total: 43500, logo: './axionquantium.png', category: 'express2', expressGroup: 2 },
-      { id: 'ypfinfinia', name: 'Infinia YPF', cost: 45000, days: 1, daily: 50000, total: 50000, logo: './ypfinfinia.png', category: 'express2', expressGroup: 2 }
+      { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1500, total: 9500, logo: './refinor.png', type: 'basico' },
+      { id: 'puma', name: 'Puma Energy', cost: 8000, days: 5, daily: 3333, total: 18000, logo: './puma.png', type: 'basico' },
+      { id: 'shell', name: 'Shell Argentina', cost: 12000, days: 10, daily: 4000, total: 52000, logo: './shell.png', type: 'basico' },
+      { id: 'axion', name: 'Axion Energy', cost: 20000, days: 15, daily: 5000, total: 75000, logo: './axion.png', type: 'basico' },
+      { id: 'ypf', name: 'YPF Yacimientos', cost: 35000, days: 25, daily: 5520, total: 138000, logo: './ypf.png', type: 'basico' },
+      // Planes Express
+      { id: 'express_1', name: 'Express Flash 24H', cost: 10000, days: 1, daily: 15000, total: 15000, logo: './ypf.png', type: 'express' },
+      { id: 'express_2', name: 'Express Weekend (Sáb y Dom)', cost: 25000, days: 2, daily: 17500, total: 35000, logo: './shell.png', type: 'express' }
     ];
 
     let currentUser = null;
@@ -532,68 +531,67 @@
     }
 
     async function handleAuthSubmit() {
-      try {
-        const nameInput = document.querySelector('#auth-name') || document.querySelector('input[type="text"]');
-        const pinInput = document.querySelector('#auth-pin') || document.querySelector('input[type="password"]');
-        
-        const nameVal = nameInput ? nameInput.value.trim() : '';
-        const pinVal = pinInput ? pinInput.value.trim() : '';
+      const nameVal = document.getElementById('auth-name').value.trim();
+      const pinVal = document.getElementById('auth-pin').value.trim();
+      const deviceId = getDeviceId();
 
-        if (!nameVal || pinVal.length !== 4) {
-          alert("Ingrese nombre y PIN de 4 dígitos válido.");
+      if (!nameVal || pinVal.length !== 4) {
+        alert("Ingrese nombre y PIN de 4 dígitos válido.");
+        return;
+      }
+
+      let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+
+      if (existingUser) {
+        if (existingUser.nombre.toLowerCase() !== nameVal.toLowerCase()) {
+          document.getElementById('multicount-error').classList.remove('hidden');
           return;
         }
+        currentUser = existingUser;
+      } else {
+        const inviteCodeRef = getUrlParameter('ref');
+        const codigoPropio = 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        const authScreen = document.getElementById('auth-screen');
-        if (authScreen) authScreen.remove();
-
-        const noticeModal = document.getElementById('notice-modal');
-        if (noticeModal) {
-          noticeModal.classList.remove('hidden');
-          noticeModal.style.display = 'block';
-        }
-
-        currentUser = {
-          id: 'temp-' + Date.now(),
-          nombre: nameVal,
-          pin: pinVal,
-          balance: 0,
+        let { data: newUser, error: insertError } = await db.from('usuarios').insert([{
+          device_id: deviceId, 
+          nombre: nameVal, 
+          pin: pinVal, 
+          balance: 0, 
+          retiro_pendiente: false,
           cuenta_activa: false,
-          codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
-        };
+          codigo_invitacion: codigoPropio,
+          invitado_por: inviteCodeRef || null
+        }]).select().single();
 
-        if (typeof updateHeaderUser === 'function') updateHeaderUser();
-        if (typeof loadUserData === 'function') await loadUserData();
-
-      } catch (err) {
-        alert("Error al procesar: " + err.message);
+        if (insertError) {
+          console.error("Error Supabase:", insertError);
+          let { data: retryUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+          if (retryUser) {
+            currentUser = retryUser;
+          } else {
+            alert("Error al registrar en la base de datos. Verifique su conexión.");
+            return;
+          }
+        } else {
+          currentUser = newUser;
+        }
       }
-    }
 
-    // Respaldo de seguridad para renderUI por si no está definida
-    if (typeof renderUI !== 'function') {
-      window.renderUI = function() {
-        console.log("Interfaz renderizada correctamente");
-        const balanceEl = document.getElementById('user-balance');
-        if (balanceEl && currentUser) balanceEl.innerText = '$' + (currentUser.balance || 0);
-      };
+      document.getElementById('auth-screen').remove();
+      document.getElementById('notice-modal').classList.remove('hidden');
+      updateHeaderUser();
+      await loadUserData();
     }
 
     async function loadUserData() {
       if (!currentUser) return;
-      try {
-        let { data: userData } = await db.from('usuarios').select('*').eq('device_id', getDeviceId()).maybeSingle();
-        if (userData) currentUser = userData;
+      let { data: userData } = await db.from('usuarios').select('*').eq('id', currentUser.id).maybeSingle();
+      if (userData) currentUser = userData;
 
-        let { data: plansData } = await db.from('acciones_activas').select('*');
-        window.activePlansList = plansData || [];
-        
-        if (typeof renderUI === 'function') {
-          renderUI();
-        }
-      } catch (e) {
-        console.log("Error cargando datos de usuario:", e);
-      }
+      let { data: plansData } = await db.from('acciones_activas').select('*').eq('user_id', currentUser.id);
+      activePlansList = plansData || [];
+      renderUI();
+      loadReferrals();
     }
 
     async function updateDBUser(fields) {
@@ -613,13 +611,6 @@
       if (destName) destName.innerText = currentUser.nombre || 'No especificado';
       if (destCvu) destCvu.innerText = currentUser.cvu || currentUser.alias || 'Faltan datos en perfil';
 
-      const profName = document.getElementById('prof-name-input');
-      const profCvu = document.getElementById('prof-cvu-input');
-      const profAlias = document.getElementById('prof-alias-input');
-      if (profName && !profName.value) profName.value = currentUser.nombre || '';
-      if (profCvu && !profCvu.value) profCvu.value = currentUser.cvu || '';
-      if (profAlias && !profAlias.value) profAlias.value = currentUser.alias || '';
-
       const withdrawBox = document.getElementById('withdrawal-confirm-box');
       if (withdrawBox) {
         if (currentUser.retiro_pendiente) {
@@ -628,7 +619,6 @@
           withdrawBox.classList.add('hidden');
         }
       }
-      renderBalanceDisplay();
     }
 
     window.toggleBalanceMask = function() {
@@ -657,7 +647,6 @@
     function startDailyTimer() {
       const btn = document.getElementById('btn-claim-daily');
       const timerText = document.getElementById('daily-timer-text');
-      if (!btn || !timerText) return;
 
       function update() {
         if (!currentUser) return;
@@ -681,6 +670,7 @@
         }
       }
       update();
+      setInterval(update, 1000);
     }
 
     async function claimDailyReward() {
@@ -689,7 +679,6 @@
       if (now - (currentUser.last_daily_claim || 0) >= 24 * 60 * 60 * 1000) {
         await updateDBUser({ balance: (currentUser.balance || 0) + 350, last_daily_claim: now });
         alert("¡Bono acreditado exitosamente (+ $350 ARS)!");
-        startDailyTimer();
       }
     }
 
@@ -728,7 +717,7 @@
             <span class="font-bold text-white block">${inv.nombre}</span>
             <span class="text-[9px] text-amber-200/60">Estado: ${inv.cuenta_activa ? '<strong class="text-emerald-400">Activo (Carga realizada)</strong>' : '<span class="text-amber-400">Pendiente de Carga</span>'}</span>
           </div>
-          <span class="font-bold text-amber-400 font-mono-num">${inv.cuenta_activa ? '+$1.250+ ARS' : '$0 ARS'}</span>
+          <span class="font-bold text-amber-400 font-mono-num">${inv.cuenta_activa ? '+$1.000 + 10%' : '$0 ARS'}</span>
         `;
         container.appendChild(item);
       });
@@ -737,37 +726,52 @@
     window.switchPlanMode = function(mode) {
       const btnBasico = document.getElementById('switch-basico');
       const btnExpress = document.getElementById('switch-express');
-      const btnPremium = document.getElementById('switch-premium');
       const secBasico = document.getElementById('section-basico');
       const secExpress = document.getElementById('section-express');
-      const secPremium = document.getElementById('section-premium');
-
-      [btnBasico, btnExpress, btnPremium].forEach(b => {
-        if(b) b.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center text-xs";
-      });
-      [secBasico, secExpress, secPremium].forEach(s => {
-        if(s) s.classList.add('hidden');
-      });
 
       if (mode === 'basico') {
-        if(btnBasico) btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
-        if(secBasico) secBasico.classList.remove('hidden');
-      } else if (mode === 'express') {
-        if(btnExpress) btnExpress.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
-        if(secExpress) secExpress.classList.remove('hidden');
-        renderExpressPlans();
+        btnBasico.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+        btnExpress.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+        secBasico.classList.remove('hidden');
+        secExpress.classList.add('hidden');
       } else {
-        if(btnPremium) btnPremium.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md text-xs";
-        if(secPremium) secPremium.classList.remove('hidden');
+        btnExpress.className = "py-2.5 rounded-lg bg-amber-400 text-slate-950 font-bold transition cursor-pointer uppercase tracking-wider text-center shadow-md";
+        btnBasico.className = "py-2.5 rounded-lg text-amber-200/70 hover:text-white transition cursor-pointer uppercase tracking-wider text-center";
+        secExpress.classList.remove('hidden');
+        secBasico.classList.add('hidden');
+      }
+    };
+
+    window.switchAssetSubTab = function(tab) {
+      const btnActivos = document.getElementById('subtab-activos-btn');
+      const btnHistorial = document.getElementById('subtab-historial-btn');
+      const contActivos = document.getElementById('active-products-container');
+      const contHistorial = document.getElementById('history-products-container');
+
+      if (tab === 'activos') {
+        btnActivos.className = "py-2 rounded-lg bg-amber-400 text-slate-950 font-bold uppercase transition";
+        btnHistorial.className = "py-2 rounded-lg text-amber-200/70 uppercase transition";
+        contActivos.classList.remove('hidden');
+        contHistorial.classList.add('hidden');
+        renderProducts();
+      } else {
+        btnHistorial.className = "py-2 rounded-lg bg-amber-400 text-slate-950 font-bold uppercase transition";
+        btnActivos.className = "py-2 rounded-lg text-amber-200/70 uppercase transition";
+        contHistorial.classList.remove('hidden');
+        contActivos.classList.add('hidden');
+        renderHistory();
       }
     };
 
     function renderPlans() {
-      const container = document.getElementById('plans-container');
-      if (!container) return;
-      container.innerHTML = '';
+      const containerBasico = document.getElementById('plans-container');
+      const containerExpress = document.getElementById('express-plans-container');
+      if (!containerBasico || !containerExpress) return;
+      
+      containerBasico.innerHTML = '';
+      containerExpress.innerHTML = '';
 
-      plans.filter(p => p.category === 'basico').forEach(p => {
+      plans.forEach(p => {
         const card = document.createElement('div');
         card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
         card.onclick = () => openActionSheet(p);
@@ -787,6 +791,7 @@
               Operar Acción
             </span>
           </div>
+
           <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
             <div>
               <span class="text-amber-200/60 block text-[9px] uppercase">Rendimiento</span>
@@ -798,58 +803,13 @@
             </div>
           </div>
         `;
-        container.appendChild(card);
+
+        if (p.type === 'express') {
+          containerExpress.appendChild(card);
+        } else {
+          containerBasico.appendChild(card);
+        }
       });
-    }
-
-    function renderExpressPlans() {
-      const c1 = document.getElementById('express1-container');
-      const c2 = document.getElementById('express2-container');
-      if (!c1 || !c2) return;
-      c1.innerHTML = '';
-      c2.innerHTML = '';
-
-      const express1 = plans.filter(p => p.category === 'express1');
-      const express2 = plans.filter(p => p.category === 'express2');
-
-      const renderGroup = (list, targetContainer) => {
-        list.forEach(p => {
-          const card = document.createElement('div');
-          card.className = "app-card p-4 space-y-3 cursor-pointer hover:border-amber-400 transition";
-          card.onclick = () => openActionSheet(p);
-          
-          card.innerHTML = `
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shrink-0">
-                  <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='./logo.png';">
-                </div>
-                <div>
-                  <h4 class="font-bold text-white text-xs">${p.name}</h4>
-                  <span class="text-[10px] text-amber-400 font-mono-num">Duración: 24 hs</span>
-                </div>
-              </div>
-              <span class="text-[9px] font-mono-num px-2 py-0.5 rounded border bg-amber-500/10 border-amber-500/30 text-amber-400 uppercase font-bold">
-                Express (Mar/Jue 12h)
-              </span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 bg-[#001412] p-2.5 rounded-xl border border-amber-500/20 text-xs font-mono-num">
-              <div>
-                <span class="text-amber-200/60 block text-[9px] uppercase">Costo Inversión</span>
-                <strong class="text-white">$${fmt(p.cost)} ARS</strong>
-              </div>
-              <div>
-                <span class="text-amber-200/60 block text-[9px] uppercase">Retorno Total</span>
-                <strong class="text-amber-400 font-bold">$${fmt(p.total)} ARS</strong>
-              </div>
-            </div>
-          `;
-          targetContainer.appendChild(card);
-        });
-      };
-
-      renderGroup(express1, c1);
-      renderGroup(express2, c2);
     }
 
     function openActionSheet(p) {
@@ -857,42 +817,36 @@
       const overlay = document.getElementById('action-sheet-overlay');
       const content = document.getElementById('action-sheet-content');
 
-      let subtitle = `Costo: $${fmt(p.cost)} ARS`;
-      if (p.category && p.category.includes('express')) {
-        subtitle = `⚡ Express (Martes y Jueves de 12:00 a 13:00 hs)`;
-      }
-
-      if (content) {
-        content.innerHTML = `
-          <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
-            <div class="flex items-center gap-3">
-              <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
-              <div>
-                <h4 class="text-sm font-bold text-white">${p.name}</h4>
-                <span class="text-[10px] text-amber-400 font-mono-num">${subtitle}</span>
-              </div>
+      content.innerHTML = `
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+          <div class="flex items-center gap-3">
+            <img src="${p.logo}" class="w-8 h-8 object-contain bg-amber-500/10 p-1 rounded-lg border border-amber-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+            <div>
+              <h4 class="text-sm font-bold text-white">${p.name}</h4>
+              <span class="text-[10px] text-amber-400 font-mono-num">Costo: $${fmt(p.cost)} ARS</span>
             </div>
-            <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
           </div>
-          <div class="space-y-2 text-xs font-mono-num text-amber-100/80 bg-[#001412] p-3 rounded-xl border border-amber-500/20">
-            <p>• Ciclo operativo: <strong>${p.days} ${p.days === 1 ? 'día (24 hs)' : 'días'}</strong></p>
-            <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
-          </div>
-          <button onclick="purchasePlan('${p.id}')" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md font-bold">
-            ${p.category && p.category.includes('express') ? 'Adquirir por Depósito' : `Activar Acción ($${fmt(p.cost)} ARS)`}
-          </button>
-        `;
-      }
+          <button onclick="closeActionSheet()" class="text-amber-400 text-base p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="space-y-2 text-xs font-mono-num text-amber-100/80 bg-[#001412] p-3 rounded-xl border border-amber-500/20">
+          <p>• Ciclo operativo: <strong>${p.days} días</strong></p>
+          <p>• Retorno diario: <strong>+$${fmt(p.daily)} ARS</strong></p>
+          <p>• Retorno total estimado: <strong class="text-amber-400">$${fmt(p.total)} ARS</strong></p>
+        </div>
+        <button onclick="purchasePlan('${p.id}')" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md font-bold">
+          Activar Acción ($${fmt(p.cost)} ARS)
+        </button>
+      `;
 
-      if (overlay) overlay.classList.remove('hidden');
-      setTimeout(() => { if(sheet) sheet.style.transform = 'translateY(0)'; }, 10);
+      overlay.classList.remove('hidden');
+      setTimeout(() => { sheet.style.transform = 'translateY(0)'; }, 10);
     }
 
     function closeActionSheet() {
       const sheet = document.getElementById('action-sheet');
       const overlay = document.getElementById('action-sheet-overlay');
-      if (sheet) sheet.style.transform = 'translateY(100%)';
-      setTimeout(() => { if(overlay) overlay.classList.add('hidden'); }, 200);
+      sheet.style.transform = 'translateY(100%)';
+      setTimeout(() => { overlay.classList.add('hidden'); }, 300);
     }
 
     async function purchasePlan(planId) {
@@ -901,45 +855,15 @@
       if (!p) return;
 
       const now = Date.now();
-      const currentHour = new Date().getHours();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
-
-      if (p.category && p.category.includes('express')) {
-        const currentDay = new Date().getDay();
-        const isTuesdayOrThursday = (currentDay === 2 || currentDay === 4);
-
-        if (!isTuesdayOrThursday || currentHour !== 12) {
-          alert("Las acciones Express solo están disponibles los días martes y jueves en su ventana exclusiva de 12:00 PM a 13:00 PM.");
-          closeActionSheet();
-          return;
-        }
-
-        let { data: existingExpress } = await db.from('acciones_activas')
-          .select('id')
-          .eq('user_id', currentUser.id)
-          .eq('plan_id', p.id)
-          .maybeSingle();
-
-        if (existingExpress) {
-          alert("Esta acción Express ya fue adquirida anteriormente.");
-          closeActionSheet();
-          return;
-        }
-
-        alert("Las acciones Express se adquieren exclusivamente cargando el monto exacto por depósito. Realice el depósito.");
-        closeActionSheet();
-        openWalletModal('recargar');
-        return;
-      }
 
       if (p.id === 'refinor') {
         const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
         if (hasBoughtRefinor) {
-          alert("La acción Refinor solo se puede adquirir una sola vez.");
           closeActionSheet();
           return;
         }
-      } else {
+      } else if (p.type !== 'express') {
         let { data: lastActionOfThisType } = await db.from('acciones_activas')
           .select('fecha_inicio')
           .eq('user_id', currentUser.id)
@@ -949,8 +873,8 @@
           .maybeSingle();
 
         if (lastActionOfThisType) {
-          if ((now - lastActionOfThisType.fecha_inicio) < weekMs) {
-            alert("Debe esperar 7 días para volver a adquirir esta acción.");
+          const elapsedSinceLast = now - lastActionOfThisType.fecha_inicio;
+          if (elapsedSinceLast < weekMs) {
             closeActionSheet();
             return;
           }
@@ -991,20 +915,23 @@
       if (!container) return;
       container.innerHTML = '';
 
-      if (!activePlansList || activePlansList.length === 0) {
+      const activeOnly = activePlansList.filter(p => !p.completada);
+
+      if (activeOnly.length === 0) {
         container.innerHTML = `<div class="app-card p-6 text-center text-xs text-amber-100/60 font-mono-num">No hay activos en operación actualmente.</div>`;
         return;
       }
 
       const now = Date.now();
-      for (let plan of activePlansList) {
-        if (plan.fecha_fin <= now && !plan.completada) {
+      for (let plan of activeOnly) {
+        if (plan.fecha_fin <= now) {
           plan.completada = true;
           await db.from('acciones_activas').update({ completada: true }).eq('id', plan.id);
           await updateDBUser({
             balance: currentUser.balance + plan.total_retorno,
             completed_actions_count: (currentUser.completed_actions_count || 0) + 1
           });
+          continue;
         }
 
         const card = document.createElement('div');
@@ -1016,7 +943,7 @@
               <span class="font-bold text-white">${plan.nombre_accion}</span>
             </div>
             <span class="text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold uppercase">
-              ${plan.completada ? 'Finalizado ✓' : 'Acción Adquirida'}
+              Acción Adquirida
             </span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-xs bg-[#001412] p-2.5 rounded-xl border border-amber-500/20">
@@ -1032,6 +959,46 @@
         `;
         container.appendChild(card);
       }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-products-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const completedOnly = activePlansList.filter(p => p.completada);
+
+      if (completedOnly.length === 0) {
+        container.innerHTML = `<div class="app-card p-6 text-center text-xs text-amber-100/60 font-mono-num">No hay historial de operaciones completadas.</div>`;
+        return;
+      }
+
+      completedOnly.forEach(plan => {
+        const card = document.createElement('div');
+        card.className = "app-card p-4 space-y-2.5 font-mono-num opacity-80";
+        card.innerHTML = `
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <img src="${plan.logo || './logo.png'}" class="w-6 h-6 object-contain bg-emerald-500/10 p-0.5 rounded border border-emerald-500/30" onerror="this.onerror=null; this.src='./logo.png';">
+              <span class="font-bold text-white">${plan.nombre_accion}</span>
+            </div>
+            <span class="text-[9px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-bold uppercase">
+              Finalizado ✓
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs bg-[#001412] p-2.5 rounded-xl border border-emerald-500/20">
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Inversión Inicial</span>
+              <strong class="text-white">$${fmt(plan.monto_invertido)} ARS</strong>
+            </div>
+            <div>
+              <span class="text-amber-200/60 block text-[9px] uppercase">Dividendos Cobrados</span>
+              <strong class="text-emerald-400">+$${fmt(plan.total_retorno)} ARS</strong>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
     async function saveProfileData() {
@@ -1077,12 +1044,10 @@
     window.calculateWithdrawal = function() {
       const amtInput = document.getElementById('withdraw-custom-input').value;
       const amt = parseFloat(amtInput) || 0;
-      const fee = amt * 0.10;
+      const fee = amt * 0.05;
       const net = amt - fee;
-      const feeEl = document.getElementById('calc-fee');
-      const netEl = document.getElementById('calc-net');
-      if (feeEl) feeEl.innerText = `$${fmt(fee)} ARS`;
-      if (netEl) netEl.innerText = `$${fmt(net)} ARS`;
+      document.getElementById('calc-fee').innerText = `$${fmt(fee)} ARS`;
+      document.getElementById('calc-net').innerText = `$${fmt(net)} ARS`;
     };
 
     async function notifyDepositTelegram() {
@@ -1103,7 +1068,7 @@
               .eq('cuenta_activa', true);
 
             if ((totalReferidosActivos || 0) <= 30) {
-              const premioReferido = 1000 + (val * 0.05);
+              const premioReferido = 1000 + (val * 0.10); // Bono del 10%
               await db.from('usuarios').update({ balance: (invitador.balance || 0) + premioReferido }).eq('id', invitador.id);
             }
           }
@@ -1120,107 +1085,94 @@
         return;
       }
 
+      const now = new Date();
+      const currentDay = now.getDay();
+      const currentHour = now.getHours();
+
+      // Horarios express / retiros
+      if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
+        const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
+        await updateDBUser({ penalty_until: penaltyTime });
+        closeWalletModal();
+        alert("Operación en proceso de validación por red fuera de horario hábil (Lunes y Viernes de 10 a 14hs).");
+        return;
+      }
+
+      if (currentUser.penalty_until && Date.now() < currentUser.penalty_until) {
+        alert("Operación temporalmente restringida por protocolo de seguridad.");
+        return;
+      }
+
+      if (currentUser.retiro_pendiente) {
+        alert("Tiene un proceso activo. Confirme la recepción en su perfil para continuar.");
+        return;
+      }
+
       const amt = parseFloat(document.getElementById('withdraw-custom-input').value);
       const pin = document.getElementById('withdraw-pin-confirm').value.trim();
-
-      if (isNaN(amt) || amt <= 0 || amt > 50000) { alert("El monto máximo por retiro es de $50.000 ARS"); return; }
+      
+      if (isNaN(amt) || amt <= 0 || amt > 25000) { alert("El monto máximo por retiro es de $25.000 ARS"); return; }
       if (amt > currentUser.balance) { alert("Saldo insuficiente"); return; }
       if (pin !== currentUser.pin) { alert("PIN incorrecto"); return; }
-      if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en el Perfil"); return; }
+      if (!currentUser.cvu && !currentUser.alias) { alert("Debe configurar su CVU o Alias en la sección Perfil."); return; }
 
-      const fee = amt * 0.10;
+      const fee = amt * 0.05;
       const net = amt - fee;
 
-      await db.from('retiros').insert([{
-        user_id: currentUser.id,
-        monto: amt,
+      await db.from('retiros').insert([{ 
+        user_id: currentUser.id, 
+        monto: amt, 
         comision: fee,
         monto_neto: net,
-        cvu_destino: currentUser.cvu || currentUser.alias,
-        estado: 'pendiente'
+        cvu_destino: currentUser.cvu || currentUser.alias, 
+        estado: 'pendiente' 
       }]);
 
-      await updateDBUser({
-        balance: currentUser.balance - amt,
-        retiro_pendiente: true
+      await updateDBUser({ 
+        balance: currentUser.balance - amt, 
+        retiro_pendiente: true 
       });
 
       closeWalletModal();
       switchTab('perfil');
-      alert(`Retiro solicitado con éxito. Monto bruto: $${fmt(amt)} ARS | Neto a recibir: $${fmt(net)} ARS`);
-      await loadUserData();
+      alert(`Retiro solicitado con éxito.\nMonto bruto: $${fmt(amt)}\nComisión (5%): $${fmt(fee)}\nRecibirás neto: $${fmt(net)} ARS\n\nConfirma la recepción en tu perfil una vez acreditado.`);
     }
 
     async function confirmWithdrawalReceived() {
-      if (!currentUser) return;
-      await db.from('usuarios').update({ retiro_pendiente: false, cuenta_activa: false }).eq('id', currentUser.id);
-      currentUser.retiro_pendiente = false;
-      currentUser.cuenta_activa = false;
-      updateHeaderUser();
-      alert("Cuenta actualizada. Ya puede realizar una nueva carga en la plataforma.");
-    }
-
-    async function loadHistorialData() {
-      if (!currentUser) return;
-      const dispEl = document.getElementById('hist-disponible');
-      const retEl = document.getElementById('hist-retirado');
-      const recContainer = document.getElementById('history-records-container');
-
-      if (dispEl) dispEl.innerText = `$${fmt(currentUser.balance)} ARS`;
-
-      let { data: retiros } = await db.from('retiros').select('monto').eq('user_id', currentUser.id);
-      let totalRetirado = (retiros || []).reduce((acc, r) => acc + (r.monto || 0), 0);
-      if (retEl) retEl.innerText = `$${fmt(totalRetirado)} ARS`;
-
-      let { data: depositos } = await db.from('depositos').select('*').eq('user_id', currentUser.id);
-      
-      let html = '';
-      if (retiros && retiros.length > 0) {
-        retiros.forEach(r => {
-          html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
-            <div><strong class="text-amber-400 block text-xs">Solicitud de Retiro</strong><span class="text-[10px] text-amber-200/60">Monto: $${fmt(r.monto)} ARS</span></div>
-            <span class="text-[10px] text-emerald-400 font-bold">Registrado</span>
-          </div>`;
-        });
+      if (confirm("¿Confirmas que ya recibiste los fondos transferidos y deseas mantener tu cuenta activa con una nueva carga obligatoria?")) {
+        await updateDBUser({ retiro_pendiente: false });
+        alert("¡Cuenta actualizada! Por favor, realice su depósito mínimo obligatorio para continuar operando.");
+        openWalletModal('recargar');
       }
-      if (depositos && depositos.length > 0) {
-        depositos.forEach(d => {
-          html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
-            <div><strong class="text-white block text-xs">Depósito / Carga</strong><span class="text-[10px] text-amber-200/60">Monto: $${fmt(d.monto)} ARS</span></div>
-            <span class="text-[10px] text-amber-400 font-bold">${d.estado || 'Procesado'}</span>
-          </div>`;
-        });
-      }
-
-      html += `<div class="p-2.5 bg-[#001412] border border-amber-500/20 rounded-xl flex justify-between items-center text-xs font-mono-num">
-        <div><strong class="text-white block text-xs">Bono / Actividad General</strong><span class="text-[10px] text-amber-200/60">Acreditado a saldo disponible</span></div>
-        <span class="text-[10px] text-emerald-400 font-bold">Activo</span>
-      </div>`;
-
-      if (recContainer) recContainer.innerHTML = html;
     }
 
     function switchTab(tabName) {
-      ['terminal', 'activos', 'historial', 'perfil'].forEach(t => {
-        const viewEl = document.getElementById(`view-${t}`);
+      ['terminal', 'activos', 'perfil'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
         const pillBtn = document.getElementById(`pill-btn-${t}`);
-        if (viewEl) viewEl.classList.add('hidden');
-        if (pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition";
+        if(pillBtn) pillBtn.className = "flex flex-col items-center gap-0.5 text-amber-200/50 hover:text-amber-400 text-xs cursor-pointer hover:scale-110 transition";
       });
-      
-      const targetView = document.getElementById(`view-${tabName}`);
-      const targetPill = document.getElementById(`pill-btn-${tabName}`);
-      if (targetView) targetView.classList.remove('hidden');
-      if (targetPill) targetPill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+      const activePill = document.getElementById(`pill-btn-${tabName}`);
+      if(activePill) activePill.className = "flex flex-col items-center gap-0.5 text-amber-400 font-bold text-xs cursor-pointer hover:scale-110 transition";
 
       if (tabName === 'activos') renderProducts();
-      if (tabName === 'historial') loadHistorialData();
       if (tabName === 'perfil') loadReferrals();
     }
 
-    window.onload = async function() {
-      await checkExistingSession();
-    };
+    function renderUI() {
+      renderBalanceDisplay();
+      if (currentUser) {
+        document.getElementById('prof-name-input').value = currentUser.nombre || '';
+        document.getElementById('prof-cvu-input').value = currentUser.cvu || '';
+        document.getElementById('prof-alias-input').value = currentUser.alias || '';
+        updateHeaderUser();
+      }
+      renderPlans();
+    }
+
+    checkExistingSession();
+    startDailyTimer();
   </script>
 </body>
-</html>
+  </html>
