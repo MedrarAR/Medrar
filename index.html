@@ -93,7 +93,7 @@
         </div>
 
         <button type="button" onclick="handleAuthSubmit()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
-          Registrarse / Ingresar
+          Registrarse / Ingresarx
         </button>
       </div>
     </div>
@@ -532,58 +532,40 @@
     }
 
     async function handleAuthSubmit() {
-      // PRUEBA: Si ves este cartel, significa que el botón sí funciona
-      alert("Botón presionado correctamente");
-
-      const nameInput = document.getElementById('auth-name');
-      const pinInput = document.getElementById('auth-pin');
+      const nameVal = document.getElementById('auth-name').value.trim();
+      const pinVal = document.getElementById('auth-pin').value.trim();
       
-      const nameVal = nameInput ? nameInput.value.trim() : '';
-      const pinVal = pinInput ? pinInput.value.trim() : '';
-      const deviceId = getDeviceId();
-
       if (!nameVal || pinVal.length !== 4) {
         alert("Ingrese nombre y PIN de 4 dígitos válido.");
         return;
       }
 
-      currentUser = {
-        id: 'user-' + deviceId,
-        nombre: nameVal,
-        pin: pinVal,
-        balance: 0,
-        cuenta_activa: false,
-        codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
-      };
+      const authScreen = document.getElementById('auth-screen');
+      if (authScreen) authScreen.remove();
+
+      const noticeModal = document.getElementById('notice-modal');
+      if (noticeModal) noticeModal.classList.remove('hidden');
 
       try {
+        const deviceId = getDeviceId();
         let { data: existingUser } = await db.from('usuarios').select('*').eq('device_id', deviceId).maybeSingle();
+        
         if (existingUser) {
           currentUser = existingUser;
         } else {
           let { data: newUser } = await db.from('usuarios').insert([{
-            device_id: deviceId, 
-            nombre: nameVal, 
-            pin: pinVal, 
-            balance: 0, 
+            device_id: deviceId,
+            nombre: nameVal,
+            pin: pinVal,
+            balance: 0,
             cuenta_activa: false,
-            codigo_invitacion: currentUser.codigo_invitacion
+            codigo_invitacion: 'MED-' + Math.random().toString(36).substring(2, 8).toUpperCase()
           }]).select().single();
           
           if (newUser) currentUser = newUser;
         }
       } catch (e) {
         console.log("Modo local activo:", e);
-      }
-
-      // Remover pantalla de acceso
-      const authScreen = document.getElementById('auth-screen');
-      if (authScreen) authScreen.remove();
-
-      const noticeModal = document.getElementById('notice-modal');
-      if (noticeModal) {
-        noticeModal.classList.remove('hidden');
-        noticeModal.style.display = 'block';
       }
 
       if (typeof updateHeaderUser === 'function') updateHeaderUser();
