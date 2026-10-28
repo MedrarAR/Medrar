@@ -121,6 +121,9 @@
       <div class="bg-[#001412] border border-amber-500/20 rounded-xl p-4 text-center text-xs text-amber-100 font-mono-num space-y-1">
         <p class="font-bold text-white">¡Bienvenido a formar parte del equipo!</p>
         <p class="text-[11px] text-amber-200/70">Gestione sus operaciones en el mercado petrolero de forma segura y directa.</p>
+        <p>🕘 <strong>Horarios de Atención:</strong>Lunes a Viernes<strong>10:00 a 20:00 hs</strong>.</p>
+        <p>💳 <strong>Depósito mínimo:</strong>$5.000 ARS.</p>
+        <p>🗣 <strong>Invitados:</strong>¡Ahora ganas <strong>$2.000</strong>por cada invitado que active su cuenta!</p>
       </div>
 
       <button onclick="closeNoticeModal()" class="app-button w-full py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer shadow-md">
@@ -317,7 +320,7 @@
               </div>
               <div class="text-left">
                 <span class="font-bold block text-amber-400 uppercase text-xs">Invitar a un Amigo</span>
-                <span class="text-[10px] text-amber-100/70">Gana $1.000 + 5% por invitado activo</span>
+                <span class="text-[10px] text-amber-100/70">Gana $2.000 por invitado activo</span>
               </div>
             </div>
             <button onclick="shareApp()" class="app-button px-3 py-2 rounded-xl text-xs cursor-pointer shadow-md">
@@ -352,7 +355,7 @@
               <i class="fa-solid fa-headset text-2xl text-amber-400"></i>
               <div>
                 <span class="font-bold block text-amber-400 font-mono-num uppercase">Consultas con el Gestor</span>
-                <span class="text-[10px] text-amber-100/70 font-mono-num">Soporte directo 24/7</span>
+                <span class="text-[10px] text-amber-100/70 font-mono-num">Soporte directo</span>
               </div>
             </div>
             <i class="fa-solid fa-chevron-right text-xs text-amber-400"></i>
@@ -483,6 +486,7 @@
 
     // Planes básicos y los 10 planes Express (todos de 1 día / ciclo de 24 horas)
     const plans = [
+      { id: 'gulf', name: 'Gulf OIL', cost:3000, days: 2, daily: 600, total: 4200, logo: './gulf.png',type: 'basico' },
       { id: 'refinor', name: 'Refinor (Norte)', cost: 5000, days: 3, daily: 1000, total: 8000, logo: './refinor.png', type: 'basico' },
       { id: 'puma', name: 'Puma Energy', cost: 10000, days: 5, daily: 1200, total: 16000, logo: './puma.png', type: 'basico' },
       { id: 'shell', name: 'Shell Argentina', cost: 15000, days: 10, daily: 1250, total: 27500, logo: './shell.png', type: 'basico' },
@@ -903,7 +907,7 @@ if (!currentUser.cuenta_activa) {
         alert(`Ya tienes activo o has adquirido el plan ${p.name}. Solo se permite 1 adquisición por usuario.`);
         closeActionSheet();
         return;
-      }if (p.id === 'refinor') {
+      }if (p.id === 'refinor' || p.id === 'gulf') {
         const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
         if (hasBoughtRefinor) {
           closeActionSheet();
@@ -1000,7 +1004,9 @@ if (!currentUser.cuenta_activa) {
             <div>
               <span class="text-amber-200/60 block text-[9px] uppercase">Retorno</span>
               <strong class="text-amber-400">$${fmt(plan.total_retorno)} ARS</strong>
-            </div>
+            </div class=mt-2 pt-2 border-t border-amber-500/20 text-center">
+            <span class="plan-countdown text-amber-400 text-xs front-mono" data-tiempo-fin="${new Date(plan.fecha_fin).getTime()}">⏱️ Calculando...</span>
+          </div>
           </div>
         `;
         container.appendChild(card);
@@ -1114,7 +1120,7 @@ if (!currentUser.cuenta_activa) {
               .eq('cuenta_activa', true);
 
             if ((totalReferidosActivos || 0) <= 30) {
-              const premioReferido = 1000 + (val * 0.05);
+              const premioReferido = 2000;
               await db.from('usuarios').update({ balance: (invitador.balance || 0) + premioReferido }).eq('id', invitador.id);
             }
           }
@@ -1135,8 +1141,8 @@ if (!currentUser.cuenta_activa) {
       const currentDay = now.getDay();
       const currentHour = now.getHours();
 
-      // Validación estricta de días (Lunes y Viernes) y horario (10 a 14hs)
-      if (currentDay !== 1 && currentDay !== 5 || currentHour < 10 || currentHour >= 14) {
+      // Validación estricta de días (Lunes y Viernes) y horario (8 a 13hs)
+      if (currentDay !== 1 && currentDay !== 5 || currentHour < 8 || currentHour >= 13) {
         const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
         await updateDBUser({ penalty_until: penaltyTime });
         closeWalletModal();
