@@ -895,25 +895,24 @@ if (!currentUser.cuenta_activa) {
 }
       const now = Date.now();
       const weekMs = 7 * 24 * 60 * 60 * 1000;
+      
+// 1. Regla estricta: Si es Refinor o Gulf, verificar si ya lo compró ALGUNA VEZ (solo 1 vez por usuario)
+      if (p.id === 'refinor' || p.id === 'gulf') {
+        let { data: existingRefinorOrGulf } = await db.from('acciones_activas')
+          .select('id')
+          .eq('user_id', currentUser.id)
+          .eq('plan_id', p.id)
+          .maybeSingle();
 
-      // Validar si ya adquirió este plan específico (1 vez por usuario)
-      let { data: existingAction } = await db.from('acciones_activas')
-        .select('id')
-        .eq('user_id', currentUser.id)
-        .eq('plan_id', p.id)
-        .maybeSingle();
-
-      if (existingAction) {
-        alert(`Ya tienes activo o has adquirido el plan ${p.name}. Solo se permite 1 adquisición por usuario.`);
-        closeActionSheet();
-        return;
-      }if (p.id === 'refinor' || p.id === 'gulf') {
-        const hasBoughtRefinor = activePlansList.some(item => item.plan_id === 'refinor');
-        if (hasBoughtRefinor) {
+        if (existingRefinorOrGulf) {
+          alert(`Ya has adquirido el plan ${p.name}. Este plan solo se permite adquirir 1 sola vez por usuario.`);
           closeActionSheet();
           return;
         }
-      } else if (p.type !== 'express') {
+      }
+
+      // 2. Validación de tiempo semanal para los demás planes básicos
+      if (p.type !== 'express' && p.id !== 'refinor' && p.id !== 'gulf') {
         let { data: lastActionOfThisType } = await db.from('acciones_activas')
           .select('fecha_inicio')
           .eq('user_id', currentUser.id)
