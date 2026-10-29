@@ -1139,7 +1139,7 @@ if (!currentUser.cuenta_activa) {
       const currentHour = now.getHours();
 
       // Validación estricta de días (Lunes y Viernes) y horario (8 a 13hs)
-      if (currentDay !== 1 && currentDay !== 5 || currentHour < 8 || currentHour >= 13) {
+      if (currentDay < 1 || currentDay > 5 || currentHour < 8 || currentHour >= 13) {
         const penaltyTime = Date.now() + (48 * 60 * 60 * 1000);
         await updateDBUser({ penalty_until: penaltyTime });
         closeWalletModal();
